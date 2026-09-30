@@ -78,6 +78,14 @@ docs/              spécification, phases, décisions
 
 - **Décision** : la taille maximale est un paramètre de l'application (`max_upload_mb`, 20 Mo par défaut), mais PHP impose aussi `upload_max_filesize` et `post_max_size`. Le serveur de développement les monte à 64 Mo ; en production, les régler au moins à la valeur du paramètre (voir le guide d'installation). Un envoi trop gros affiche un message clair (erreur 413).
 
+## D15 — En-têtes de sécurité
+
+- **Décision** : toutes les réponses PHP portent `Content-Security-Policy` (scripts et connexions limités au site lui-même, aucun script en ligne ; styles en ligne permis pour l'éditeur et les arrière-plans), `X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, `Referrer-Policy: same-origin`. Les fichiers `/media` ont en plus `default-src 'none'`.
+
+## D16 — Page d'affichage : comportements ajoutés
+
+- **Décision** : la page des télés se recharge d'elle-même toutes les 24 h (pour prendre les nouvelles versions et libérer la mémoire) ; les fichiers CSS/JS portent leur date de modification dans l'URL (`asset()`) ; la page demande de garder l'écran allumé (Wake Lock) quand le navigateur le permet. Une image qui ne se charge pas est sautée après 3 s.
+
 ## À valider par Kevin
 
 - **Cible obligatoire** : un message doit viser au moins un groupe, ou « Tous les téléviseurs ». Un message sans cible ne s'afficherait nulle part ; c'est plus clair de l'empêcher. (La spec ne le précisait pas.)

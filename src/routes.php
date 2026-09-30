@@ -11,6 +11,7 @@ use VitrineExpress\Controllers\DisplayController;
 use VitrineExpress\Controllers\GroupController;
 use VitrineExpress\Controllers\MediaController;
 use VitrineExpress\Controllers\MessageController;
+use VitrineExpress\Controllers\SettingsController;
 use VitrineExpress\Controllers\UserController;
 use VitrineExpress\Router;
 
@@ -53,6 +54,9 @@ return static function (Router $r): void {
     $r->get('/admin/users/{id}/edit', [UserController::class, 'edit']);
     $r->post('/admin/users/{id}', [UserController::class, 'update']);
     $r->post('/admin/users/{id}/delete', [UserController::class, 'delete']);
+
+    $r->get('/admin/settings', [SettingsController::class, 'edit']);
+    $r->post('/admin/settings', [SettingsController::class, 'update']);
 
     $r->get('/admin/account', [AccountController::class, 'edit']);
     $r->post('/admin/account', [AccountController::class, 'update']);

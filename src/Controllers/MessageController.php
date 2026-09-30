@@ -118,8 +118,8 @@ final class MessageController extends Controller
             'groups' => Groups::options($this->app),
             'backgrounds' => Messages::backgrounds($this->app),
             'maxUpload' => Media::formatBytes(Media::maxUploadBytes($this->app)),
-            'styles' => [url('/assets/vendor/quill/quill.snow.css'), url('/assets/slide.css')],
-            'scripts' => [url('/assets/vendor/quill/quill.js'), url('/assets/slide.js'), url('/assets/message-form.js')],
+            'styles' => [asset('/assets/vendor/quill/quill.snow.css'), asset('/assets/slide.css')],
+            'scripts' => [asset('/assets/vendor/quill/quill.js'), asset('/assets/slide.js'), asset('/assets/message-form.js')],
         ], $status);
     }
 }

@@ -72,8 +72,10 @@ En attendant, la page d'affichage a été écrite au plus prudent (ES5, XMLHttpR
 
 ## Phase 5 — Tableau de bord, paramètres, mise en production
 
-- [ ] Tableau de bord : état de chaque télé (en ligne, hors ligne, jamais connectée), dernière activité, message affiché avec miniature, nombre de messages dans sa file ; rafraîchissement automatique
-- [ ] Écran Paramètres : durée par défaut, taille maximale des fichiers, nom et logo de l'organisme, fuseau horaire
-- [ ] Revue de sécurité (spec, section Sécurité et contraintes)
-- [ ] Guide d'installation et de mise à jour dans `docs/installation.md` (exigences, configuration Apache et Nginx, droits sur `storage/`, sauvegarde de la base)
+- [x] Tableau de bord : état de chaque télé (en ligne, hors ligne, jamais connectée), dernière activité, message affiché avec miniature, nombre de messages dans sa file ; rafraîchissement automatique
+- [x] Écran Paramètres : durée par défaut, taille maximale des fichiers, nom et logo de l'organisme, fuseau horaire
+- [x] Revue de sécurité (spec, section Sécurité et contraintes)
+- [x] Guide d'installation et de mise à jour dans `docs/installation.md` (exigences, configuration Apache et Nginx, droits sur `storage/`, sauvegarde de la base)
 - [ ] Mise en production — **demander à Kevin avant**
+
+**Bilan** : tableau de bord (compteurs + tableau, actualisé toutes les 30 s, lien vers la file de chaque télé), paramètres (logo téléversé, retrait possible), en-têtes de sécurité dont une CSP stricte sur les scripts, `.htaccess` racine de secours, guide d'installation. Revue de sécurité : mots de passe `password_hash`, session `HttpOnly`/`SameSite=Lax`/`Secure` en HTTPS et régénérée à la connexion, CSRF sur tout POST de gestion, requêtes préparées, HTML nettoyé par liste blanche (testé), fichiers validés par contenu et servis hors racine web avec noms aléatoires, jetons des télés stockés hachés, échappement systématique dans les gabarits. Limites connues (hors MVP) : pas de limite de tentatives sur la connexion ni sur les codes à 5 chiffres.

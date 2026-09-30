@@ -1,0 +1,14 @@
+# Sécurité si la racine web pointe par erreur sur le dossier du projet au lieu de public/ :
+# tout est redirigé vers public/, rien d'autre (base, configuration, code) n'est accessible.
+# La configuration recommandée reste : racine web = public/ (voir docs/installation.md).
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule ^public/ - [L]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+<IfModule !mod_rewrite.c>
+    Require all denied
+</IfModule>

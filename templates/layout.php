@@ -8,6 +8,7 @@ $nav = [
     '/admin/devices' => 'Téléviseurs',
     '/admin/groups' => 'Groupes',
     '/admin/users' => 'Utilisateurs',
+    '/admin/settings' => 'Paramètres',
 ];
 $isActive = static function (string $path) use ($current): bool {
     $full = url($path);
@@ -19,7 +20,10 @@ $isActive = static function (string $path) use ($current): bool {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title><?= e($title !== '' ? $title . ' · VitrineExpress' : 'VitrineExpress') ?></title>
-    <link rel="stylesheet" href="<?= e(url('/assets/admin.css')) ?>">
+    <?php if (!empty($refresh)): ?>
+        <meta http-equiv="refresh" content="<?= (int) $refresh ?>">
+    <?php endif; ?>
+    <link rel="stylesheet" href="<?= e(asset('/assets/admin.css')) ?>">
     <?php foreach ($styles ?? [] as $href): ?>
         <link rel="stylesheet" href="<?= e($href) ?>">
     <?php endforeach; ?>
@@ -48,7 +52,7 @@ $isActive = static function (string $path) use ($current): bool {
     <?php endforeach; ?>
     <?= $content ?>
 </main>
-<script src="<?= e(url('/assets/admin.js')) ?>"></script>
+<script src="<?= e(asset('/assets/admin.js')) ?>"></script>
 <?php foreach ($scripts ?? [] as $src): ?>
     <script src="<?= e($src) ?>"></script>
 <?php endforeach; ?>

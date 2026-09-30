@@ -1,0 +1,148 @@
+# Installation et mise à jour
+
+## Exigences
+
+- PHP 8.1 ou plus, avec les extensions `pdo_sqlite`, `fileinfo`, `mbstring`, `dom` et `gd`
+- Un serveur web (Apache ou Nginx) avec PHP-FPM ou mod_php
+- HTTPS fortement recommandé (les mots de passe et les jetons des téléviseurs circulent sur le réseau)
+- Aucune base de données à installer : SQLite est un simple fichier
+
+Vérifier les extensions :
+
+```bash
+php -m | grep -E 'pdo_sqlite|fileinfo|mbstring|dom|gd'
+```
+
+## Installation
+
+1. Placer le projet sur le serveur, **hors** de la racine web publique si possible :
+
+   ```bash
+   git clone https://github.com/kevin-belanger/VitrineExpress.git /var/www/vitrineexpress
+   ```
+
+2. Donner au serveur web le droit d'écrire dans `storage/` (base, fichiers téléversés, journal) :
+
+   ```bash
+   sudo chown -R www-data:www-data /var/www/vitrineexpress/storage
+   ```
+
+3. Créer la base et le premier compte administrateur :
+
+   ```bash
+   cd /var/www/vitrineexpress
+   sudo -u www-data php bin/install.php
+   ```
+
+   Le script demande le code usager et le mot de passe. Il ne fait rien s'il a déjà été exécuté.
+
+4. Configurer le serveur web pour que la **racine web soit le dossier `public/`** (exemples plus bas).
+
+5. Ouvrir le site, se connecter, puis dans **Paramètres** : nom de l'organisme, logo, fuseau horaire.
+
+## Configuration locale (facultatif)
+
+Créer `config/config.local.php` pour remplacer des valeurs de `config/config.php` :
+
+```php
+<?php
+return [
+    // Base ailleurs que dans storage/ (ex. disque de données)
+    'db_path' => '/srv/data/vitrineexpress.sqlite',
+    // Application installée dans un sous-dossier : https://exemple.ca/vitrine
+    'base_path' => '/vitrine',
+];
+```
+
+Ne jamais activer `'debug' => true` en production.
+
+## Limites de téléversement
+
+La taille maximale des images se règle dans **Paramètres** (20 Mo par défaut), mais PHP a ses propres limites. Les ajuster dans `php.ini` (ou la configuration du pool PHP-FPM) à au moins cette valeur :
+
+```ini
+upload_max_filesize = 25M
+post_max_size = 30M
+```
+
+L'écran Paramètres affiche la limite actuelle de PHP.
+
+## Apache
+
+```apache
+<VirtualHost *:443>
+    ServerName affichage.exemple.ca
+    DocumentRoot /var/www/vitrineexpress/public
+
+    <Directory /var/www/vitrineexpress/public>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    # SSLEngine on, certificats, etc.
+</VirtualHost>
+```
+
+`mod_rewrite` doit être activé (`sudo a2enmod rewrite`). Le fichier `public/.htaccess` envoie toutes les requêtes vers `index.php`.
+
+Sur un hébergement où la racine web ne peut pas être changée, le `.htaccess` à la racine du projet redirige tout vers `public/` et empêche l'accès au reste (base, configuration, code).
+
+## Nginx
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name affichage.exemple.ca;
+    root /var/www/vitrineexpress/public;
+    index index.php;
+
+    client_max_body_size 30m;
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location ~ \.php$ {
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+    }
+}
+```
+
+## Connecter un téléviseur
+
+1. Dans **Téléviseurs**, ajouter le téléviseur et noter son code à 5 chiffres.
+2. Sur le téléviseur, ouvrir `https://affichage.exemple.ca/display` (ou la page de connexion, lien « Connexion d’un périphérique d’affichage »).
+3. Entrer le code. Le téléviseur reste connecté, même après un redémarrage.
+4. Bouger la souris (si le téléviseur en a une) fait apparaître un menu : plein écran, déconnexion.
+
+Pour vérifier ce que le navigateur d'un téléviseur prend en charge : ouvrir `/tv-test.html` sur ce téléviseur.
+
+## Mise à jour
+
+```bash
+cd /var/www/vitrineexpress
+git pull
+```
+
+Les migrations de la base s'appliquent automatiquement à la requête suivante. Les téléviseurs rechargent la page d'eux-mêmes au plus tard 24 heures après ; pour forcer, les déconnecter et reconnecter, ou redémarrer leur navigateur.
+
+## Sauvegarde
+
+Tout l'état de l'application est dans `storage/` : la base `database.sqlite` et le dossier `uploads/`. Pour une copie cohérente de la base pendant que l'application tourne :
+
+```bash
+sqlite3 storage/database.sqlite ".backup '/chemin/sauvegarde/vitrine-$(date +%F).sqlite'"
+rsync -a storage/uploads/ /chemin/sauvegarde/uploads/
+```
+
+## Mot de passe oublié
+
+S'il reste un autre administrateur, il peut changer le mot de passe dans **Utilisateurs**. Sinon, sur le serveur :
+
+```bash
+php -r 'require "src/bootstrap.php"; $app = VitrineExpress\App::fromConfig(VitrineExpress\load_config()); VitrineExpress\Users::setPassword($app, 1, "NouveauMotDePasse");'
+```
+
+(remplacer `1` par l'identifiant du compte).

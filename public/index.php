@@ -28,6 +28,9 @@ if ($path === '/index.php') {
 header('X-Content-Type-Options: nosniff');
 header('Referrer-Policy: same-origin');
 header('X-Frame-Options: SAMEORIGIN');
+// Aucun script en ligne ni externe ; styles en ligne permis (éditeur, arrière-plans).
+header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; "
+    . "img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'");
 
 try {
     $app = VitrineExpress\App::fromConfig($config);
