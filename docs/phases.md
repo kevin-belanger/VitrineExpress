@@ -15,11 +15,11 @@ Développement local dans WSL (Ubuntu 24.04, PHP 8.3.6, SQLite 3.45) : dépôt d
 
 Le plus grand risque du projet est le navigateur des téléviseurs. On le mesure avant d'écrire la page d'affichage.
 
-- [ ] Page `public/tv-test.html` autonome qui affiche, en gros caractères, le résultat de chaque vérification : agent utilisateur, taille d'écran et ratio de pixels, `fetch` / `XMLHttpRequest`, `Promise`, fonctions fléchées, `localStorage`, cookies, API plein écran, transitions et opacités CSS, `object-fit: contain`, flexbox, polices et tailles en `vw`
-- [ ] Instructions courtes pour Kevin : quelle adresse ouvrir sur la télé, quoi photographier ou recopier
-- [ ] Résultats consignés dans `docs/decisions.md` (niveau de JavaScript et de CSS retenu pour la page d'affichage)
+- [x] Page `public/tv-test.html` autonome qui affiche, en gros caractères, le résultat de chaque vérification : agent utilisateur, taille d'écran et ratio de pixels, `fetch` / `XMLHttpRequest`, `Promise`, fonctions fléchées, `localStorage`, cookies, API plein écran, transitions et opacités CSS, `object-fit: contain`, flexbox, polices et tailles en `vw`
+- [x] Instructions courtes pour Kevin : ouvrir `http://<serveur>/tv-test.html` sur la télé et photographier l'écran (les lignes « NON » sont en rouge)
+- [ ] Résultats consignés dans `docs/decisions.md` — **en attente d'un test sur une vraie télé**
 
-Cette phase attend un humain : prépare la page, puis passe à la phase 1 en parallèle.
+En attendant, la page d'affichage a été écrite au plus prudent (ES5, XMLHttpRequest, préfixes `-webkit-`, sans `object-fit` ni unités `vw`) : elle devrait fonctionner même sur un vieux navigateur.
 
 ## Phase 1 — Fondations
 
@@ -57,16 +57,18 @@ Cette phase attend un humain : prépare la page, puis passe à la phase 1 en par
 
 ## Phase 4 — Page d'affichage
 
-- [ ] API `pair`, `next`, `heartbeat`, `logout` (spec, section Logique serveur) ; jeton aléatoire de 32 octets, seule l'empreinte est stockée
-- [ ] Écran de code : pavé numérique utilisable à la télécommande (flèches + OK) ; conflit « déjà connecté » avec confirmation ; lien depuis la page de connexion de la gestion
-- [ ] Jeton persistant : cookie longue durée + copie dans `localStorage`
-- [ ] Rotation : affichage selon la durée, préchargement du suivant, fondu, image en *contain* sur fond noir, texte proportionnel à la largeur
-- [ ] File vide : nom ou logo de l'organisme, heure et date ; nouvel essai toutes les 60 s
-- [ ] Coupure réseau : écran d'avertissement avec indicateur, nouvel essai toutes les 10 s, reprise automatique
-- [ ] Déconnexion à distance (401) : retour à l'écran de code avec un message
-- [ ] Menu caché au mouvement de la souris (5 s) : nom de la télé, Plein écran, Déconnecter cet appareil
-- [ ] Signal de présence toutes les 60 s
+- [x] API `pair`, `next`, `heartbeat`, `logout` (spec, section Logique serveur) ; jeton aléatoire de 32 octets, seule l'empreinte est stockée
+- [x] Écran de code : pavé numérique utilisable à la télécommande (flèches + OK) ; conflit « déjà connecté » avec confirmation ; lien depuis la page de connexion de la gestion
+- [x] Jeton persistant : cookie longue durée + copie dans `localStorage`
+- [x] Rotation : affichage selon la durée, préchargement du suivant, fondu, image en *contain* sur fond noir, texte proportionnel à la largeur
+- [x] File vide : nom ou logo de l'organisme, heure et date ; nouvel essai toutes les 60 s
+- [x] Coupure réseau : écran d'avertissement avec indicateur, nouvel essai toutes les 10 s, reprise automatique
+- [x] Déconnexion à distance (401) : retour à l'écran de code avec un message
+- [x] Menu caché au mouvement de la souris (5 s) : nom de la télé, Plein écran, Déconnecter cet appareil
+- [x] Signal de présence toutes les 60 s
 - [ ] Vérification sur une vraie télé (instructions pour Kevin)
+
+**Bilan** : 28 tests (dont l'API de bout en bout). Vérifié dans le navigateur : saisie du code au clavier, rotation texte → image avec fondu, menu caché qui disparaît, conflit (409) par l'API, déconnexion depuis la gestion (retour à l'écran de code avec message), coupure du serveur (avertissement puis reprise automatique), file vide (nom, heure, date en français). Ajouts hors spec : rechargement automatique de la page toutes les 24 h (nouvelles versions, mémoire) et demande de maintien de l'écran allumé sur les navigateurs qui le permettent.
 
 ## Phase 5 — Tableau de bord, paramètres, mise en production
 

@@ -1,0 +1,149 @@
+/* Page d'affichage des téléviseurs. Styles simples, compatibles avec les vieux navigateurs. */
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: #000;
+    color: #fff;
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+body.idle, body.idle * { cursor: none !important; }
+
+.hidden { display: none !important; }
+
+.screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+/* Diapositives et fondu */
+#stage .vx-slide {
+    opacity: 0;
+    -webkit-transition: opacity .5s ease;
+    transition: opacity .5s ease;
+}
+#stage .vx-slide.visible { opacity: 1; }
+
+/* Panneaux plein écran (code, conflit, file vide, coupure) */
+.panel {
+    background: #0f1b24;
+    background: -webkit-linear-gradient(-45deg, #0f2027, #203a43, #2c5364);
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    text-align: center;
+    z-index: 5;
+}
+.pair-box, .empty-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 90%;
+    max-width: 900px;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+/* Connexion par code */
+.pair-brand { margin: 0 0 .2em; font-size: 48px; font-weight: 700; }
+.pair-brand span { color: #5eead4; }
+.pair-title { margin: 0 0 24px; font-size: 26px; color: #cbd5e1; }
+.pair-notice { margin: 0 auto 20px; padding: 12px 20px; max-width: 640px; font-size: 22px; background: rgba(245, 158, 11, .18); color: #fde68a; border-radius: 10px; }
+.pair-digits { margin: 0 0 10px; }
+.pair-digits span {
+    display: inline-block;
+    width: 72px;
+    height: 92px;
+    margin: 0 6px;
+    line-height: 92px;
+    font-size: 56px;
+    font-weight: 700;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, .1);
+    border: 2px solid rgba(255, 255, 255, .25);
+    vertical-align: middle;
+}
+.pair-digits span.filled { border-color: #5eead4; }
+.pair-error { min-height: 32px; margin: 8px 0; font-size: 24px; color: #fca5a5; }
+.pad { width: 420px; margin: 0 auto; font-size: 0; }
+.pad button, .conflict-actions button, .menu button {
+    font-family: inherit;
+    cursor: pointer;
+    color: #fff;
+    background: rgba(255, 255, 255, .12);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    outline: none;
+}
+.pad button {
+    width: 128px;
+    height: 72px;
+    margin: 5px;
+    font-size: 32px;
+    font-weight: 600;
+    vertical-align: top;
+}
+.pad button.pad-muted { font-size: 22px; }
+.pad-ok { background: #0f766e !important; }
+.pad button:focus, .conflict-actions button:focus, .menu button:focus,
+.pad button:hover, .conflict-actions button:hover, .menu button:hover {
+    border-color: #5eead4;
+    background: rgba(94, 234, 212, .25);
+}
+.pair-help { margin-top: 24px; font-size: 20px; color: #94a3b8; }
+
+/* Conflit */
+.conflict-text { font-size: 32px; line-height: 1.45; margin: 0 0 36px; }
+.conflict-actions button { margin: 8px; padding: 18px 32px; font-size: 26px; font-weight: 600; }
+
+/* File vide */
+.empty-logo { max-width: 60%; max-height: 220px; margin-bottom: 24px; }
+.empty-org { margin: 0 0 24px; font-size: 44px; font-weight: 600; color: #e2e8f0; }
+.empty-time { margin: 0; font-size: 160px; font-weight: 300; line-height: 1; letter-spacing: 2px; }
+.empty-date { margin: 16px 0 0; font-size: 40px; color: #cbd5e1; }
+
+/* Coupure réseau : avertissement en bas de l'écran */
+#offline { background: #000; z-index: 10; }
+.offline-bar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 6%;
+    font-size: 28px;
+    color: #e2e8f0;
+}
+.offline-bar span { vertical-align: middle; }
+.spinner {
+    display: inline-block;
+    width: 36px;
+    height: 36px;
+    margin-right: 16px;
+    border: 4px solid rgba(255, 255, 255, .25);
+    border-top-color: #5eead4;
+    border-radius: 50%;
+    -webkit-animation: vx-spin 1s linear infinite;
+    animation: vx-spin 1s linear infinite;
+}
+@-webkit-keyframes vx-spin { to { -webkit-transform: rotate(360deg); } }
+@keyframes vx-spin { to { transform: rotate(360deg); } }
+
+/* Menu caché */
+.menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 20;
+    padding: 14px 20px;
+    text-align: right;
+    background: rgba(0, 0, 0, .75);
+}
+.menu-name { float: left; line-height: 44px; font-size: 20px; color: #cbd5e1; }
+.menu button { margin-left: 10px; padding: 10px 18px; font-size: 18px; }

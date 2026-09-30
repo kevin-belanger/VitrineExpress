@@ -23,7 +23,7 @@ final class Kernel
     {
         $isApi = str_starts_with($path, '/api/');
         try {
-            if (!$isApi && !str_starts_with($path, '/media/')) {
+            if (!$isApi && !str_starts_with($path, '/media/') && $path !== '/display') {
                 $this->startSession();
             }
 

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VitrineExpress — Test du navigateur</title>
+<style>
+    body { margin: 0; padding: 2% 3%; background: #0f2027; color: #fff; font-family: Arial, sans-serif; font-size: 22px; }
+    h1 { margin: 0 0 .3em; font-size: 40px; }
+    p { margin: .2em 0 .8em; color: #cbd5e1; }
+    table { border-collapse: collapse; width: 100%; }
+    td { padding: 6px 12px; border-bottom: 1px solid #2c5364; vertical-align: top; }
+    td.r { width: 140px; font-weight: bold; }
+    .ok { color: #4ade80; }
+    .ko { color: #f87171; }
+    .info { color: #fde68a; }
+    #box { width: 160px; height: 90px; background: #f59e0b; -webkit-transition: opacity 1s; transition: opacity 1s; }
+    #fit { width: 160px; height: 90px; background: #000; }
+    #fit img { width: 100%; height: 100%; object-fit: contain; }
+    button { font-size: 22px; padding: 10px 18px; margin: 8px 8px 0 0; }
+    .code { font-family: monospace; font-size: 18px; color: #e2e8f0; word-break: break-all; }
+</style>
+</head>
+<body>
+<h1>Test du navigateur du téléviseur</h1>
+<p>Prenez une photo de cet écran (ou recopiez les lignes en rouge) et envoyez-la. Le bouton « Plein écran » teste le passage en plein écran.</p>
+<table id="results"></table>
+<button id="fs" type="button">Plein écran</button>
+<div style="margin-top: 12px">
+    <div id="box" style="display:inline-block"></div>
+    <div id="fit" style="display:inline-block"><img alt="" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Crect width='40' height='40' fill='%23f59e0b'/%3E%3C/svg%3E"></div>
+    <p>Le carré orange de droite doit rester carré (object-fit), celui de gauche doit clignoter doucement (transition).</p>
+</div>
+<script>
+(function () {
+    var rows = document.getElementById('results');
+
+    function add(label, ok, detail) {
+        var tr = document.createElement('tr');
+        var cls = ok === true ? 'ok' : (ok === false ? 'ko' : 'info');
+        var word = ok === true ? 'OUI' : (ok === false ? 'NON' : 'INFO');
+        tr.innerHTML = '<td class="r ' + cls + '">' + word + '</td><td>' + label + (detail ? '<div class="code">' + detail + '</div>' : '') + '</td>';
+        rows.appendChild(tr);
+    }
+
+    function test(label, fn) {
+        var result;
+        try { result = fn(); } catch (e) { result = false; }
+        add(label, !!result);
+    }
+
+    function escape(text) {
+        return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+    }
+
+    add('Navigateur', null, escape(navigator.userAgent));
+    add('Écran', null, screen.width + ' × ' + screen.height + ' — fenêtre ' + window.innerWidth + ' × ' + window.innerHeight + ' — ratio de pixels ' + (window.devicePixelRatio || 1));
+
+    test('XMLHttpRequest', function () { return !!window.XMLHttpRequest; });
+    test('JSON', function () { return !!(window.JSON && JSON.parse('{"a":1}').a === 1); });
+    test('fetch', function () { return typeof window.fetch === 'function'; });
+    test('Promise', function () { return typeof window.Promise === 'function'; });
+    test('Fonctions fléchées (ES2015)', function () { return new Function('return (() => 1)()')() === 1; });
+    test('let / const (ES2015)', function () { return new Function('let a = 1; const b = 2; return a + b')() === 3; });
+    test('localStorage', function () { localStorage.setItem('vx_t', '1'); var v = localStorage.getItem('vx_t'); localStorage.removeItem('vx_t'); return v === '1'; });
+    test('Cookies', function () { document.cookie = 'vx_t=1; path=/'; var ok = document.cookie.indexOf('vx_t=1') !== -1; document.cookie = 'vx_t=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'; return ok; });
+    test('API plein écran', function () { var d = document.documentElement; return !!(d.requestFullscreen || d.webkitRequestFullscreen || d.webkitRequestFullScreen || d.mozRequestFullScreen || d.msRequestFullscreen); });
+    test('classList', function () { return !!document.documentElement.classList; });
+
+    function css(prop, value) {
+        var el = document.createElement('div');
+        el.style.cssText = prop + ':' + value;
+        return el.style.length > 0 || el.style[prop] !== undefined && el.style[prop] !== '';
+    }
+    test('CSS transform', function () { return css('transform', 'scale(2)') || css('-webkit-transform', 'scale(2)'); });
+    test('CSS transition', function () { return css('transition', 'opacity 1s') || css('-webkit-transition', 'opacity 1s'); });
+    test('CSS dégradé (linear-gradient)', function () { return css('background-image', 'linear-gradient(135deg, #000, #fff)'); });
+    test('CSS object-fit', function () { return 'objectFit' in document.documentElement.style; });
+    test('CSS flexbox', function () { return css('display', 'flex'); });
+    test('CSS unités vw', function () { return css('width', '10vw'); });
+    test('Image WebP', function () {
+        var c = document.createElement('canvas');
+        return !!(c.getContext && c.toDataURL('image/webp').indexOf('data:image/webp') === 0);
+    });
+
+    var box = document.getElementById('box');
+    var visible = true;
+    setInterval(function () { visible = !visible; box.style.opacity = visible ? '1' : '0.2'; }, 1500);
+
+    document.getElementById('fs').onclick = function () {
+        var d = document.documentElement;
+        var fn = d.requestFullscreen || d.webkitRequestFullscreen || d.webkitRequestFullScreen || d.mozRequestFullScreen || d.msRequestFullscreen;
+        if (fn) { try { fn.call(d); } catch (e) { alert('Plein écran refusé : ' + e); } } else { alert('Plein écran non pris en charge.'); }
+    };
+})();
+</script>
+</body>
+</html>

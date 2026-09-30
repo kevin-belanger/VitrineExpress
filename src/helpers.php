@@ -47,6 +47,13 @@ function is_https(): bool
         || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
 }
 
+/** URL d'un fichier de public/ avec sa date de modification (force le rechargement après une mise à jour). */
+function asset(string $path): string
+{
+    $file = dirname(__DIR__) . '/public/' . ltrim($path, '/');
+    return url($path) . (is_file($file) ? '?v=' . filemtime($file) : '');
+}
+
 /** Jeton anti-CSRF de la session courante. */
 function csrf_token(): string
 {

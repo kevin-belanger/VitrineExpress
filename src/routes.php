@@ -5,7 +5,9 @@ declare(strict_types=1);
 use VitrineExpress\Controllers\AccountController;
 use VitrineExpress\Controllers\AuthController;
 use VitrineExpress\Controllers\DashboardController;
+use VitrineExpress\Controllers\DeviceApiController;
 use VitrineExpress\Controllers\DeviceController;
+use VitrineExpress\Controllers\DisplayController;
 use VitrineExpress\Controllers\GroupController;
 use VitrineExpress\Controllers\MediaController;
 use VitrineExpress\Controllers\MessageController;
@@ -54,6 +56,13 @@ return static function (Router $r): void {
 
     $r->get('/admin/account', [AccountController::class, 'edit']);
     $r->post('/admin/account', [AccountController::class, 'update']);
+
+    // Page des téléviseurs et son API (authentifiée par jeton, sans session)
+    $r->get('/display', [DisplayController::class, 'show']);
+    $r->post('/api/device/pair', [DeviceApiController::class, 'pair']);
+    $r->get('/api/device/next', [DeviceApiController::class, 'next']);
+    $r->post('/api/device/heartbeat', [DeviceApiController::class, 'heartbeat']);
+    $r->post('/api/device/logout', [DeviceApiController::class, 'logout']);
 
     // Fichiers téléversés (publics, noms aléatoires)
     $r->get('/media/{name}', [MediaController::class, 'show']);
