@@ -1,8 +1,10 @@
 # Données locales
-/data/*.sqlite
-/data/*.sqlite-*
-/uploads/*
-!/uploads/.gitkeep
+/storage/*.sqlite
+/storage/*.sqlite-*
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+/storage/logs/*
+!/storage/logs/.gitkeep
 
 # Configuration locale
 /config/config.local.php
