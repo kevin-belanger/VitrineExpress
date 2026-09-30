@@ -2,11 +2,14 @@
 
 Chaque phase se termine quand tous ses critères sont cochés, les tests passent, et le travail est poussé sur `main`. Un bilan court est ajouté sous la phase.
 
-## Démarrage sur le serveur
+## Démarrage
 
-- [ ] Cloner le dépôt, configurer l'identité Git du dépôt (voir `CLAUDE.md`)
-- [ ] Relever l'environnement et le noter dans `docs/decisions.md` : serveur web (Apache/Nginx), version de PHP, extensions (`pdo_sqlite`, `fileinfo`, `mbstring`, `dom`, `gd` ou `imagick`), limites de téléversement (`upload_max_filesize`, `post_max_size`), accès en écriture à `storage/`
-- [ ] Déterminer comment servir l'application en développement (`php -S` sur `public/`, ou vhost existant) — demander avant de modifier la configuration du serveur web
+Développement local dans WSL (Ubuntu 24.04, PHP 8.3.6, SQLite 3.45) : dépôt dans `~/VitrineExpress`, serveur `bin/dev-server.sh` sur http://localhost:8080.
+
+- [x] Cloner le dépôt, configurer l'identité Git du dépôt (voir `CLAUDE.md`)
+- [x] Relever l'environnement local : extensions `pdo_sqlite`, `fileinfo`, `mbstring`, `dom`, `gd` présentes
+- [x] Serveur de développement : `php -S` sur `public/` (`bin/dev-server.sh`)
+- [ ] Relever l'environnement du serveur de production (Apache/Nginx, version de PHP, extensions, limites de téléversement) — à la mise en production
 
 ## Phase 0 — Test sur une vraie télé
 
@@ -20,13 +23,15 @@ Cette phase attend un humain : prépare la page, puis passe à la phase 1 en par
 
 ## Phase 1 — Fondations
 
-- [ ] Structure des dossiers (D2), chargement automatique, configuration (`config/config.php` + `config.local.php`)
-- [ ] Connexion PDO SQLite (clés étrangères activées, mode WAL), système de migrations (D4), migration initiale avec les 8 tables de la spec
-- [ ] Routeur, gestion des erreurs (page 404/500 propre, journal d'erreurs), gabarit de base de l'interface de gestion
-- [ ] Script d'installation (ligne de commande `php bin/install.php`) : crée la base, les paramètres par défaut, les arrière-plans prédéfinis, et le premier compte ; refuse de tourner deux fois
-- [ ] Connexion / déconnexion des administrateurs, sessions sécurisées, protection CSRF
-- [ ] Écran Utilisateurs : liste, ajout, modification, suppression (on ne peut pas supprimer son propre compte), changement de son mot de passe
-- [ ] Mini-exécuteur de tests (D8) et premiers tests
+- [x] Structure des dossiers (D2), chargement automatique, configuration (`config/config.php` + `config.local.php`)
+- [x] Connexion PDO SQLite (clés étrangères activées, mode WAL), système de migrations (D4), migration initiale avec les 8 tables de la spec
+- [x] Routeur, gestion des erreurs (page 404/500 propre, journal d'erreurs), gabarit de base de l'interface de gestion
+- [x] Script d'installation (ligne de commande `php bin/install.php`) : crée la base, les paramètres par défaut, les arrière-plans prédéfinis, et le premier compte ; refuse de tourner deux fois
+- [x] Connexion / déconnexion des administrateurs, sessions sécurisées, protection CSRF
+- [x] Écran Utilisateurs : liste, ajout, modification, suppression (on ne peut pas supprimer son propre compte), changement de son mot de passe
+- [x] Mini-exécuteur de tests (D8) et premiers tests
+
+**Bilan** : fondations en place, 7 tests. Vérifié dans le navigateur : connexion, tableau de bord (vide pour l'instant), validation du formulaire d'utilisateur. Le compte de développement local est dans `storage/dev-admin.txt` (non versionné).
 
 ## Phase 2 — Téléviseurs et groupes
 

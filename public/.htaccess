@@ -1,0 +1,8 @@
+# Apache : toutes les requêtes qui ne visent pas un fichier existant passent par index.php.
+Options -Indexes
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ index.php [QSA,L]
+</IfModule>

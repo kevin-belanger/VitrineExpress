@@ -29,7 +29,7 @@ docs/              spécification, phases, décisions
 
 ## D4 — Migrations SQL maison
 
-- **Décision** : fichiers `migrations/NNN_description.sql` appliqués dans l'ordre ; version courante dans la table `schema_version`. Appliquées par le script d'installation et au démarrage si nécessaire.
+- **Décision** : fichiers `migrations/NNN_description.sql` appliqués dans l'ordre, chacun dans une transaction ; version courante dans `PRAGMA user_version` (plus simple qu'une table dédiée). Appliquées par le script d'installation et à chaque requête si nécessaire (coût négligeable).
 
 ## D5 — Nettoyage du texte enrichi sans dépendance
 
@@ -54,6 +54,15 @@ docs/              spécification, phases, décisions
 ## D9 — Fuseau horaire par défaut
 
 - **Décision** : `America/Toronto` (heure de l'Est, Québec), modifiable dans les paramètres. Dates stockées en texte ISO 8601 dans ce fuseau.
+
+## D10 — Développement dans WSL
+
+- **Décision** : développement dans Ubuntu 24.04 (WSL 2) avec PHP 8.3, dépôt cloné dans `~/VitrineExpress` (hors Google Drive). Serveur de développement intégré de PHP via `bin/dev-server.sh`.
+- **Pourquoi** : environnement proche d'un serveur Linux de production ; Google Drive risque de corrompre `.git` et la base SQLite.
+
+## D11 — Routes et contrôleurs
+
+- **Décision** : `/login`, `/logout` pour la connexion ; tout l'administration sous `/admin/...` (authentification vérifiée par le noyau) ; `/display` pour la page des télés, `/api/device/...` pour son API JSON (sans session ni CSRF, authentifiée par jeton), `/media/{nom}` pour les fichiers. Jeton CSRF vérifié sur tout POST hors API. Les paramètres de route sont passés aux actions par arguments nommés.
 
 ## À valider par Kevin
 
