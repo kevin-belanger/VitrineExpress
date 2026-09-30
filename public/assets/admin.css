@@ -210,6 +210,108 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .stack form { margin: 0; }
 .stack .button { width: 100%; }
 
+/* Messages : liste */
+.head-actions { display: flex; gap: .5rem; flex-wrap: wrap; }
+.filters {
+    display: flex;
+    gap: .75rem 1rem;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.filters label { display: flex; flex-direction: column; gap: .25rem; font-size: .8rem; font-weight: 600; color: var(--muted); }
+.filters select {
+    font: inherit;
+    font-size: .95rem;
+    color: var(--text);
+    padding: .4rem .6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    min-width: 200px;
+}
+.hint-box {
+    background: var(--accent-soft);
+    border: 1px solid #99e0d6;
+    color: var(--accent-dark);
+    border-radius: var(--radius);
+    padding: .6rem .9rem;
+    margin: 0 0 1rem;
+}
+.thumb-col { width: 112px; }
+.thumb {
+    display: block;
+    width: 96px;
+    height: 54px;
+    object-fit: contain;
+    background: #000;
+    border-radius: 4px;
+}
+.thumb-text {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+}
+.is-dim td { opacity: .6; }
+.nowrap { white-space: nowrap; }
+
+/* Messages : formulaire */
+.split-wide { grid-template-columns: minmax(0, 1fr) minmax(320px, 44%); }
+.segmented { flex-direction: row !important; flex-wrap: wrap; gap: .5rem 1.5rem !important; }
+.segmented legend { width: 100%; }
+.segmented label { flex-direction: row; align-items: center; gap: .4rem; font-weight: normal; }
+.field { display: flex; flex-direction: column; gap: .35rem; }
+.field-label { font-weight: 600; }
+#editor { min-height: 180px; font-size: 1.05rem; background: #fff; }
+.ql-toolbar.ql-snow, .ql-container.ql-snow { border-color: var(--border); }
+.ql-toolbar.ql-snow { border-radius: 6px 6px 0 0; background: #f9fafb; }
+.ql-container.ql-snow { border-radius: 0 0 6px 6px; }
+.swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: .6rem; }
+.swatch { position: relative; flex-direction: column; align-items: center; gap: .25rem !important; font-weight: normal !important; cursor: pointer; }
+.swatch input { position: absolute; opacity: 0; pointer-events: none; }
+.swatch-color {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border-radius: 6px;
+    font-weight: 700;
+    border: 2px solid transparent;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, .12);
+}
+.swatch input:checked + .swatch-color { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15, 118, 110, .25); }
+.swatch input:focus-visible + .swatch-color { outline: 2px solid var(--accent); outline-offset: 2px; }
+.swatch-name { font-size: .8rem; color: var(--muted); }
+.inline-fields { display: flex; gap: .5rem; }
+.inline-fields input[type="time"] { max-width: 8.5rem; }
+.form label.short { max-width: 240px; }
+.check-strong { flex-direction: row !important; align-items: center; gap: .45rem !important; margin-bottom: .5rem; }
+.preview-panel { position: sticky; top: 1rem; }
+.preview-label { margin: 0 0 .5rem; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.preview-frame {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%;
+    background: #000;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+.preview-empty {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 1rem;
+    color: #94a3b8;
+    text-align: center;
+}
+
 /* Connexion */
 .no-nav .page { max-width: 420px; padding-top: 10vh; }
 .login-box .card { padding: 1.5rem; }
@@ -222,6 +324,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
 @media (max-width: 700px) {
     .topbar { gap: .5rem 1rem; padding: .5rem 1rem; }
     .page { padding: 1rem; }
-    .split { grid-template-columns: 1fr; }
+    .split, .split-wide { grid-template-columns: 1fr; }
+    .preview-panel { position: static; order: -1; }
     .table { display: block; overflow-x: auto; }
 }

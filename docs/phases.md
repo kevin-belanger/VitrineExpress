@@ -45,13 +45,15 @@ Cette phase attend un humain : prépare la page, puis passe à la phase 1 en par
 
 ## Phase 3 — Messages
 
-- [ ] Arrière-plans prédéfinis (environ 8 dégradés et couleurs lisibles) fournis par la migration ou l'installation
-- [ ] Formulaire commun : titre, début (défaut : date de création à 00:00), fin facultative (heure par défaut 23:59), durée (défaut du paramètre), ciblage (groupes ou « Tous les téléviseurs »)
-- [ ] Type image : téléversement JPG/PNG/WebP/GIF, validation par contenu (`finfo`), taille maximale, nom aléatoire, route `/media/{nom}` (D3), miniature
-- [ ] Type texte : Quill (D6), nettoyage serveur (D5), choix d'arrière-plan
-- [ ] Aperçu 16:9 fidèle au rendu de la télé (mêmes styles que la page d'affichage)
-- [ ] Liste : miniature, titre, type, période, durée, cibles, état ; filtres par groupe, par téléviseur (file exacte) et par état
-- [ ] Service `Playlist` : calcul de la file d'une télé et du message suivant, selon la spec — c'est le cœur, bien testé (doublons, expirés, à venir, sans fin, file vide, message supprimé, retour au début)
+- [x] Arrière-plans prédéfinis (environ 8 dégradés et couleurs lisibles) fournis par la migration ou l'installation
+- [x] Formulaire commun : titre, début (défaut : date de création à 00:00), fin facultative (heure par défaut 23:59), durée (défaut du paramètre), ciblage (groupes ou « Tous les téléviseurs »)
+- [x] Type image : téléversement JPG/PNG/WebP/GIF, validation par contenu (`finfo`), taille maximale, nom aléatoire, route `/media/{nom}` (D3), miniature
+- [x] Type texte : Quill (D6), nettoyage serveur (D5), choix d'arrière-plan
+- [x] Aperçu 16:9 fidèle au rendu de la télé (mêmes styles que la page d'affichage)
+- [x] Liste : miniature, titre, type, période, durée, cibles, état ; filtres par groupe, par téléviseur (file exacte) et par état
+- [x] Service `Playlist` : calcul de la file d'une télé et du message suivant, selon la spec — c'est le cœur, bien testé (doublons, expirés, à venir, sans fin, file vide, message supprimé, retour au début)
+
+**Bilan** : 22 tests. Vérifié dans le navigateur : message texte (éditeur, arrière-plans, aperçu en direct), message image (téléversement, aperçu *contain* d'une image 4:3, miniature), rechargement d'un message dans l'éditeur, service des fichiers `/media`. Correction au passage : détection du préfixe d'URL avec le serveur intégré de PHP. Le rendu des messages (`public/assets/slide.js` et `slide.css`) est partagé avec la future page d'affichage.
 
 ## Phase 4 — Page d'affichage
 

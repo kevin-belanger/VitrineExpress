@@ -7,6 +7,8 @@ use VitrineExpress\Controllers\AuthController;
 use VitrineExpress\Controllers\DashboardController;
 use VitrineExpress\Controllers\DeviceController;
 use VitrineExpress\Controllers\GroupController;
+use VitrineExpress\Controllers\MediaController;
+use VitrineExpress\Controllers\MessageController;
 use VitrineExpress\Controllers\UserController;
 use VitrineExpress\Router;
 
@@ -19,6 +21,13 @@ return static function (Router $r): void {
 
     // Interface de gestion (authentification exigée pour /admin)
     $r->get('/admin', [DashboardController::class, 'index']);
+
+    $r->get('/admin/messages', [MessageController::class, 'index']);
+    $r->get('/admin/messages/new', [MessageController::class, 'create']);
+    $r->post('/admin/messages', [MessageController::class, 'store']);
+    $r->get('/admin/messages/{id}/edit', [MessageController::class, 'edit']);
+    $r->post('/admin/messages/{id}', [MessageController::class, 'update']);
+    $r->post('/admin/messages/{id}/delete', [MessageController::class, 'delete']);
 
     $r->get('/admin/devices', [DeviceController::class, 'index']);
     $r->get('/admin/devices/new', [DeviceController::class, 'create']);
@@ -45,4 +54,7 @@ return static function (Router $r): void {
 
     $r->get('/admin/account', [AccountController::class, 'edit']);
     $r->post('/admin/account', [AccountController::class, 'update']);
+
+    // Fichiers téléversés (publics, noms aléatoires)
+    $r->get('/media/{name}', [MediaController::class, 'show']);
 };

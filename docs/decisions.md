@@ -64,6 +64,22 @@ docs/              spécification, phases, décisions
 
 - **Décision** : `/login`, `/logout` pour la connexion ; tout l'administration sous `/admin/...` (authentification vérifiée par le noyau) ; `/display` pour la page des télés, `/api/device/...` pour son API JSON (sans session ni CSRF, authentifiée par jeton), `/media/{nom}` pour les fichiers. Jeton CSRF vérifié sur tout POST hors API. Les paramètres de route sont passés aux actions par arguments nommés.
 
+## D12 — Rendu des messages texte sur une scène fixe
+
+- **Décision** : un message texte est mis en page sur une scène de 1920 × 1080 px (marges de 120 px, police de base 64 px), puis mis à l'échelle avec `transform: scale()` pour remplir l'écran en gardant le 16:9 ; l'arrière-plan couvre tout l'écran. Si le texte déborde, sa taille est réduite automatiquement. Les images sont dimensionnées en JavaScript (équivalent de `object-fit: contain`, que les vieux navigateurs ignorent).
+- **Pourquoi** : rendu identique sur toutes les tailles d'écran et dans l'aperçu de la gestion ; techniques compatibles avec les vieux navigateurs de télé (pas d'unités `vw` ni de requêtes de conteneur).
+- **Code** : `public/assets/slide.js` (ES5) et `slide.css`, partagés par l'aperçu et la page d'affichage.
+
+## D13 — Miniatures
+
+- **Décision** : à chaque téléversement, une miniature JPEG de 480 px de large est créée avec GD (`nom.thumb.jpg`), sur fond noir. Utilisée dans les listes et le tableau de bord ; l'original est gardé tel quel pour l'affichage.
+
+## D14 — Limites de téléversement
+
+- **Décision** : la taille maximale est un paramètre de l'application (`max_upload_mb`, 20 Mo par défaut), mais PHP impose aussi `upload_max_filesize` et `post_max_size`. Le serveur de développement les monte à 64 Mo ; en production, les régler au moins à la valeur du paramètre (voir le guide d'installation). Un envoi trop gros affiche un message clair (erreur 413).
+
 ## À valider par Kevin
 
-_(aucun point pour l'instant)_
+- **Cible obligatoire** : un message doit viser au moins un groupe, ou « Tous les téléviseurs ». Un message sans cible ne s'afficherait nulle part ; c'est plus clair de l'empêcher. (La spec ne le précisait pas.)
+- **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.
+- **Alignement du texte** : aligné à gauche par défaut (comportement standard de l'éditeur) et centré verticalement ; l'éditeur permet de centrer. On pourrait centrer par défaut si tu préfères.

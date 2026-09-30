@@ -1,0 +1,111 @@
+<?php
+
+use VitrineExpress\Messages;
+use VitrineExpress\View;
+
+$statusClass = [
+    Messages::STATUS_ACTIVE => 'badge-success',
+    Messages::STATUS_UPCOMING => 'badge-warning',
+    Messages::STATUS_EXPIRED => '',
+];
+$now = now();
+?>
+<div class="page-head">
+    <h1>Messages</h1>
+    <div class="head-actions">
+        <a class="button primary" href="<?= e(url('/admin/messages/new')) ?>">Nouvelle image</a>
+        <a class="button primary" href="<?= e(url('/admin/messages/new?type=text')) ?>">Nouveau texte</a>
+    </div>
+</div>
+
+<form method="get" action="<?= e(url('/admin/messages')) ?>" class="filters" data-autosubmit>
+    <label>
+        Groupe
+        <select name="group">
+            <option value="">Tous les groupes</option>
+            <?php foreach ($groups as $groupId => $groupName): ?>
+                <option value="<?= (int) $groupId ?>" <?= $filters['group'] === $groupId ? 'selected' : '' ?>><?= e($groupName) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label>
+    <label>
+        Téléviseur
+        <select name="device">
+            <option value="">Tous les téléviseurs</option>
+            <?php foreach ($devices as $deviceId => $deviceName): ?>
+                <option value="<?= (int) $deviceId ?>" <?= $filters['device'] === $deviceId ? 'selected' : '' ?>><?= e($deviceName) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label>
+    <label>
+        État
+        <select name="status">
+            <option value="">Tous</option>
+            <?php foreach (Messages::STATUS_LABELS as $value => $label): ?>
+                <option value="<?= e($value) ?>" <?= $filters['status'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
+            <?php endforeach; ?>
+        </select>
+    </label>
+    <noscript><button type="submit" class="button">Filtrer</button></noscript>
+    <?php if ($filters['group'] || $filters['device'] || $filters['status']): ?>
+        <a class="button" href="<?= e(url('/admin/messages')) ?>">Effacer les filtres</a>
+    <?php endif; ?>
+</form>
+
+<?php if ($filters['device']): ?>
+    <p class="hint-box">
+        Messages visant <strong><?= e($devices[$filters['device']] ?? '') ?></strong>.
+        Sa file actuelle est formée des messages <strong>actifs</strong> ci-dessous, dans cet ordre.
+    </p>
+<?php endif; ?>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th class="thumb-col"></th>
+        <th>Titre</th>
+        <th>Période</th>
+        <th>Durée</th>
+        <th>Cibles</th>
+        <th>État</th>
+        <th class="actions">Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php if (!$messages): ?>
+        <tr><td colspan="7" class="empty">Aucun message<?= ($filters['group'] || $filters['device'] || $filters['status']) ? ' pour ces filtres' : '' ?>.</td></tr>
+    <?php endif; ?>
+    <?php foreach ($messages as $message): ?>
+        <?php $status = Messages::status($message, $now); ?>
+        <tr class="<?= $status === Messages::STATUS_EXPIRED ? 'is-dim' : '' ?>">
+            <td class="thumb-col"><?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?></td>
+            <td>
+                <strong><?= e($message['title']) ?></strong><br>
+                <span class="muted"><?= e(Messages::TYPE_LABELS[$message['type']]) ?></span>
+            </td>
+            <td class="nowrap">
+                <?= e(format_datetime($message['start_at'])) ?><br>
+                <span class="muted"><?= $message['end_at'] ? 'au ' . e(format_datetime($message['end_at'])) : 'sans fin' ?></span>
+            </td>
+            <td><?= (int) $message['duration_seconds'] ?> s</td>
+            <td>
+                <?php if ($message['all_devices']): ?>
+                    <span class="badge badge-accent">Tous les téléviseurs</span>
+                <?php endif; ?>
+                <?php foreach ($message['group_names'] as $groupName): ?>
+                    <span class="badge"><?= e($groupName) ?></span>
+                <?php endforeach; ?>
+            </td>
+            <td><span class="badge <?= $statusClass[$status] ?>"><?= e(Messages::STATUS_LABELS[$status]) ?></span></td>
+            <td class="actions">
+                <a class="button small" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>">Modifier</a>
+                <form method="post" action="<?= e(url('/admin/messages/' . $message['id'] . '/delete')) ?>"
+                      data-confirm="Supprimer le message « <?= e($message['title']) ?> » ?">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="button small danger">Supprimer</button>
+                </form>
+            </td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>

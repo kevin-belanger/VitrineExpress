@@ -32,6 +32,10 @@ final class Kernel
             if ((str_starts_with($path, '/admin/') || $path === '/admin') && Auth::user($this->app) === null) {
                 return Response::redirect(url('/login'));
             }
+            if ($method === 'POST' && !$_POST && !$_FILES && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+                // Le corps dépasse post_max_size : PHP l'a ignoré en entier.
+                throw new HttpException(413, 'L’envoi dépasse la taille maximale permise par le serveur (' . ini_get('post_max_size') . ').');
+            }
             if ($method === 'POST' && !$isApi && !hash_equals(csrf_token(), (string) ($_POST['_csrf'] ?? ''))) {
                 throw new HttpException(419);
             }

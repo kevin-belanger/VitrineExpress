@@ -25,9 +25,10 @@ function base_path(): string
         if (is_string($configured)) {
             $base = rtrim($configured, '/');
         } else {
+            // Le préfixe est le dossier de index.php. (Le serveur intégré de PHP met parfois l'URL
+            // demandée dans SCRIPT_NAME : on ne s'y fie que s'il désigne bien index.php.)
             $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-            $dir = rtrim(dirname($script), '/');
-            $base = $dir === '.' ? '' : $dir;
+            $base = str_ends_with($script, '/index.php') ? rtrim(dirname($script), '/') : '';
         }
     }
     return $base;

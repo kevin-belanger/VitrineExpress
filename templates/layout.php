@@ -4,6 +4,7 @@ $title = $title ?? '';
 $current = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
 $nav = [
     '/admin' => 'Tableau de bord',
+    '/admin/messages' => 'Messages',
     '/admin/devices' => 'Téléviseurs',
     '/admin/groups' => 'Groupes',
     '/admin/users' => 'Utilisateurs',

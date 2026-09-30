@@ -10,4 +10,12 @@
             event.preventDefault();
         }
     });
+
+    // Envoi automatique des formulaires de filtres marqués data-autosubmit.
+    document.addEventListener('change', function (event) {
+        var form = event.target.form;
+        if (form && form.hasAttribute('data-autosubmit')) {
+            form.submit();
+        }
+    });
 })();

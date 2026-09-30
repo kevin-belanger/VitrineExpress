@@ -1,0 +1,77 @@
+/* Rendu des messages : page d'affichage et aperçu de la gestion (voir slide.js). */
+
+.vx-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+.vx-slide-image img {
+    position: absolute;
+    display: block;
+    max-width: none;
+}
+
+.vx-stage {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1920px;
+    height: 1080px;
+    display: table;
+    table-layout: fixed;
+    -webkit-transform-origin: 0 0;
+    -ms-transform-origin: 0 0;
+    transform-origin: 0 0;
+}
+
+.vx-stage-cell {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 120px;
+}
+
+.vx-text {
+    font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 64px;
+    line-height: 1.3;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+}
+
+.vx-text p,
+.vx-text h1,
+.vx-text h2,
+.vx-text h3,
+.vx-text ol,
+.vx-text ul {
+    margin: 0 0 .4em;
+}
+.vx-text > :last-child { margin-bottom: 0; }
+.vx-text h1 { font-size: 1.9em; line-height: 1.15; }
+.vx-text h2 { font-size: 1.45em; line-height: 1.2; }
+.vx-text h3 { font-size: 1.2em; line-height: 1.25; }
+.vx-text ol,
+.vx-text ul { padding-left: 1.4em; }
+.vx-text li { margin: .1em 0; }
+.vx-text li[data-list="bullet"] { list-style-type: disc; }
+.vx-text li[data-list="ordered"] { list-style-type: decimal; }
+
+.vx-text .ql-size-small { font-size: .7em; }
+.vx-text .ql-size-large { font-size: 1.5em; }
+.vx-text .ql-size-huge { font-size: 2.4em; }
+.vx-text .ql-align-center { text-align: center; }
+.vx-text .ql-align-right { text-align: right; }
+.vx-text .ql-align-justify { text-align: justify; }
+.vx-text .ql-indent-1 { margin-left: 1.5em; }
+.vx-text .ql-indent-2 { margin-left: 3em; }
+.vx-text .ql-indent-3 { margin-left: 4.5em; }
+.vx-text .ql-indent-4 { margin-left: 6em; }
+.vx-text .ql-indent-5 { margin-left: 7.5em; }
+.vx-text .ql-indent-6 { margin-left: 9em; }
+.vx-text .ql-indent-7 { margin-left: 10.5em; }
+.vx-text .ql-indent-8 { margin-left: 12em; }
