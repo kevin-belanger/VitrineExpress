@@ -1,6 +1,7 @@
 <?php
 
 use VitrineExpress\Messages;
+use VitrineExpress\View;
 
 $isNew = $message === null;
 $isText = $values['type'] === Messages::TYPE_TEXT;
@@ -99,23 +100,25 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
 
         <fieldset>
             <legend>Afficher sur</legend>
-            <label class="check-strong">
-                <input type="checkbox" name="all_devices" value="1" <?= $values['all_devices'] ? 'checked' : '' ?>>
-                Tous les téléviseurs
-            </label>
-            <?php if ($groups): ?>
-                <div class="checks">
-                    <?php foreach ($groups as $groupId => $groupName): ?>
-                        <label>
-                            <input type="checkbox" name="groups[]" value="<?= (int) $groupId ?>" <?= in_array($groupId, $values['group_ids'], true) ? 'checked' : '' ?>>
-                            <?= e($groupName) ?>
-                        </label>
-                    <?php endforeach; ?>
-                </div>
-            <?php else: ?>
-                <p class="hint">Aucun groupe. <a href="<?= e(url('/admin/groups/new')) ?>">Créer un groupe</a></p>
-            <?php endif; ?>
-            <p class="hint">Sans groupe coché, le message est gardé mais n’est affiché sur aucun téléviseur.</p>
+            <div class="target-modes">
+                <label class="target-mode">
+                    <input type="radio" name="all_devices" value="1" data-picker-target="group-picker" <?= $values['all_devices'] ? 'checked' : '' ?>>
+                    <span><strong>Tous les téléviseurs</strong><small>Y compris ceux ajoutés plus tard</small></span>
+                </label>
+                <label class="target-mode">
+                    <input type="radio" name="all_devices" value="0" data-picker-target="group-picker" <?= $values['all_devices'] ? '' : 'checked' ?>>
+                    <span><strong>Certains groupes</strong><small>Les téléviseurs des groupes cochés</small></span>
+                </label>
+            </div>
+            <?= View::render('partials/picker', [
+                'id' => 'group-picker',
+                'name' => 'groups[]',
+                'items' => $groups,
+                'selected' => $values['group_ids'],
+                'noun' => 'groupes',
+                'emptyText' => 'Aucun groupe pour l’instant. <a href="' . e(url('/admin/groups/new')) . '">Créer un groupe</a>',
+                'deviceNames' => $deviceNames,
+            ], null) ?>
         </fieldset>
 
         <div class="form-actions">

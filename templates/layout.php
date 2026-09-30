@@ -55,6 +55,7 @@ $isActive = static function (string $path) use ($current): bool {
 </main>
 <script src="<?= e(asset('/assets/slide.js')) ?>"></script>
 <script src="<?= e(asset('/assets/admin.js')) ?>"></script>
+<script src="<?= e(asset('/assets/picker.js')) ?>"></script>
 <?php foreach ($scripts ?? [] as $src): ?>
     <script src="<?= e($src) ?>"></script>
 <?php endforeach; ?>

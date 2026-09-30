@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace VitrineExpress\Controllers;
 
-use PDO;
 use VitrineExpress\Controller;
+use VitrineExpress\Devices;
 use VitrineExpress\Groups;
 use VitrineExpress\Response;
 
@@ -69,11 +69,10 @@ final class GroupController extends Controller
 
     private function form(array $values, array $deviceIds, array $errors, ?int $id, int $status = 200): Response
     {
-        $devices = $this->app->db->query('SELECT id, name FROM devices ORDER BY name COLLATE NOCASE')->fetchAll(PDO::FETCH_KEY_PAIR);
         return $this->view('groups/form', [
             'title' => $id === null ? 'Nouveau groupe' : 'Modifier le groupe',
             'values' => $values,
-            'devices' => $devices,
+            'devices' => Devices::pickerItems($this->app),
             'selected' => $deviceIds,
             'errors' => $errors,
             'id' => $id,

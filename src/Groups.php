@@ -72,6 +72,27 @@ final class Groups
         return $app->db->query('SELECT id, name FROM groups ORDER BY name COLLATE NOCASE')->fetchAll(PDO::FETCH_KEY_PAIR);
     }
 
+    /**
+     * Éléments du sélecteur de groupes (templates/partials/picker.php) : nom, nombre de télés, télés membres.
+     *
+     * @return array<int, array{label: string, meta: string, devices: list<int>}>
+     */
+    public static function pickerItems(App $app): array
+    {
+        $items = [];
+        foreach (self::options($app) as $id => $name) {
+            $items[$id] = ['label' => $name, 'meta' => '', 'devices' => []];
+        }
+        foreach ($app->db->query('SELECT group_id, device_id FROM device_groups')->fetchAll() as $link) {
+            $items[(int) $link['group_id']]['devices'][] = (int) $link['device_id'];
+        }
+        foreach ($items as &$item) {
+            $n = count($item['devices']);
+            $item['meta'] = $n === 0 ? 'aucun téléviseur' : $n . ' téléviseur' . ($n > 1 ? 's' : '');
+        }
+        return $items;
+    }
+
     /** Groupes avec le nombre de téléviseurs et de messages de chacun. */
     public static function allWithCounts(App $app): array
     {

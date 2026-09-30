@@ -91,6 +91,12 @@ docs/              spécification, phases, décisions
 - **Décision** (validée par Kevin) : un message peut n'avoir aucun groupe ni « Tous les téléviseurs ». Il est gardé mais affiché nulle part, comme un brouillon ; la liste l'indique (« Aucune (non affiché) »).
 - **Écarté** : exiger au moins une cible (premier choix, jugé trop contraignant).
 
+## D18 — Sélecteur à choix multiples
+
+- **Décision** : un composant unique (`templates/partials/picker.php` + `public/assets/picker.js`) remplace les cases à cocher en ligne pour les groupes d'un message, les groupes d'un téléviseur et les téléviseurs d'un groupe : une ligne par élément avec une information utile (nombre de télés, description), recherche à partir de 7 éléments, tout cocher / décocher, compteur. Pour un message : choix explicite « Tous les téléviseurs » / « Certains groupes » et résumé en direct des téléviseurs touchés.
+- **Pourquoi** : c'est une amélioration de présentation seulement ; le formulaire envoie toujours les mêmes cases à cocher et fonctionne sans JavaScript, donc aucun changement côté serveur.
+- **Écarté** : liste déroulante à étiquettes (type « select2 ») — plus lourde à coder et à maintenir, et cache les choix au lieu de les montrer.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

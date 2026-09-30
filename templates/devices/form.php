@@ -22,18 +22,13 @@ use VitrineExpress\View;
         </label>
         <fieldset>
             <legend>Groupes</legend>
-            <?php if (!$groups): ?>
-                <p class="hint">Aucun groupe pour l’instant. <a href="<?= e(url('/admin/groups/new')) ?>">Créer un groupe</a></p>
-            <?php else: ?>
-                <div class="checks">
-                    <?php foreach ($groups as $groupId => $groupName): ?>
-                        <label>
-                            <input type="checkbox" name="groups[]" value="<?= (int) $groupId ?>" <?= in_array($groupId, $selected, true) ? 'checked' : '' ?>>
-                            <?= e($groupName) ?>
-                        </label>
-                    <?php endforeach; ?>
-                </div>
-            <?php endif; ?>
+            <?= View::render('partials/picker', [
+                'name' => 'groups[]',
+                'items' => $groups,
+                'selected' => $selected,
+                'noun' => 'groupes',
+                'emptyText' => 'Aucun groupe pour l’instant. <a href="' . e(url('/admin/groups/new')) . '">Créer un groupe</a>',
+            ], null) ?>
         </fieldset>
         <div class="form-actions">
             <button type="submit" class="button primary">Enregistrer</button>

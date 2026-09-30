@@ -97,7 +97,7 @@ final class DeviceController extends Controller
         return $this->view('devices/form', [
             'title' => $id === null ? 'Nouveau téléviseur' : 'Modifier le téléviseur',
             'values' => $values,
-            'groups' => Groups::options($this->app),
+            'groups' => Groups::pickerItems($this->app),
             'selected' => $groupIds,
             'errors' => $errors,
             'id' => $id,

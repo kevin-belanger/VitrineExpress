@@ -16,18 +16,13 @@
     </label>
     <fieldset>
         <legend>Téléviseurs du groupe</legend>
-        <?php if (!$devices): ?>
-            <p class="hint">Aucun téléviseur pour l’instant.</p>
-        <?php else: ?>
-            <div class="checks">
-                <?php foreach ($devices as $deviceId => $deviceName): ?>
-                    <label>
-                        <input type="checkbox" name="devices[]" value="<?= (int) $deviceId ?>" <?= in_array($deviceId, $selected, true) ? 'checked' : '' ?>>
-                        <?= e($deviceName) ?>
-                    </label>
-                <?php endforeach; ?>
-            </div>
-        <?php endif; ?>
+        <?= \VitrineExpress\View::render('partials/picker', [
+            'name' => 'devices[]',
+            'items' => $devices,
+            'selected' => $selected,
+            'noun' => 'téléviseurs',
+            'emptyText' => 'Aucun téléviseur pour l’instant. <a href="' . e(url('/admin/devices/new')) . '">Ajouter un téléviseur</a>',
+        ], null) ?>
     </fieldset>
     <div class="form-actions">
         <button type="submit" class="button primary">Enregistrer</button>

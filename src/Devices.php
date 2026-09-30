@@ -114,6 +114,26 @@ final class Devices
         return self::STATUS_OFFLINE;
     }
 
+    /** Liste id => nom, par ordre alphabétique. */
+    public static function options(App $app): array
+    {
+        return $app->db->query('SELECT id, name FROM devices ORDER BY name COLLATE NOCASE')->fetchAll(\PDO::FETCH_KEY_PAIR);
+    }
+
+    /**
+     * Éléments du sélecteur de téléviseurs (templates/partials/picker.php) : nom et description.
+     *
+     * @return array<int, array{label: string, meta: string}>
+     */
+    public static function pickerItems(App $app): array
+    {
+        $items = [];
+        foreach ($app->db->query('SELECT id, name, description FROM devices ORDER BY name COLLATE NOCASE')->fetchAll() as $row) {
+            $items[(int) $row['id']] = ['label' => $row['name'], 'meta' => $row['description']];
+        }
+        return $items;
+    }
+
     /**
      * Tous les téléviseurs avec la liste de leurs groupes (clé 'groups' : id => nom).
      *

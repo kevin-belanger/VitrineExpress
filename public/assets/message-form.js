@@ -10,7 +10,6 @@
     var preview = document.getElementById('preview');
     var htmlField = form.querySelector('[name="text_html"]');
     var imageInput = form.querySelector('[name="image"]');
-    var allDevices = form.querySelector('[name="all_devices"]');
     var imageUrl = form.getAttribute('data-image-url') || '';
     var quill = null;
     var current = null;
@@ -65,13 +64,6 @@
         refresh();
     }
 
-    function toggleTargets() {
-        var boxes = form.querySelectorAll('[name="groups[]"]');
-        for (var i = 0; i < boxes.length; i++) {
-            boxes[i].disabled = allDevices.checked;
-        }
-    }
-
     // Éditeur de texte enrichi
     var editor = document.getElementById('editor');
     if (editor && window.Quill) {
@@ -104,8 +96,6 @@
             toggleType();
         } else if (target.name === 'background_id') {
             refresh();
-        } else if (target === allDevices) {
-            toggleTargets();
         } else if (target === imageInput) {
             if (imageInput.files && imageInput.files[0] && window.URL) {
                 imageUrl = window.URL.createObjectURL(imageInput.files[0]);
@@ -126,8 +116,5 @@
         }
     });
 
-    if (allDevices) {
-        toggleTargets();
-    }
     toggleType();
 })();
