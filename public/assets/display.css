@@ -27,8 +27,8 @@ body.idle, body.idle * { cursor: none !important; }
 /* Diapositives et fondu */
 #stage .vx-slide {
     opacity: 0;
-    -webkit-transition: opacity .5s ease;
-    transition: opacity .5s ease;
+    -webkit-transition: opacity 1.2s ease-in-out;
+    transition: opacity 1.2s ease-in-out;
 }
 #stage .vx-slide.visible { opacity: 1; }
 

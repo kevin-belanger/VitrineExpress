@@ -162,7 +162,7 @@
             if (old) {
                 window.setTimeout(function () {
                     if (old.parentNode) { old.parentNode.removeChild(old); }
-                }, 700);
+                }, 1500); // après la fin du fondu (1,2 s, display.css)
             }
             done(true);
         });

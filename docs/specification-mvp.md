@@ -126,7 +126,7 @@ Tout refus du jeton, peu importe sa cause, ramène le téléviseur à l'écran d
 - La réponse contient aussi le message d'après, que la page précharge pour éviter un écran noir entre deux messages.
 - Images : affichées au complet, centrées, sans recadrage (*contain*), sur fond noir.
 - Textes : le texte enrichi centré sur l'arrière-plan choisi, avec une taille proportionnelle à la largeur de l'écran.
-- Transition : fondu d'environ 0,5 seconde.
+- Transition : fondu enchaîné de 1,2 seconde.
 
 **File vide** : le nom ou le logo de l'organisme, l'heure et la date. La page redemande toutes les 60 secondes.
 
