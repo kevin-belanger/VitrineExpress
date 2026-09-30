@@ -247,13 +247,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
     background: #000;
     border-radius: 4px;
 }
-.thumb-text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-    font-size: 1.1rem;
-}
+.thumb-slide { position: relative; overflow: hidden; }
 .is-dim td { opacity: .6; }
 .nowrap { white-space: nowrap; }
 
