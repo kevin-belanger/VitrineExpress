@@ -95,6 +95,9 @@ $now = now();
                 <?php foreach ($message['group_names'] as $groupName): ?>
                     <span class="badge"><?= e($groupName) ?></span>
                 <?php endforeach; ?>
+                <?php if (!$message['all_devices'] && !$message['group_names']): ?>
+                    <span class="muted">Aucune (non affiché)</span>
+                <?php endif; ?>
             </td>
             <td><span class="badge <?= $statusClass[$status] ?>"><?= e(Messages::STATUS_LABELS[$status]) ?></span></td>
             <td class="actions">

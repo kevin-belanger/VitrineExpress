@@ -86,8 +86,12 @@ docs/              spécification, phases, décisions
 
 - **Décision** : la page des télés se recharge d'elle-même toutes les 24 h (pour prendre les nouvelles versions et libérer la mémoire) ; les fichiers CSS/JS portent leur date de modification dans l'URL (`asset()`) ; la page demande de garder l'écran allumé (Wake Lock) quand le navigateur le permet. Une image qui ne se charge pas est sautée après 3 s.
 
+## D17 — Message sans cible permis
+
+- **Décision** (validée par Kevin) : un message peut n'avoir aucun groupe ni « Tous les téléviseurs ». Il est gardé mais affiché nulle part, comme un brouillon ; la liste l'indique (« Aucune (non affiché) »).
+- **Écarté** : exiger au moins une cible (premier choix, jugé trop contraignant).
+
 ## À valider par Kevin
 
-- **Cible obligatoire** : un message doit viser au moins un groupe, ou « Tous les téléviseurs ». Un message sans cible ne s'afficherait nulle part ; c'est plus clair de l'empêcher. (La spec ne le précisait pas.)
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.
 - **Alignement du texte** : aligné à gauche par défaut (comportement standard de l'éditeur) et centré verticalement ; l'éditeur permet de centrer. On pourrait centrer par défaut si tu préfères.

@@ -65,9 +65,10 @@ function test_message_form_validation(): void
     $group = Groups::create($app, 'Local 101', '', []);
 
     [, $errors] = Messages::fromForm($app, ['title' => '', 'start_date' => 'x', 'duration_seconds' => '1'], Messages::TYPE_TEXT);
-    foreach (['title', 'start', 'duration_seconds', 'targets', 'text_html', 'background_id'] as $field) {
+    foreach (['title', 'start', 'duration_seconds', 'text_html', 'background_id'] as $field) {
         assert_true(isset($errors[$field]), "Erreur attendue sur {$field}");
     }
+    assert_false(isset($errors['targets']), 'Un message sans groupe est permis');
 
     [$values, $errors] = Messages::fromForm($app, [
         'title' => 'Bienvenue', 'start_date' => '2026-10-01', 'start_time' => '', 'end_date' => '2026-10-05', 'end_time' => '',
@@ -109,6 +110,7 @@ function test_queue_contains_active_targeted_messages_without_duplicates(): void
 
     $both = make_message($app, 'Deux groupes', [$local, $compta]);
     make_message($app, 'Autre groupe', [$other]);
+    make_message($app, 'Sans cible', []);
     $all = make_message($app, 'Tous', [], true);
     make_message($app, 'À venir', [$local], false, '2026-12-01 00:00:00');
     make_message($app, 'Expiré', [$local], false, '2026-01-01 00:00:00', '2026-02-01 23:59:00');

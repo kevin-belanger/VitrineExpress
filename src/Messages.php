@@ -112,10 +112,8 @@ final class Messages
 
         $requested = is_array($post['groups'] ?? null) ? array_map('intval', $post['groups']) : [];
         $valid = array_keys(Groups::options($app));
+        // Aucune cible est permis : le message est alors gardé sans être affiché (brouillon).
         $values['group_ids'] = array_values(array_intersect($valid, $requested));
-        if (!$values['all_devices'] && !$values['group_ids']) {
-            $errors['targets'] = 'Choisissez au moins un groupe, ou « Tous les téléviseurs ».';
-        }
 
         if ($type === self::TYPE_TEXT) {
             $html = HtmlSanitizer::clean(is_string($post['text_html'] ?? null) ? $post['text_html'] : '');

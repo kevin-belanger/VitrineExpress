@@ -115,7 +115,7 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             <?php else: ?>
                 <p class="hint">Aucun groupe. <a href="<?= e(url('/admin/groups/new')) ?>">Créer un groupe</a></p>
             <?php endif; ?>
-            <?= field_error($errors, 'targets') ?>
+            <p class="hint">Sans groupe coché, le message est gardé mais n’est affiché sur aucun téléviseur.</p>
         </fieldset>
 
         <div class="form-actions">

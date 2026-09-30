@@ -21,7 +21,7 @@ Un téléviseur affiche les messages actifs des groupes dont il fait partie ; le
 - **Téléviseur** : une station d'affichage identifiée par un nom (ex. « Télé local 101 ») et un code à 5 chiffres aléatoire et unique. Il appartient à zéro, un ou plusieurs groupes.
 - **Groupe** : un ensemble nommé de téléviseurs, représentant n'importe quoi (local, département, pavillon, « Aire commune »). Un groupe ne contient pas d'autres groupes : on assigne chaque téléviseur à tous les groupes nécessaires.
 - **Message** : une image plein écran ou un texte enrichi sur un arrière-plan prédéfini, avec une période d'affichage (début et fin, date et heure) et une durée à l'écran.
-- **Ciblage** : un message vise un ou plusieurs groupes, ou l'option « Tous les téléviseurs ».
+- **Ciblage** : un message vise un ou plusieurs groupes, ou l'option « Tous les téléviseurs ». Sans cible, il est gardé mais n'est affiché nulle part.
 - **File d'un téléviseur** : les messages actifs qui le visent, sans doublon, dans l'ordre de création. Chaque téléviseur peut donc avoir une file différente.
 - **Arrière-plan** : un préréglage pour les messages texte, soit un dégradé ou une couleur CSS, soit une image générique, choisi pour garder le texte lisible.
 
