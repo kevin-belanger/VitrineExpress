@@ -4,6 +4,8 @@ $title = $title ?? '';
 $current = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH) ?: '';
 $nav = [
     '/admin' => 'Tableau de bord',
+    '/admin/devices' => 'Téléviseurs',
+    '/admin/groups' => 'Groupes',
     '/admin/users' => 'Utilisateurs',
 ];
 $isActive = static function (string $path) use ($current): bool {

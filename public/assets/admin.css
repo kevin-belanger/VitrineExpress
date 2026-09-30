@@ -180,6 +180,36 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .badge-warning { background: var(--warning-soft); color: var(--warning); }
 .badge-accent { background: var(--accent-soft); color: var(--accent-dark); }
 
+/* Téléviseurs */
+.code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-weight: 700;
+    font-size: 1.05rem;
+    letter-spacing: .12em;
+    background: #f1f5f9;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .1rem .45rem;
+}
+.split { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 1.25rem; align-items: start; }
+.device-code { text-align: center; }
+.device-code-label { margin: 0; color: var(--muted); font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+.device-code-value {
+    margin: .25rem 0 .75rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    letter-spacing: .15em;
+    color: var(--accent-dark);
+}
+.device-code .hint { font-size: .85rem; color: var(--muted); overflow-wrap: anywhere; }
+.facts { display: grid; grid-template-columns: auto 1fr; gap: .35rem .75rem; text-align: left; margin: 1rem 0; font-size: .9rem; }
+.facts dt { color: var(--muted); }
+.facts dd { margin: 0; }
+.stack { display: flex; flex-direction: column; gap: .5rem; }
+.stack form { margin: 0; }
+.stack .button { width: 100%; }
+
 /* Connexion */
 .no-nav .page { max-width: 420px; padding-top: 10vh; }
 .login-box .card { padding: 1.5rem; }
@@ -192,5 +222,6 @@ button.link:hover { color: #fff; text-decoration: underline; }
 @media (max-width: 700px) {
     .topbar { gap: .5rem 1rem; padding: .5rem 1rem; }
     .page { padding: 1rem; }
+    .split { grid-template-columns: 1fr; }
     .table { display: block; overflow-x: auto; }
 }

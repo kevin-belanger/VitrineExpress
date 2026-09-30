@@ -5,6 +5,8 @@ declare(strict_types=1);
 use VitrineExpress\Controllers\AccountController;
 use VitrineExpress\Controllers\AuthController;
 use VitrineExpress\Controllers\DashboardController;
+use VitrineExpress\Controllers\DeviceController;
+use VitrineExpress\Controllers\GroupController;
 use VitrineExpress\Controllers\UserController;
 use VitrineExpress\Router;
 
@@ -17,6 +19,22 @@ return static function (Router $r): void {
 
     // Interface de gestion (authentification exigée pour /admin)
     $r->get('/admin', [DashboardController::class, 'index']);
+
+    $r->get('/admin/devices', [DeviceController::class, 'index']);
+    $r->get('/admin/devices/new', [DeviceController::class, 'create']);
+    $r->post('/admin/devices', [DeviceController::class, 'store']);
+    $r->get('/admin/devices/{id}/edit', [DeviceController::class, 'edit']);
+    $r->post('/admin/devices/{id}', [DeviceController::class, 'update']);
+    $r->post('/admin/devices/{id}/delete', [DeviceController::class, 'delete']);
+    $r->post('/admin/devices/{id}/disconnect', [DeviceController::class, 'disconnect']);
+    $r->post('/admin/devices/{id}/regenerate', [DeviceController::class, 'regenerate']);
+
+    $r->get('/admin/groups', [GroupController::class, 'index']);
+    $r->get('/admin/groups/new', [GroupController::class, 'create']);
+    $r->post('/admin/groups', [GroupController::class, 'store']);
+    $r->get('/admin/groups/{id}/edit', [GroupController::class, 'edit']);
+    $r->post('/admin/groups/{id}', [GroupController::class, 'update']);
+    $r->post('/admin/groups/{id}/delete', [GroupController::class, 'delete']);
 
     $r->get('/admin/users', [UserController::class, 'index']);
     $r->get('/admin/users/new', [UserController::class, 'create']);

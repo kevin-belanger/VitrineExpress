@@ -35,11 +35,13 @@ Cette phase attend un humain : prépare la page, puis passe à la phase 1 en par
 
 ## Phase 2 — Téléviseurs et groupes
 
-- [ ] Écran Groupes : liste (nombre de télés et de messages), ajout, modification, suppression
-- [ ] Écran Téléviseurs : liste, ajout, modification, suppression ; groupes par cases à cocher
-- [ ] Génération du code à 5 chiffres aléatoire et unique (`random_int`), affiché bien en vue
-- [ ] Boutons Déconnecter et Régénérer le code
-- [ ] Tests : unicité des codes, appartenance aux groupes, suppression d'un groupe sans perte de télés ni de messages
+- [x] Écran Groupes : liste (nombre de télés et de messages), ajout, modification, suppression
+- [x] Écran Téléviseurs : liste, ajout, modification, suppression ; groupes par cases à cocher
+- [x] Génération du code à 5 chiffres aléatoire et unique (`random_int`), affiché bien en vue
+- [x] Boutons Déconnecter et Régénérer le code
+- [x] Tests : unicité des codes, appartenance aux groupes, suppression d'un groupe sans perte de télés ni de messages
+
+**Bilan** : 13 tests. L'appartenance se gère des deux côtés (cases des groupes sur la fiche d'une télé, cases des télés sur la fiche d'un groupe). Après l'ajout d'une télé, on arrive sur sa fiche avec le code en grand et l'adresse à ouvrir sur le téléviseur. Codes de 10000 à 99999 (pas de zéro initial, pour éviter la confusion à la saisie).
 
 ## Phase 3 — Messages
 

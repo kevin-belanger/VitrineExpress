@@ -29,6 +29,29 @@ final class App
         return $app;
     }
 
+    /**
+     * Exécute $fn dans une transaction (annulée en cas d'exception) et retourne son résultat.
+     *
+     * @template T
+     * @param callable(): T $fn
+     * @return T
+     */
+    public function transaction(callable $fn): mixed
+    {
+        if ($this->db->inTransaction()) {
+            return $fn();
+        }
+        $this->db->beginTransaction();
+        try {
+            $result = $fn();
+            $this->db->commit();
+            return $result;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
     public function setting(string $key, ?string $default = null): ?string
     {
         if ($this->settings === null) {
