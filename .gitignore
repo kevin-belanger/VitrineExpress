@@ -1,0 +1,18 @@
+# Données locales
+/data/*.sqlite
+/data/*.sqlite-*
+/uploads/*
+!/uploads/.gitkeep
+
+# Configuration locale
+/config/config.local.php
+
+# Dépendances
+/vendor/
+
+# Système / éditeurs
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
