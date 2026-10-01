@@ -29,7 +29,12 @@ final class Kernel
 
             [$handler, $params] = $this->router->match($method, $path);
 
-            if ((str_starts_with($path, '/admin/') || $path === '/admin') && Auth::user($this->app) === null) {
+            $isAdmin = str_starts_with($path, '/admin/') || $path === '/admin';
+            if (($isAdmin || $path === '/' || $path === '/login') && !Installer::isInstalled($this->app)) {
+                // Aucun compte : on commence par l'installation web.
+                return Response::redirect(url('/install'));
+            }
+            if ($isAdmin && Auth::user($this->app) === null) {
                 return Response::redirect(url('/login'));
             }
             if ($method === 'POST' && !$_POST && !$_FILES && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
@@ -71,8 +76,8 @@ final class Kernel
 
     private function startSession(): void
     {
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            return;
+        if (session_status() === PHP_SESSION_ACTIVE || PHP_SAPI === 'cli') {
+            return; // en ligne de commande (tests), $_SESSION suffit
         }
         session_name('vx_session');
         session_set_cookie_params([

@@ -27,18 +27,20 @@ php -m | grep -E 'pdo_sqlite|fileinfo|mbstring|dom|gd'
    sudo chown -R www-data:www-data /var/www/vitrineexpress/storage
    ```
 
-3. Créer la base et le premier compte administrateur :
+3. Configurer le serveur web pour que la **racine web soit le dossier `public/`** (exemples plus bas).
+
+4. **Ouvrir le site dans un navigateur.** Tant qu'aucun compte n'existe, il affiche la page d'installation : vérification du serveur (version de PHP, extensions, droits d'écriture), puis création du premier compte administrateur. On est ensuite connecté directement.
+
+   > Faites cette étape tout de suite après la mise en ligne : tant qu'elle n'est pas faite, la première personne qui ouvre le site peut créer le compte administrateur. Une fois un compte créé, la page d'installation n'est plus accessible.
+
+   Variante en ligne de commande (SSH ou Terminal de cPanel), équivalente :
 
    ```bash
    cd /var/www/vitrineexpress
    sudo -u www-data php bin/install.php
    ```
 
-   Le script demande le code usager et le mot de passe. Il ne fait rien s'il a déjà été exécuté.
-
-4. Configurer le serveur web pour que la **racine web soit le dossier `public/`** (exemples plus bas).
-
-5. Ouvrir le site, se connecter, puis dans **Paramètres** : nom de l'organisme, logo, fuseau horaire.
+5. Dans **Paramètres** : logo, fuseau horaire, durée par défaut.
 
 ## Configuration locale (facultatif)
 

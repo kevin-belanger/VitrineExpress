@@ -35,9 +35,20 @@ header("Content-Security-Policy: default-src 'self'; script-src 'self'; style-sr
 try {
     $app = VitrineExpress\App::fromConfig($config);
 } catch (Throwable $e) {
+    // Typiquement : dossier storage/ non accessible en écriture, ou extension pdo_sqlite absente.
     http_response_code(500);
     error_log('VitrineExpress : ' . $e->getMessage());
-    echo 'Erreur de démarrage de l’application.' . (!empty($config['debug']) ? ' ' . e($e->getMessage()) : '');
+    header('Content-Type: text/html; charset=utf-8');
+    echo '<!DOCTYPE html><html lang="fr"><meta charset="utf-8"><title>VitrineExpress — Erreur de démarrage</title>'
+        . '<body style="font-family:system-ui,sans-serif;max-width:640px;margin:10vh auto;padding:0 1rem;line-height:1.5">'
+        . '<h1>VitrineExpress ne peut pas démarrer</h1>'
+        . '<p>La base de données n’a pas pu être ouverte ou créée. Vérifiez sur le serveur :</p><ul>'
+        . '<li>que le dossier <code>storage/</code> du projet existe et est accessible en écriture par PHP ;</li>'
+        . '<li>que l’extension PHP <code>pdo_sqlite</code> est activée ;</li>'
+        . '<li>que la version de PHP est 8.1 ou plus.</li></ul>'
+        . '<p>Le détail de l’erreur est dans le journal d’erreurs du serveur.</p>'
+        . (!empty($config['debug']) ? '<pre>' . e($e->getMessage()) . '</pre>' : '')
+        . '</body></html>';
     exit;
 }
 

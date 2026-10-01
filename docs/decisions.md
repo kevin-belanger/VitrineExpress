@@ -97,6 +97,12 @@ docs/              spécification, phases, décisions
 - **Pourquoi** : c'est une amélioration de présentation seulement ; le formulaire envoie toujours les mêmes cases à cocher et fonctionne sans JavaScript, donc aucun changement côté serveur.
 - **Écarté** : liste déroulante à étiquettes (type « select2 ») — plus lourde à coder et à maintenir, et cache les choix au lieu de les montrer.
 
+## D19 — Installation web
+
+- **Décision** (demandée par Kevin) : page `/install` à la manière de WordPress. Tant qu'aucun compte n'existe, `/`, `/login` et `/admin…` y mènent ; elle vérifie l'environnement (PHP, extensions, droits d'écriture ; limite de téléversement et HTTPS en avertissement), demande le nom de l'organisme et le premier compte, puis connecte l'utilisateur. Dès qu'un compte existe, elle redirige vers `/login` ; la création se fait dans une transaction qui revérifie l'absence de compte. Le script `bin/install.php` reste disponible.
+- **Risque accepté** : comme WordPress, la première personne qui ouvre un site fraîchement déployé peut créer le compte ; le guide d'installation demande de le faire aussitôt.
+- **Écarté** : clé d'installation à copier depuis le serveur (plus sûr, mais complique justement le cas sans terminal).
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

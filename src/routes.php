@@ -9,6 +9,7 @@ use VitrineExpress\Controllers\DeviceApiController;
 use VitrineExpress\Controllers\DeviceController;
 use VitrineExpress\Controllers\DisplayController;
 use VitrineExpress\Controllers\GroupController;
+use VitrineExpress\Controllers\InstallController;
 use VitrineExpress\Controllers\MediaController;
 use VitrineExpress\Controllers\MessageController;
 use VitrineExpress\Controllers\SettingsController;
@@ -16,6 +17,10 @@ use VitrineExpress\Controllers\UserController;
 use VitrineExpress\Router;
 
 return static function (Router $r): void {
+    // Installation web (premier compte), accessible seulement tant qu'aucun compte n'existe
+    $r->get('/install', [InstallController::class, 'show']);
+    $r->post('/install', [InstallController::class, 'store']);
+
     // Accueil et connexion des administrateurs
     $r->get('/', [AuthController::class, 'home']);
     $r->get('/login', [AuthController::class, 'showLogin']);
