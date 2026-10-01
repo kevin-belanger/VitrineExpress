@@ -41,7 +41,7 @@ $now = now();
         État
         <select name="status">
             <option value="">Tous</option>
-            <?php foreach (Messages::STATUS_LABELS as $value => $label): ?>
+            <?php foreach (Messages::FILTER_LABELS as $value => $label): ?>
                 <option value="<?= e($value) ?>" <?= $filters['status'] === $value ? 'selected' : '' ?>><?= e($label) ?></option>
             <?php endforeach; ?>
         </select>

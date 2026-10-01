@@ -16,7 +16,7 @@ use VitrineExpress\View;
         <th>Code</th>
         <th>Groupes</th>
         <th>État</th>
-        <th>Dernière activité</th>
+        <th>Affiche en ce moment</th>
         <th class="actions">Actions</th>
     </tr>
     </thead>
@@ -25,6 +25,10 @@ use VitrineExpress\View;
         <tr><td colspan="6" class="empty">Aucun téléviseur. Ajoutez-en un pour obtenir son code de connexion.</td></tr>
     <?php endif; ?>
     <?php foreach ($devices as $device): ?>
+        <?php
+        $status = Devices::status($device, $offlineAfter);
+        $current = $status === Devices::STATUS_ONLINE ? ($messages[(int) $device['current_message_id']] ?? null) : null;
+        ?>
         <tr>
             <td>
                 <strong><?= e($device['name']) ?></strong>
@@ -37,8 +41,22 @@ use VitrineExpress\View;
                 <?php endforeach; ?>
                 <?php if (!$device['groups']): ?><span class="muted">Aucun</span><?php endif; ?>
             </td>
-            <td><?= View::render('devices/_status', ['status' => Devices::status($device, $offlineAfter)], null) ?></td>
-            <td class="muted"><?= e(time_ago($device['last_seen_at'])) ?></td>
+            <td>
+                <?= View::render('devices/_status', ['status' => $status], null) ?><br>
+                <span class="muted small"><?= e(time_ago($device['last_seen_at'])) ?></span>
+            </td>
+            <td>
+                <?php if ($current): ?>
+                    <div class="current-message">
+                        <?= View::render('messages/_thumb', ['message' => $current, 'app' => $app], null) ?>
+                        <span><?= e($current['title']) ?></span>
+                    </div>
+                <?php elseif ($status === Devices::STATUS_ONLINE): ?>
+                    <span class="muted">L’heure et la date (aucun message)</span>
+                <?php else: ?>
+                    <span class="muted">—</span>
+                <?php endif; ?>
+            </td>
             <td class="actions">
                 <a class="button small" href="<?= e(url('/admin/devices/' . $device['id'] . '/edit')) ?>">Modifier</a>
             </td>

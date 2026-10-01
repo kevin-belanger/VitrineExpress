@@ -103,6 +103,15 @@ docs/              spécification, phases, décisions
 - **Risque accepté** : comme WordPress, la première personne qui ouvre un site fraîchement déployé peut créer le compte ; le guide d'installation demande de le faire aussitôt.
 - **Écarté** : clé d'installation à copier depuis le serveur (plus sûr, mais complique justement le cas sans terminal).
 
+## D20 — Tableau de bord par exceptions
+
+- **Décision** (définie avec Kevin) : deux cartes, Téléviseurs et Messages. Chacune a un chiffre principal (« 4 sur 6 en ligne », « 7 messages en diffusion ») puis seulement les lignes dont le compte n'est pas zéro, de la plus urgente à la moins urgente, chacune liée à la liste filtrée (ou à la fiche s'il n'y a qu'une télé) :
+  - Téléviseurs : hors ligne (nom, dernière activité), non connectés (nom, code), en ligne sans message à afficher.
+  - Messages : se terminent dans les 48 h, à venir (le prochain), non diffusés (actifs mais n'atteignant aucune télé : sans cible ou groupes vides), expirés.
+- Le détail télé par télé (dont le message affiché en ce moment) est dans la page Téléviseurs, actualisée elle aussi toutes les 30 s.
+- **Écarté** : ligne « télés sans groupe » (déjà couverte par « sans message à afficher ») ; compteurs à zéro ; tableau détaillé sur le tableau de bord.
+- Code : `src/Dashboard.php` (calculs, testés), nouveaux filtres de la liste des messages (`live`, `ending`, `unbroadcast`).
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

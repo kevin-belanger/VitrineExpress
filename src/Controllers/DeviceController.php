@@ -7,16 +7,23 @@ namespace VitrineExpress\Controllers;
 use VitrineExpress\Controller;
 use VitrineExpress\Devices;
 use VitrineExpress\Groups;
+use VitrineExpress\Messages;
 use VitrineExpress\Response;
 
 final class DeviceController extends Controller
 {
     public function index(): Response
     {
+        $messages = [];
+        foreach (Messages::search($this->app, []) as $message) {
+            $messages[(int) $message['id']] = $message;
+        }
         return $this->view('devices/index', [
             'title' => 'Téléviseurs',
             'devices' => Devices::allWithGroups($this->app),
+            'messages' => $messages,
             'offlineAfter' => $this->app->intSetting('offline_after', 180),
+            'refresh' => 30,
         ]);
     }
 

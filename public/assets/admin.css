@@ -378,25 +378,40 @@ button.link:hover { color: #fff; text-decoration: underline; }
 
 /* Tableau de bord */
 .small { font-size: .85rem; }
-.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 1.25rem; }
-.stat {
-    display: flex;
-    flex-direction: column;
+.dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; align-items: start; }
+.dash-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-left: 4px solid #cbd2dc;
-    border-radius: var(--radius);
+    border-radius: 12px;
     box-shadow: var(--shadow);
-    padding: .85rem 1rem;
+    padding: 1.25rem 1.4rem;
+}
+.dash-label { margin: 0 0 .35rem; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+.dash-big { margin: 0; font-size: 1.75rem; font-weight: 700; line-height: 1.2; }
+.dash-ok { color: var(--success); margin-right: .25rem; }
+.dash-sub { margin: .2rem 0 .9rem; color: var(--muted); }
+.dash-sub a { color: inherit; }
+.dash-line {
+    display: flex;
+    align-items: flex-start;
+    gap: .75rem;
+    padding: .7rem .5rem;
+    margin: 0 -.5rem;
+    border-top: 1px solid #eef0f3;
+    border-radius: 6px;
     color: var(--text);
     text-decoration: none;
 }
-.stat-success { border-left-color: var(--success); }
-.stat-danger { border-left-color: var(--danger); }
-.stat-accent { border-left-color: var(--accent); }
-a.stat:hover { background: #f9fafb; }
-.stat-value { font-size: 2rem; font-weight: 700; line-height: 1.1; }
-.stat-label { color: var(--muted); }
+.dash-line:hover { background: #f6f7f9; }
+.dash-dot { flex: none; width: .55rem; height: .55rem; margin-top: .5rem; border-radius: 50%; background: #c2c8d1; }
+.dot-danger { background: var(--danger); }
+.dot-warning { background: #f79009; }
+.dot-accent { background: var(--accent); }
+.dash-text { flex: 1; font-weight: 600; }
+.dash-text small { display: block; font-weight: normal; font-size: .85rem; color: var(--muted); }
+.dash-chevron { color: #b8bfcc; font-size: 1.3rem; line-height: 1; }
+.dash-more { display: inline-block; margin-top: .9rem; font-size: .9rem; text-decoration: none; }
+.dash-more:hover { text-decoration: underline; }
 .current-message { display: flex; align-items: center; gap: .6rem; }
 .current-message .thumb { width: 64px; height: 36px; flex: none; font-size: .8rem; }
 

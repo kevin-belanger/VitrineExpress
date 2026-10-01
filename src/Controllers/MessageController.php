@@ -21,7 +21,7 @@ final class MessageController extends Controller
         $filters = [
             'group' => (int) ($_GET['group'] ?? 0),
             'device' => (int) ($_GET['device'] ?? 0),
-            'status' => array_key_exists((string) ($_GET['status'] ?? ''), Messages::STATUS_LABELS) ? (string) $_GET['status'] : '',
+            'status' => array_key_exists((string) ($_GET['status'] ?? ''), Messages::FILTER_LABELS) ? (string) $_GET['status'] : '',
         ];
         return $this->view('messages/index', [
             'title' => 'Messages',

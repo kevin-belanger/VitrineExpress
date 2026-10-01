@@ -1,63 +1,91 @@
 <?php
 
-use VitrineExpress\Devices;
-use VitrineExpress\View;
+use VitrineExpress\Dashboard;
+use VitrineExpress\Messages;
 
+/**
+ * Une ligne du tableau de bord (affichée seulement si $count > 0).
+ * $tone : danger, warning, accent ou muted.
+ */
+$line = static function (int $count, string $tone, string $href, string $title, string $detail): string {
+    if ($count === 0) {
+        return '';
+    }
+    return '<a class="dash-line" href="' . e($href) . '">'
+        . '<span class="dash-dot dot-' . e($tone) . '" aria-hidden="true"></span>'
+        . '<span class="dash-text">' . e($title) . '<small>' . e($detail) . '</small></span>'
+        . '<span class="dash-chevron" aria-hidden="true">›</span></a>';
+};
+$plural = static fn (int $n, string $one, string $many): string => $n . ' ' . ($n > 1 ? $many : $one);
+// Lien vers la fiche si un seul téléviseur est concerné, sinon vers la liste.
+$deviceLink = static fn (array $rows): string => count($rows) === 1 ? url('/admin/devices/' . $rows[0]['id'] . '/edit') : url('/admin/devices');
+
+$offlineDetail = Dashboard::names($tv['offline'], static fn (array $d): string => $d['name'] . ' (vu ' . time_ago($d['last_seen_at']) . ')');
+$codesDetail = Dashboard::names($tv['disconnected'], static fn (array $d): string => $d['name'] . ' (code ' . $d['code'] . ')');
+
+$tvAllGood = $tv['total'] > 0 && $tv['online'] === $tv['total'] && !$tv['idle'];
+$live = count($msg['live']);
+$next = $msg['upcoming'][0] ?? null;
 ?>
 <div class="page-head">
     <h1>Tableau de bord</h1>
-    <span class="muted small">Actualisé automatiquement toutes les 30 secondes</span>
 </div>
 
-<div class="stats">
-    <div class="stat stat-success"><span class="stat-value"><?= $counts[Devices::STATUS_ONLINE] ?></span><span class="stat-label">en ligne</span></div>
-    <div class="stat stat-danger"><span class="stat-value"><?= $counts[Devices::STATUS_OFFLINE] ?></span><span class="stat-label">hors ligne</span></div>
-    <div class="stat"><span class="stat-value"><?= $counts[Devices::STATUS_DISCONNECTED] ?></span><span class="stat-label">non connectés</span></div>
-    <a class="stat stat-accent" href="<?= e(url('/admin/messages?status=active')) ?>"><span class="stat-value"><?= $activeMessages ?></span><span class="stat-label">messages actifs</span></a>
-</div>
+<div class="dash">
+    <section class="dash-card" aria-labelledby="dash-tv">
+        <p class="dash-label" id="dash-tv">Téléviseurs</p>
+        <?php if ($tv['total'] === 0): ?>
+            <p class="dash-big">Aucun téléviseur</p>
+            <p class="dash-sub">Ajoutez un téléviseur pour obtenir son code de connexion.</p>
+            <a class="button primary" href="<?= e(url('/admin/devices/new')) ?>">Ajouter un téléviseur</a>
+        <?php else: ?>
+            <p class="dash-big">
+                <?php if ($tvAllGood): ?><span class="dash-ok" aria-hidden="true">✓</span><?php endif; ?>
+                <?= $tv['online'] ?> sur <?= $tv['total'] ?> en ligne
+            </p>
+            <p class="dash-sub"><?= $tvAllGood ? 'Tout fonctionne.' : 'Actualisé automatiquement.' ?></p>
 
-<table class="table">
-    <thead>
-    <tr>
-        <th>Téléviseur</th>
-        <th>État</th>
-        <th>Dernière activité</th>
-        <th>Affiche en ce moment</th>
-        <th>File</th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php if (!$devices): ?>
-        <tr><td colspan="5" class="empty">Aucun téléviseur. <a href="<?= e(url('/admin/devices/new')) ?>">Ajouter un téléviseur</a></td></tr>
-    <?php endif; ?>
-    <?php foreach ($devices as $device): ?>
-        <tr>
-            <td>
-                <a href="<?= e(url('/admin/devices/' . $device['id'] . '/edit')) ?>"><strong><?= e($device['name']) ?></strong></a><br>
-                <?php foreach ($device['groups'] as $groupName): ?>
-                    <span class="badge"><?= e($groupName) ?></span>
-                <?php endforeach; ?>
-            </td>
-            <td><?= View::render('devices/_status', ['status' => $device['status']], null) ?></td>
-            <td class="muted"><?= e(time_ago($device['last_seen_at'])) ?></td>
-            <td>
-                <?php if ($device['current']): ?>
-                    <div class="current-message">
-                        <?= View::render('messages/_thumb', ['message' => $device['current'], 'app' => $app], null) ?>
-                        <span><?= e($device['current']['title']) ?></span>
-                    </div>
-                <?php elseif ($device['status'] === Devices::STATUS_ONLINE): ?>
-                    <span class="muted">File vide (heure et date)</span>
+            <?= $line(count($tv['offline']), 'danger', $deviceLink($tv['offline']),
+                $plural(count($tv['offline']), 'hors ligne', 'hors ligne'), $offlineDetail) ?>
+            <?= $line(count($tv['disconnected']), 'warning', $deviceLink($tv['disconnected']),
+                $plural(count($tv['disconnected']), 'non connecté', 'non connectés'), $codesDetail) ?>
+            <?= $line(count($tv['idle']), 'muted', $deviceLink($tv['idle']),
+                $plural(count($tv['idle']), 'en ligne sans message à afficher', 'en ligne sans message à afficher'),
+                Dashboard::names($tv['idle']) . (count($tv['idle']) > 1 ? ' affichent' : ' affiche') . ' seulement l’heure') ?>
+
+            <a class="dash-more" href="<?= e(url('/admin/devices')) ?>">Voir les téléviseurs →</a>
+        <?php endif; ?>
+    </section>
+
+    <section class="dash-card" aria-labelledby="dash-msg">
+        <p class="dash-label" id="dash-msg">Messages</p>
+        <?php if ($msg['total'] === 0): ?>
+            <p class="dash-big">Aucun message</p>
+            <p class="dash-sub">Créez une image ou un texte à diffuser sur vos téléviseurs.</p>
+            <a class="button primary" href="<?= e(url('/admin/messages/new')) ?>">Créer un message</a>
+        <?php else: ?>
+            <p class="dash-big"><?= $live === 0 ? 'Aucun message' : $plural($live, 'message', 'messages') ?> en diffusion</p>
+            <p class="dash-sub">
+                <?php if ($live > 0): ?>
+                    <a href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">destinés à <?= $plural($msg['reached'], 'téléviseur', 'téléviseurs') ?></a>
                 <?php else: ?>
-                    <span class="muted">—</span>
+                    Les téléviseurs connectés affichent l’heure et la date.
                 <?php endif; ?>
-            </td>
-            <td>
-                <a href="<?= e(url('/admin/messages?status=active&device=' . $device['id'])) ?>">
-                    <?= (int) $device['queue_count'] ?> message<?= $device['queue_count'] > 1 ? 's' : '' ?>
-                </a>
-            </td>
-        </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+            </p>
+
+            <?= $line(count($msg['ending']), 'warning', url('/admin/messages?status=' . Messages::FILTER_ENDING),
+                $plural(count($msg['ending']), 'se termine', 'se terminent') . ' dans les ' . Messages::ENDING_SOON_HOURS . ' h',
+                Dashboard::names($msg['ending'], 'title')) ?>
+            <?= $line(count($msg['upcoming']), 'accent', url('/admin/messages?status=' . Messages::STATUS_UPCOMING),
+                $plural(count($msg['upcoming']), 'à venir', 'à venir'),
+                $next ? 'Prochain : ' . $next['title'] . ', ' . format_datetime($next['start_at']) : '') ?>
+            <?= $line(count($msg['unbroadcast']), 'muted', url('/admin/messages?status=' . Messages::FILTER_UNBROADCAST),
+                $plural(count($msg['unbroadcast']), 'non diffusé', 'non diffusés'),
+                'Aucun téléviseur visé : ' . Dashboard::names($msg['unbroadcast'], 'title')) ?>
+            <?= $line($msg['expired'], 'muted', url('/admin/messages?status=' . Messages::STATUS_EXPIRED),
+                $plural($msg['expired'], 'expiré', 'expirés'), 'À supprimer quand vous voulez') ?>
+
+            <a class="dash-more" href="<?= e(url('/admin/messages')) ?>">Voir les messages →</a>
+        <?php endif; ?>
+    </section>
+</div>

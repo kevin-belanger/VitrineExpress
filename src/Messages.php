@@ -27,6 +27,22 @@ final class Messages
         self::STATUS_EXPIRED => 'Expiré',
     ];
 
+    // Filtres supplémentaires de la liste (pas des états : un message actif peut être diffusé ou non).
+    public const FILTER_LIVE = 'live';
+    public const FILTER_ENDING = 'ending';
+    public const FILTER_UNBROADCAST = 'unbroadcast';
+
+    public const FILTER_LABELS = [
+        self::FILTER_LIVE => 'En diffusion',
+        self::FILTER_ENDING => 'Se termine dans les 48 h',
+        self::FILTER_UNBROADCAST => 'Non diffusé (aucune télé visée)',
+        self::STATUS_UPCOMING => 'À venir',
+        self::STATUS_EXPIRED => 'Expiré',
+        self::STATUS_ACTIVE => 'Actif (diffusé ou non)',
+    ];
+
+    public const ENDING_SOON_HOURS = 48;
+
     public const MIN_DURATION = 3;
     public const MAX_DURATION = 3600;
 
@@ -257,12 +273,21 @@ final class Messages
         return array_map('intval', $st->fetchAll(PDO::FETCH_COLUMN));
     }
 
+    /** Condition SQL « le message atteint au moins un téléviseur existant » sur l'alias m. */
+    public static function reachesAnyDeviceSql(): string
+    {
+        return '((m.all_devices = 1 AND EXISTS (SELECT 1 FROM devices))
+                 OR EXISTS (SELECT 1 FROM message_groups mg JOIN device_groups dg ON dg.group_id = mg.group_id
+                            WHERE mg.message_id = m.id))';
+    }
+
     /**
      * Liste filtrée des messages, dans l'ordre de la file (création), avec arrière-plan et groupes.
+     * Filtres d'état : ceux de STATUS_LABELS, plus ceux de FILTER_LABELS (en diffusion, se termine bientôt, non diffusé).
      *
      * @param array{group?: int, device?: int, status?: string} $filters
      */
-    public static function search(App $app, array $filters): array
+    public static function search(App $app, array $filters, ?string $now = null): array
     {
         $where = [];
         $params = [];
@@ -276,13 +301,19 @@ final class Messages
         }
         $status = $filters['status'] ?? '';
         if ($status !== '') {
-            $params['now'] = now();
+            $params['now'] = $now ?? now();
             $where[] = match ($status) {
                 self::STATUS_ACTIVE => self::activeSql(),
                 self::STATUS_UPCOMING => 'm.start_at > :now',
                 self::STATUS_EXPIRED => 'm.end_at IS NOT NULL AND m.end_at < :now',
+                self::FILTER_LIVE => self::activeSql() . ' AND ' . self::reachesAnyDeviceSql(),
+                self::FILTER_ENDING => self::activeSql() . ' AND ' . self::reachesAnyDeviceSql() . ' AND m.end_at <= :soon',
+                self::FILTER_UNBROADCAST => self::activeSql() . ' AND NOT ' . self::reachesAnyDeviceSql(),
                 default => '1 = 1',
             };
+            if ($status === self::FILTER_ENDING) {
+                $params['soon'] = date('Y-m-d H:i:s', strtotime($params['now']) + self::ENDING_SOON_HOURS * 3600);
+            }
         }
 
         $sql = 'SELECT m.*, b.css_value AS background_css, b.text_color AS background_color
