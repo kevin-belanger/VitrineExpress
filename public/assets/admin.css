@@ -580,9 +580,21 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .dash-chevron { color: #b8bfcc; font-size: 1.3rem; line-height: 1; }
 .dash-more { display: inline-block; margin-top: .9rem; font-size: .9rem; text-decoration: none; }
 .dash-more:hover { text-decoration: underline; }
-.current-message { display: flex; align-items: center; gap: .6rem; max-width: 280px; }
-.current-message .thumb { width: 64px; height: 36px; flex: none; font-size: .8rem; }
-.current-message-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* « Affiche en ce moment » : vignette de taille fixe (miniature cliquable, ou case grise), le tableau ne bouge pas. */
+.live-current { width: 112px; }
+.current-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 54px;
+    border-radius: 4px;
+}
+.current-thumb .thumb { width: 96px; height: 54px; }
+a.current-thumb { transition: box-shadow .15s, transform .15s; }
+a.current-thumb:hover, a.current-thumb:focus-visible { box-shadow: 0 0 0 2px var(--accent); transform: translateY(-1px); }
+.current-placeholder { background: #f1f3f5; color: var(--muted); font-size: 1.1rem; }
+.current-placeholder svg { width: 1.4rem; height: 1.4rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 /* Bascule en fondu quand la diapositive affichée change (devices-live.js). */
 .live-slot { transition: opacity .25s ease; }
 .live-slot.is-fading { opacity: 0; }

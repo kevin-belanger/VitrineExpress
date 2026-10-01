@@ -26,8 +26,8 @@ function test_devices_live_state_reports_current_slide(): void
     $devices = json_decode($response->body, true)['devices'];
 
     assert_same('message-' . $message . '-' . $app->db->query("SELECT updated_at FROM messages WHERE id = {$message}")->fetchColumn(), $devices[$online]['key']);
-    assert_contains('Une diapositive au titre assez long', $devices[$online]['current']);
-    assert_contains('current-message-title', $devices[$online]['current']);
+    assert_contains('title="Une diapositive au titre assez long', $devices[$online]['current'], 'Titre en infobulle');
+    assert_contains('href="/admin/messages/' . $message . '/edit"', $devices[$online]['current'], 'Miniature cliquable vers la modification');
     assert_contains('En ligne', $devices[$online]['status']);
 
     assert_same(Devices::STATUS_DISCONNECTED, $devices[$offline]['key'], 'Sans connexion : pas de diapositive');
