@@ -80,6 +80,23 @@ function test_login_succeeds_only_with_right_password(): void
     assert_same(null, Auth::user($app));
 }
 
+function test_base_path_hides_public_folder(): void
+{
+    assert_same('', compute_base_path('/index.php'), 'Racine web = public/');
+    assert_same('', compute_base_path('/public/index.php'), 'Racine web = dossier du projet : pas de « /public » dans les adresses');
+    assert_same('/vitrine', compute_base_path('/vitrine/public/index.php'), 'Sous-dossier, racine web = dossier du projet');
+    assert_same('/vitrine', compute_base_path('/vitrine/index.php'), 'Sous-dossier, racine web = public/');
+    assert_same('', compute_base_path('/media/abc.png'), 'Serveur intégré de PHP : SCRIPT_NAME ignoré');
+    assert_same('', compute_base_path('tests/run.php'));
+
+    assert_same('/admin', without_public_segment('/public/admin'));
+    assert_same('/assets/admin.css', without_public_segment('/public/assets/admin.css'));
+    assert_same('/', without_public_segment('/public'));
+    assert_same('/', without_public_segment('/public/index.php'));
+    assert_same(null, without_public_segment('/admin'));
+    assert_same(null, without_public_segment('/publications'), 'Seul le segment exact « public » compte');
+}
+
 function test_helpers_escape_and_format(): void
 {
     assert_same('&lt;b&gt;&quot;x&quot;&amp;', e('<b>"x"&'));

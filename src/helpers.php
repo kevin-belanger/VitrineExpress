@@ -22,16 +22,45 @@ function base_path(): string
     static $base = null;
     if ($base === null) {
         $configured = $GLOBALS['vx_base_path'] ?? null;
-        if (is_string($configured)) {
-            $base = rtrim($configured, '/');
-        } else {
-            // Le préfixe est le dossier de index.php. (Le serveur intégré de PHP met parfois l'URL
-            // demandée dans SCRIPT_NAME : on ne s'y fie que s'il désigne bien index.php.)
-            $script = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
-            $base = str_ends_with($script, '/index.php') ? rtrim(dirname($script), '/') : '';
-        }
+        $base = is_string($configured)
+            ? rtrim($configured, '/')
+            : compute_base_path((string) ($_SERVER['SCRIPT_NAME'] ?? ''));
     }
     return $base;
+}
+
+/**
+ * Préfixe d'URL déduit du chemin de index.php :
+ * - racine web = public/ : « /index.php » → « » ;
+ * - racine web = dossier du projet (hébergement mutualisé) : le .htaccess racine renvoie vers public/,
+ *   mais l'adresse publique ne contient pas « /public » : « /public/index.php » → « » ;
+ * - installation dans un sous-dossier : « /vitrine/public/index.php » → « /vitrine ».
+ * Le serveur intégré de PHP met parfois l'URL demandée dans SCRIPT_NAME : on ne s'y fie que s'il désigne index.php.
+ */
+function compute_base_path(string $scriptName): string
+{
+    $script = str_replace('\\', '/', $scriptName);
+    if (!str_ends_with($script, '/index.php')) {
+        return '';
+    }
+    $dir = rtrim(dirname($script), '/');
+    return str_ends_with($dir, '/public') ? substr($dir, 0, -strlen('/public')) : $dir;
+}
+
+/** Chemin sans son premier segment « /public » (« /public/admin » → « /admin »), ou null s'il n'en a pas. */
+function without_public_segment(string $path): ?string
+{
+    if ($path === '/public' || $path === '/public/index.php') {
+        return '/';
+    }
+    return str_starts_with($path, '/public/') ? substr($path, strlen('/public')) : null;
+}
+
+/** Vrai si index.php est atteint par le dossier « public » (racine web = dossier du projet). */
+function served_through_public_folder(): bool
+{
+    $script = str_replace('\\', '/', (string) ($_SERVER['SCRIPT_NAME'] ?? ''));
+    return str_ends_with($script, '/public/index.php');
 }
 
 /** URL absolue (depuis la racine du domaine) d'un chemin de l'application. */

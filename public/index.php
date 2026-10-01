@@ -21,6 +21,17 @@ if ($base !== '' && str_starts_with($path, $base)) {
     $path = substr($path, strlen($base));
 }
 $path = '/' . trim($path, '/');
+
+// Racine web = dossier du projet : une adresse qui contient encore « /public » (ancien favori, lien copié)
+// est redirigée vers l'adresse propre ; un envoi de formulaire est traité tel quel.
+if (served_through_public_folder() && ($clean = without_public_segment($path)) !== null) {
+    if (in_array($_SERVER['REQUEST_METHOD'] ?? 'GET', ['GET', 'HEAD'], true)) {
+        $query = (string) ($_SERVER['QUERY_STRING'] ?? '');
+        header('Location: ' . url($clean) . ($query !== '' ? '?' . $query : ''), true, 301);
+        exit;
+    }
+    $path = $clean;
+}
 if ($path === '/index.php') {
     $path = '/';
 }

@@ -87,7 +87,7 @@ L'écran Paramètres affiche la limite actuelle de PHP.
 
 `mod_rewrite` doit être activé (`sudo a2enmod rewrite`). Le fichier `public/.htaccess` envoie toutes les requêtes vers `index.php`.
 
-Sur un hébergement où la racine web ne peut pas être changée, le `.htaccess` à la racine du projet redirige tout vers `public/` et empêche l'accès au reste (base, configuration, code).
+Sur un hébergement où la racine web ne peut pas être changée (ex. le domaine principal sur cPanel, qui pointe sur `public_html`), on peut cloner le projet directement dans ce dossier : le `.htaccess` à la racine du projet renvoie tout vers `public/` et empêche l'accès au reste (base, configuration, code). Les adresses restent propres (`/admin`, sans `/public`) ; une ancienne adresse contenant `/public` est redirigée vers la bonne.
 
 ## Nginx
 
