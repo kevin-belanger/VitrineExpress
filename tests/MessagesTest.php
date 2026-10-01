@@ -86,6 +86,12 @@ function test_message_form_validation(): void
     assert_same([], $errors);
     assert_same(null, $values['end_at'], 'Sans date de fin, le message est permanent');
 
+    [$values] = Messages::fromForm($app, [
+        'title' => 'Tous', 'start_date' => '2026-10-01', 'duration_seconds' => '20', 'all_devices' => '1',
+        'groups' => [(string) $group],
+    ], Messages::TYPE_IMAGE);
+    assert_same([], $values['group_ids'], 'Avec « Tous », les groupes cochés auparavant sont ignorés');
+
     [, $errors] = Messages::fromForm($app, [
         'title' => 'X', 'start_date' => '2026-10-05', 'end_date' => '2026-10-01', 'duration_seconds' => '20', 'all_devices' => '1',
     ], Messages::TYPE_IMAGE);

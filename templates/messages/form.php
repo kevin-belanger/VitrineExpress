@@ -103,27 +103,30 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             <legend>Afficher sur</legend>
             <div class="target-modes">
                 <label class="target-mode">
-                    <input type="radio" name="all_devices" value="1" data-picker-target="target-picker" <?= $values['all_devices'] ? 'checked' : '' ?>>
+                    <input type="radio" name="all_devices" value="1" data-choice-target="target-choice" <?= $values['all_devices'] ? 'checked' : '' ?>>
                     <span><strong>Tous les périphériques d’affichage</strong><small>Y compris ceux ajoutés plus tard</small></span>
                 </label>
                 <label class="target-mode">
-                    <input type="radio" name="all_devices" value="0" data-picker-target="target-picker" <?= $values['all_devices'] ? '' : 'checked' ?>>
+                    <input type="radio" name="all_devices" value="0" data-choice-target="target-choice" <?= $values['all_devices'] ? '' : 'checked' ?>>
                     <span><strong>Choisir</strong><small><?= $groups ? 'Des groupes, des périphériques, ou les deux' : 'Les périphériques cochés' ?></small></span>
                 </label>
             </div>
-            <?= View::render('partials/picker', [
-                'id' => 'target-picker',
-                'sections' => [
-                    ['key' => 'groups', 'title' => 'Groupes', 'name' => 'groups[]', 'items' => $groups, 'selected' => $values['group_ids']],
-                    ['key' => 'devices', 'title' => 'Périphériques d’affichage', 'name' => 'devices[]', 'items' => $devices, 'selected' => $values['device_ids']],
-                ],
-                'noun' => $groups ? 'groupes et périphériques' : 'périphériques',
-                'emptyText' => 'Aucun périphérique d’affichage pour l’instant. <a href="' . e(url('/admin/devices/new')) . '">Ajouter un périphérique d’affichage</a>',
-                'deviceNames' => $deviceNames,
-            ], null) ?>
-            <?php if ($groups): ?>
-                <p class="hint">Un groupe coché inclut aussi les périphériques qu’on y ajoutera plus tard.</p>
-            <?php endif; ?>
+            <?php // Caché en mode « Tous » (picker.js) ; les cases restent cochées si on revient à « Choisir ». ?>
+            <div id="target-choice" class="form">
+                <?= View::render('partials/picker', [
+                    'id' => 'target-picker',
+                    'sections' => [
+                        ['key' => 'groups', 'title' => 'Groupes', 'name' => 'groups[]', 'items' => $groups, 'selected' => $values['group_ids']],
+                        ['key' => 'devices', 'title' => 'Périphériques d’affichage', 'name' => 'devices[]', 'items' => $devices, 'selected' => $values['device_ids']],
+                    ],
+                    'noun' => $groups ? 'groupes et périphériques' : 'périphériques',
+                    'emptyText' => 'Aucun périphérique d’affichage pour l’instant. <a href="' . e(url('/admin/devices/new')) . '">Ajouter un périphérique d’affichage</a>',
+                    'deviceNames' => $deviceNames,
+                ], null) ?>
+                <?php if ($groups): ?>
+                    <p class="hint">Un groupe coché inclut aussi les périphériques qu’on y ajoutera plus tard.</p>
+                <?php endif; ?>
+            </div>
         </fieldset>
 
         <div class="form-actions">

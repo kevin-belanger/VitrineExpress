@@ -461,8 +461,6 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .picker-summary { margin: 0; padding: .55rem .75rem; border-radius: 6px; font-size: .9rem; }
 .picker-summary.is-ok { background: var(--success-soft); color: var(--success); }
 .picker-summary.is-warning { background: var(--warning-soft); color: var(--warning); }
-.picker.is-all .picker-tools,
-.picker.is-all .picker-list { opacity: .45; pointer-events: none; }
 
 .target-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .5rem; margin-bottom: .25rem; }
 .form .target-mode {

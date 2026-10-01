@@ -134,7 +134,8 @@ final class Messages
 
         // Cibles : groupes et/ou périphériques. Aucune cible est permis : le message est alors
         // gardé sans être affiché (brouillon). Les identifiants inconnus sont ignorés.
-        $ids = static fn (string $key): array => is_array($post[$key] ?? null) ? array_map('intval', $post[$key]) : [];
+        // Avec « Tous les périphériques », les choix de groupes et de périphériques ne s'appliquent pas.
+        $ids = static fn (string $key): array => !$values['all_devices'] && is_array($post[$key] ?? null) ? array_map('intval', $post[$key]) : [];
         $values['group_ids'] = array_values(array_intersect(array_keys(Groups::options($app)), $ids('groups')));
         $values['device_ids'] = array_values(array_intersect(array_keys(Devices::options($app)), $ids('devices')));
 

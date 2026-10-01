@@ -87,12 +87,6 @@
         }
 
         function renderSummary(ids) {
-            if (picker.classList.contains('is-all')) {
-                var total = Object.keys(names).length;
-                summary.textContent = 'Affiché sur tous les périphériques : les ' + total + ' actuels et ceux ajoutés plus tard.';
-                summary.className = 'picker-summary is-ok';
-                return;
-            }
             if (!ids.length) {
                 summary.textContent = 'Affiché sur aucun périphérique : le message est gardé comme brouillon.';
                 summary.className = 'picker-summary is-warning';
@@ -152,14 +146,13 @@
     }
 
     // Choix « Tous les périphériques d'affichage » / « Choisir » (formulaire de message).
-    // La liste est seulement estompée en mode « tous » : les choix sont gardés si on revient en arrière.
+    // En mode « Tous », la partie « Choisir » est cachée ; ses cases restent cochées si on y revient.
     var modes = document.querySelectorAll('input[name="all_devices"][type="radio"]');
     if (modes.length) {
-        var target = document.getElementById(modes[0].getAttribute('data-picker-target'));
+        var target = document.getElementById(modes[0].getAttribute('data-choice-target'));
         var syncMode = function () {
             var checkedMode = document.querySelector('input[name="all_devices"]:checked');
-            target.classList.toggle('is-all', !!checkedMode && checkedMode.value === '1');
-            if (target.refresh) { target.refresh(); }
+            target.hidden = !!checkedMode && checkedMode.value === '1';
         };
         for (var k = 0; k < modes.length; k++) {
             modes[k].addEventListener('change', syncMode);
