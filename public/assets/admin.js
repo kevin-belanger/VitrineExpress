@@ -92,8 +92,12 @@
     });
 
     // Miniatures des messages texte : rendu réduit du vrai message (slide.js).
-    var thumbs = document.querySelectorAll('.thumb-slide[data-slide]');
-    if (thumbs.length && window.VxSlide) {
+    // Aussi appelé sur le HTML inséré plus tard (ex. mise à jour en direct des périphériques).
+    window.vxRenderThumbs = function (root) {
+        var thumbs = root.querySelectorAll('.thumb-slide[data-slide]');
+        if (!window.VxSlide) {
+            return;
+        }
         for (var i = 0; i < thumbs.length; i++) {
             try {
                 var slide = window.VxSlide.render(JSON.parse(thumbs[i].getAttribute('data-slide')));
@@ -101,7 +105,8 @@
                 window.VxSlide.fit(slide);
             } catch (e) { /* miniature ignorée */ }
         }
-    }
+    };
+    window.vxRenderThumbs(document);
 
     // Parties de formulaire repliées derrière un bouton : <button data-reveal="id"> affiche l'élément id,
     // un bouton [data-conceal] à l'intérieur le referme et vide ses champs (rien n'est alors modifié).

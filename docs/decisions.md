@@ -145,6 +145,11 @@ docs/              spécification, phases, décisions
 - **Tableaux** : chaque liste est dans un cadre qui défile horizontalement au besoin, au lieu de faire défiler toute la page (tablettes, téléphones).
 - **Largeurs minimales** plafonnées à la largeur de l'écran (`min(…, 100%)`), `min-width: 0` sur les fieldsets : aucune page ne déborde de 320 à 2560 px.
 
+## D26 — Liste des périphériques en direct
+
+- **Décision** (demandée par Kevin) : la page Périphériques d'affichage ne se recharge plus en entier toutes les 30 s. Elle interroge `/admin/devices/live` (JSON) toutes les 5 s et ne remplace que les cellules « État » et « Affiche en ce moment » ; quand la diapositive affichée change (clé = message + date de modification, ou l'état), la cellule bascule en fondu. Les interrogations s'arrêtent quand l'onglet est caché ; si la session a expiré, la page se recharge (et mène à la connexion).
+- Le HTML des deux cellules est produit par les mêmes gabarits (`devices/_status_cell`, `devices/_current`) pour la page et pour le JSON.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

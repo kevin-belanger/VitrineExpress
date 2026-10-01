@@ -9,22 +9,51 @@ use VitrineExpress\Devices;
 use VitrineExpress\Groups;
 use VitrineExpress\Messages;
 use VitrineExpress\Response;
+use VitrineExpress\View;
 
 final class DeviceController extends Controller
 {
     public function index(): Response
     {
+        return $this->view('devices/index', [
+            'title' => 'Périphériques d’affichage',
+            'devices' => Devices::allWithGroups($this->app),
+            'live' => $this->liveState(),
+            'scripts' => [asset('/assets/devices-live.js')],
+        ]);
+    }
+
+    /** État en direct pour la liste (interrogé toutes les 5 secondes par devices-live.js). */
+    public function live(): Response
+    {
+        return Response::json(['devices' => $this->liveState()]);
+    }
+
+    /**
+     * Pour chaque périphérique : HTML des cellules « État » et « Affiche en ce moment », et une clé
+     * qui change quand la diapositive affichée change (pour ne faire la transition qu'à ce moment-là).
+     *
+     * @return array<int, array{status: string, current: string, key: string}>
+     */
+    private function liveState(): array
+    {
+        $offlineAfter = $this->app->intSetting('offline_after', 180);
         $messages = [];
         foreach (Messages::search($this->app, []) as $message) {
             $messages[(int) $message['id']] = $message;
         }
-        return $this->view('devices/index', [
-            'title' => 'Périphériques d’affichage',
-            'devices' => Devices::allWithGroups($this->app),
-            'messages' => $messages,
-            'offlineAfter' => $this->app->intSetting('offline_after', 180),
-            'refresh' => 30,
-        ]);
+
+        $state = [];
+        foreach ($this->app->db->query('SELECT id, token_hash, last_seen_at, current_message_id FROM devices')->fetchAll() as $device) {
+            $status = Devices::status($device, $offlineAfter);
+            $current = $status === Devices::STATUS_ONLINE ? ($messages[(int) $device['current_message_id']] ?? null) : null;
+            $state[(int) $device['id']] = [
+                'status' => View::render('devices/_status_cell', ['status' => $status, 'lastSeen' => $device['last_seen_at']], null),
+                'current' => View::render('devices/_current', ['current' => $current, 'status' => $status, 'app' => $this->app], null),
+                'key' => $current !== null ? 'message-' . $current['id'] . '-' . $current['updated_at'] : $status,
+            ];
+        }
+        return $state;
     }
 
     public function create(): Response

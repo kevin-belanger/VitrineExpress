@@ -580,8 +580,12 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .dash-chevron { color: #b8bfcc; font-size: 1.3rem; line-height: 1; }
 .dash-more { display: inline-block; margin-top: .9rem; font-size: .9rem; text-decoration: none; }
 .dash-more:hover { text-decoration: underline; }
-.current-message { display: flex; align-items: center; gap: .6rem; }
+.current-message { display: flex; align-items: center; gap: .6rem; max-width: 280px; }
 .current-message .thumb { width: 64px; height: 36px; flex: none; font-size: .8rem; }
+.current-message-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Bascule en fondu quand la diapositive affichée change (devices-live.js). */
+.live-slot { transition: opacity .25s ease; }
+.live-slot.is-fading { opacity: 0; }
 
 /* Paramètres */
 

@@ -1,8 +1,5 @@
 <?php
-
-use VitrineExpress\Devices;
-use VitrineExpress\View;
-
+// L'état et la diapositive affichée sont mis à jour toutes les 5 secondes (devices-live.js, /admin/devices/live).
 ?>
 <div class="page-head">
     <h1>Périphériques d’affichage</h1>
@@ -10,7 +7,7 @@ use VitrineExpress\View;
 </div>
 
 <div class="table-wrap">
-<table class="table">
+<table class="table" data-live-url="<?= e(url('/admin/devices/live')) ?>">
     <thead>
     <tr>
         <th>Nom</th>
@@ -26,11 +23,8 @@ use VitrineExpress\View;
         <tr><td colspan="6" class="empty">Aucun périphérique d’affichage. Ajoutez-en un pour obtenir son code de connexion.</td></tr>
     <?php endif; ?>
     <?php foreach ($devices as $device): ?>
-        <?php
-        $status = Devices::status($device, $offlineAfter);
-        $current = $status === Devices::STATUS_ONLINE ? ($messages[(int) $device['current_message_id']] ?? null) : null;
-        ?>
-        <tr>
+        <?php $state = $live[(int) $device['id']]; ?>
+        <tr data-device-id="<?= (int) $device['id'] ?>">
             <td>
                 <strong><?= e($device['name']) ?></strong>
                 <?php if ($device['description'] !== ''): ?><br><span class="muted"><?= e($device['description']) ?></span><?php endif; ?>
@@ -42,22 +36,8 @@ use VitrineExpress\View;
                 <?php endforeach; ?>
                 <?php if (!$device['groups']): ?><span class="muted">Aucun</span><?php endif; ?>
             </td>
-            <td>
-                <?= View::render('devices/_status', ['status' => $status], null) ?><br>
-                <span class="muted small"><?= e(time_ago($device['last_seen_at'])) ?></span>
-            </td>
-            <td>
-                <?php if ($current): ?>
-                    <div class="current-message">
-                        <?= View::render('messages/_thumb', ['message' => $current, 'app' => $app], null) ?>
-                        <span><?= e($current['title']) ?></span>
-                    </div>
-                <?php elseif ($status === Devices::STATUS_ONLINE): ?>
-                    <span class="muted">L’heure et la date (aucun message)</span>
-                <?php else: ?>
-                    <span class="muted">—</span>
-                <?php endif; ?>
-            </td>
+            <td class="live-status"><?= $state['status'] ?></td>
+            <td class="live-current" data-key="<?= e($state['key']) ?>"><div class="live-slot"><?= $state['current'] ?></div></td>
             <td class="actions">
                 <a class="button small" href="<?= e(url('/admin/devices/' . $device['id'] . '/edit')) ?>">Modifier</a>
             </td>

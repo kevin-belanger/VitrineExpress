@@ -38,6 +38,7 @@ return static function (Router $r): void {
     $r->post('/admin/messages/{id}/delete', [MessageController::class, 'delete']);
 
     $r->get('/admin/devices', [DeviceController::class, 'index']);
+    $r->get('/admin/devices/live', [DeviceController::class, 'live']);
     $r->get('/admin/devices/new', [DeviceController::class, 'create']);
     $r->post('/admin/devices', [DeviceController::class, 'store']);
     $r->get('/admin/devices/{id}/edit', [DeviceController::class, 'edit']);
