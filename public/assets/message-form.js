@@ -229,12 +229,12 @@
     }
 
     // ---------- Date de fin facultative ----------
-    // Pas de fin : seul le lien « Définir une date de fin » est visible. Les champs cachés sont
-    // désactivés, donc pas envoyés : le message n'a pas de fin.
+    // Pas de fin : la ligne Fin est cachée et le lien « Définir une date de fin » est au bout de la
+    // ligne Début. Les champs cachés sont désactivés, donc pas envoyés : le message n'a pas de fin.
 
     var endFields = document.getElementById('end-fields');
     var endLabel = form.querySelector('.end-label');
-    var endAdd = endFields.querySelector('.end-add');
+    var endAdd = form.querySelector('.end-add');
     var endRemove = endFields.querySelector('.end-remove');
     var endDate = form.querySelector('[name="end_date"]');
     var endTime = form.querySelector('[name="end_time"]');
@@ -242,9 +242,8 @@
 
     function setEnd(on, byUser) {
         endAdd.hidden = on;
-        endDate.hidden = endTime.hidden = endRemove.hidden = !on;
+        endLabel.hidden = endFields.hidden = !on;
         endDate.disabled = endTime.disabled = !on;
-        endLabel.classList.toggle('is-empty', !on);
         if (on && !endDate.value) {
             endDate.value = startDate.value;
         }

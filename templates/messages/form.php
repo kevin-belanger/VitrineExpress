@@ -87,13 +87,13 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             <div class="inline-fields">
                 <input type="date" id="start_date" name="start_date" value="<?= e($values['start_date']) ?>" required>
                 <input type="time" name="start_time" value="<?= e($values['start_time']) ?>" aria-label="Heure de début">
+                <button type="button" class="link-button end-add" hidden>Définir une date de fin</button>
                 <?= field_error($errors, 'start') ?>
             </div>
 
-            <?php // Sans JavaScript, les champs de fin restent visibles ; message-form.js les cache s'il n'y a pas de fin. ?>
+            <?php // Sans JavaScript, la ligne Fin reste visible ; message-form.js la cache s'il n'y a pas de fin. ?>
             <label for="end_date" class="end-label">Fin</label>
             <div class="inline-fields" id="end-fields">
-                <button type="button" class="link-button end-add" hidden>Définir une date de fin</button>
                 <input type="date" id="end_date" name="end_date" value="<?= e($values['end_date']) ?>">
                 <input type="time" name="end_time" value="<?= e($values['end_time']) ?>" aria-label="Heure de fin">
                 <button type="button" class="icon-button end-remove" title="Retirer la date de fin" aria-label="Retirer la date de fin">

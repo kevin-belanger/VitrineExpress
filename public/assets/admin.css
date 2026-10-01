@@ -317,7 +317,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
     align-items: center;
 }
 .compact-grid > label { font-weight: 600; }
-.end-label.is-empty { visibility: hidden; }
+.end-add { margin-left: .35rem; }
 
 /* Champ image (message-form.js) */
 .image-field { display: flex; flex-direction: column; gap: .5rem; }
