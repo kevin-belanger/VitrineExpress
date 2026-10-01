@@ -36,7 +36,11 @@
             Taille maximale des fichiers (Mo)
             <input type="number" name="max_upload_mb" value="<?= e($values['max_upload_mb']) ?>" min="1" max="500" required>
             <?= field_error($errors, 'max_upload_mb') ?>
-            <p class="hint">Le serveur PHP accepte actuellement jusqu’à <?= e($serverUploadLimit) ?> par fichier (réglage <code>upload_max_filesize</code>).</p>
+            <?php if ((int) $values['max_upload_mb'] > $serverLimitMb): ?>
+                <p class="hint hint-warning">Votre hébergement refuse les fichiers de plus de <?= $serverLimitMb ?> Mo. Pour accepter de plus gros fichiers, demandez à votre hébergeur d’augmenter cette limite.</p>
+            <?php else: ?>
+                <p class="hint">Votre hébergement accepte des fichiers jusqu’à <?= $serverLimitMb ?> Mo.</p>
+            <?php endif; ?>
         </label>
     </fieldset>
 

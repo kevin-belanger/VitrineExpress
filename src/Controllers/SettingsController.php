@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace VitrineExpress\Controllers;
 
 use VitrineExpress\Controller;
+use VitrineExpress\Installer;
 use VitrineExpress\Media;
 use VitrineExpress\Messages;
 use VitrineExpress\Response;
@@ -87,7 +88,11 @@ final class SettingsController extends Controller
             'errors' => $errors,
             'logoUrl' => Media::url($this->app, (string) $values['logo_path']),
             'timezones' => timezone_identifiers_list(),
-            'serverUploadLimit' => ini_get('upload_max_filesize'),
+            // Limite réelle de l'hébergement : la plus petite des deux limites PHP, en Mo.
+            'serverLimitMb' => (int) floor(min(
+                Installer::iniBytes((string) ini_get('upload_max_filesize')),
+                Installer::iniBytes((string) ini_get('post_max_size'))
+            ) / 1048576),
         ], $status);
     }
 }
