@@ -76,11 +76,13 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
                 <?= field_error($errors, 'start') ?>
             </div>
 
-            <label for="end_date">Fin</label>
+            <label class="end-toggle">
+                <input type="checkbox" id="has_end" <?= $values['end_date'] !== '' ? 'checked' : '' ?>>
+                Fin
+            </label>
             <div class="inline-fields">
-                <input type="date" id="end_date" name="end_date" value="<?= e($values['end_date']) ?>">
+                <input type="date" id="end_date" name="end_date" value="<?= e($values['end_date']) ?>" aria-label="Date de fin">
                 <input type="time" name="end_time" value="<?= e($values['end_time']) ?>" aria-label="Heure de fin">
-                <span class="muted">facultative</span>
                 <?= field_error($errors, 'end') ?>
             </div>
 

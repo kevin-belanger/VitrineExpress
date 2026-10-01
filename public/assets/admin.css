@@ -289,6 +289,8 @@ button.link:hover { color: #fff; text-decoration: underline; }
     align-items: center;
 }
 .compact-grid > label { font-weight: 600; }
+.form .end-toggle { flex-direction: row; align-items: center; gap: .4rem; cursor: pointer; }
+.end-toggle input { margin: 0; accent-color: var(--accent); }
 .inline-fields { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .form .inline-fields input[type="date"],
 .form .inline-fields input[type="time"] { width: auto; }

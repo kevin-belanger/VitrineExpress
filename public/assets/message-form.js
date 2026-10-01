@@ -116,16 +116,26 @@
         }
     });
 
-    // Sans date de fin, l'heure de fin est grisée : le message n'a pas de fin.
-    // (Désactivée, elle n'est pas envoyée ; le serveur garde alors 23:59 par défaut.)
+    // Case « Fin » : décochée, la date et l'heure de fin sont grisées et ne sont pas envoyées
+    // (le message n'a pas de fin) ; cochée, elles s'activent, la date reprenant celle du début.
+    var hasEnd = document.getElementById('has_end');
     var endDate = form.querySelector('[name="end_date"]');
     var endTime = form.querySelector('[name="end_time"]');
-    function syncEnd() {
-        endTime.disabled = !endDate.value;
+    var startDate = form.querySelector('[name="start_date"]');
+    function syncEnd(byUser) {
+        endDate.disabled = endTime.disabled = !hasEnd.checked;
+        if (hasEnd.checked && !endDate.value) {
+            endDate.value = startDate.value;
+        }
+        if (byUser && hasEnd.checked) {
+            endDate.focus();
+        }
+        if (byUser && !hasEnd.checked) {
+            endDate.value = ''; // une date grisée laisserait croire qu'il y a encore une fin
+        }
     }
-    endDate.addEventListener('input', syncEnd);
-    endDate.addEventListener('change', syncEnd);
-    syncEnd();
+    hasEnd.addEventListener('change', function () { syncEnd(true); });
+    syncEnd(false);
 
     toggleType();
 })();
