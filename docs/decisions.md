@@ -122,6 +122,13 @@ docs/              spécification, phases, décisions
 - **Interface** : « Tous les périphériques d'affichage » ou « Choisir ». Sous « Choisir », un seul sélecteur à deux sections (Groupes, Périphériques ; la section Groupes n'apparaît que s'il en existe). Un périphérique inclus par un groupe coché est montré coché, grisé, « inclus par … » ; il n'est pas enregistré comme cible directe. Le résumé donne toujours la liste des périphériques touchés.
 - **Règle** : la condition de ciblage est définie une seule fois (`Messages::targetsDeviceSql()`) et réutilisée par la file, la liste, les filtres et le tableau de bord.
 
+## D23 — Formulaire de message : image et date de fin
+
+- **Image** : zone « Choisir une image ou la glisser ici », qui accepte aussi le collage (Ctrl+V). Une fois l'image choisie, une fiche (miniature, nom, dimensions, poids) avec « Remplacer » ; en modification, « Image actuelle » et « Annuler » pour revenir à l'image enregistrée. Format et taille vérifiés dès le choix, avec les mêmes messages que le serveur ; un fichier refusé n'efface pas le choix précédent. Le vrai `<input type="file">` reste dans le formulaire (caché visuellement mais focalisable), donc l'envoi et la validation serveur sont inchangés.
+- **Envoi** : le bouton passe à « Enregistrement… » et se désactive (téléversements longs, double clic).
+- **Date de fin** : lien « Définir une date de fin » ; les champs n'apparaissent qu'à la demande, avec un bouton pour les retirer. Cachés, ils sont désactivés et non envoyés : pas de fin. Sans JavaScript, les champs restent visibles.
+- **Écarté** : case à cocher « Fin » (demandait une interprétation) ; bibliothèque de téléversement (Dropzone, FilePond) — inutile pour un seul fichier.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

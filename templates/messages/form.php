@@ -12,8 +12,7 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
 </div>
 
 <div class="split split-wide">
-    <form method="post" action="<?= e(url($action)) ?>" enctype="multipart/form-data" class="card form" id="message-form"
-          data-image-url="<?= e($imageUrl ?? '') ?>">
+    <form method="post" action="<?= e(url($action)) ?>" enctype="multipart/form-data" class="card form" id="message-form">
         <?= csrf_field() ?>
 
         <?php if ($isNew): ?>
@@ -33,15 +32,30 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             <?= field_error($errors, 'title') ?>
         </label>
 
-        <div data-for-type="image" class="<?= $isText ? 'hidden' : '' ?>">
-            <label>
-                <?= $isNew ? 'Image' : 'Remplacer l’image' ?>
-                <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif">
-                <?= field_error($errors, 'image') ?>
-                <?php if ($errors && !$isText && $isNew && !isset($errors['image'])): ?>
-                    <p class="hint">Sélectionnez de nouveau l’image.</p>
-                <?php endif; ?>
-            </label>
+        <div data-for-type="image" class="field <?= $isText ? 'hidden' : '' ?>">
+            <span class="field-label">Image</span>
+            <?php // Comportement (choix, glisser-déposer, coller, vérifications) : public/assets/message-form.js ?>
+            <div class="image-field" id="image-field"
+                 data-max-bytes="<?= (int) $maxBytes ?>" data-max-label="<?= e($maxLabel) ?>"
+                 data-current-url="<?= e($imageUrl ?? '') ?>">
+                <input type="file" id="image" name="image" class="visually-hidden" accept="image/jpeg,image/png,image/webp,image/gif">
+                <label for="image" class="dropzone"<?= $imageUrl ? ' hidden' : '' ?>>
+                    <svg class="dropzone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l4.6-4.6a2 2 0 0 1 2.8 0L16 16m-2-2 1.6-1.6a2 2 0 0 1 2.8 0L20 14M14 8h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+                    <span><strong>Choisir une image</strong> ou la glisser ici</span>
+                </label>
+                <div class="image-card"<?= $imageUrl ? '' : ' hidden' ?>>
+                    <img class="image-card-thumb" src="<?= e($imageUrl ?? '') ?>" alt="">
+                    <span class="image-card-info">
+                        <strong class="image-card-name"><?= $imageUrl ? 'Image actuelle' : '' ?></strong>
+                        <span class="image-card-meta muted"></span>
+                    </span>
+                    <span class="image-card-actions">
+                        <label for="image" class="button small">Remplacer</label>
+                        <button type="button" class="button small image-card-undo" hidden>Annuler</button>
+                    </span>
+                </div>
+                <p class="field-error image-error"<?= isset($errors['image']) || ($errors && !$isText && $isNew) ? '' : ' hidden' ?>><?= e($errors['image'] ?? 'Sélectionnez de nouveau l’image.') ?></p>
+            </div>
         </div>
 
         <div data-for-type="text" class="<?= $isText ? '' : 'hidden' ?> form">
@@ -76,13 +90,15 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
                 <?= field_error($errors, 'start') ?>
             </div>
 
-            <label class="end-toggle">
-                <input type="checkbox" id="has_end" <?= $values['end_date'] !== '' ? 'checked' : '' ?>>
-                Fin
-            </label>
-            <div class="inline-fields">
-                <input type="date" id="end_date" name="end_date" value="<?= e($values['end_date']) ?>" aria-label="Date de fin">
+            <?php // Sans JavaScript, les champs de fin restent visibles ; message-form.js les cache s'il n'y a pas de fin. ?>
+            <label for="end_date" class="end-label">Fin</label>
+            <div class="inline-fields" id="end-fields">
+                <button type="button" class="link-button end-add" hidden>Définir une date de fin</button>
+                <input type="date" id="end_date" name="end_date" value="<?= e($values['end_date']) ?>">
                 <input type="time" name="end_time" value="<?= e($values['end_time']) ?>" aria-label="Heure de fin">
+                <button type="button" class="icon-button end-remove" title="Retirer la date de fin" aria-label="Retirer la date de fin">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+                </button>
                 <?= field_error($errors, 'end') ?>
             </div>
 

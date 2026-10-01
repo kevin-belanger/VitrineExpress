@@ -34,7 +34,35 @@ a { color: var(--accent); }
 h1 { font-size: 1.5rem; margin: 0; }
 h2 { font-size: 1.15rem; margin: 1.5rem 0 .75rem; }
 .muted { color: var(--muted); font-weight: normal; }
-.hidden { display: none !important; }
+.hidden, [hidden] { display: none !important; }
+.visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+.link-button { background: none; border: 0; padding: .4rem 0; font: inherit; color: var(--accent); cursor: pointer; }
+.link-button:hover { text-decoration: underline; }
+.icon-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+}
+.icon-button:hover { background: #eef0f3; color: var(--text); }
+.icon-button svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
 
 /* Barre du haut */
 .topbar {
@@ -289,8 +317,46 @@ button.link:hover { color: #fff; text-decoration: underline; }
     align-items: center;
 }
 .compact-grid > label { font-weight: 600; }
-.form .end-toggle { flex-direction: row; align-items: center; gap: .4rem; cursor: pointer; }
-.end-toggle input { margin: 0; accent-color: var(--accent); }
+.end-label.is-empty { visibility: hidden; }
+
+/* Champ image (message-form.js) */
+.image-field { display: flex; flex-direction: column; gap: .5rem; }
+.form .dropzone {
+    align-items: center;
+    justify-content: center;
+    gap: .35rem;
+    padding: 1.5rem 1rem;
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    background: #fafbfc;
+    color: var(--muted);
+    font-weight: normal;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color .15s, background-color .15s;
+}
+.dropzone strong { color: var(--accent); }
+.dropzone:hover,
+.image-field.is-dragover .dropzone { border-color: var(--accent); background: var(--accent-soft); }
+.dropzone-icon { width: 2rem; height: 2rem; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+.image-field input:focus-visible ~ .dropzone,
+.image-field input:focus-visible ~ .image-card { outline: 2px solid rgba(15, 118, 110, .4); outline-offset: 2px; }
+.image-card {
+    display: flex;
+    align-items: center;
+    gap: .85rem;
+    padding: .6rem;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #fff;
+}
+.image-field.is-dragover .image-card { border-color: var(--accent); background: var(--accent-soft); }
+.image-card-thumb { flex: none; width: 96px; height: 54px; object-fit: contain; background: #000; border-radius: 6px; }
+.image-card-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.image-card-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.image-card-meta { font-size: .85rem; }
+.image-card-actions { display: flex; gap: .4rem; flex: none; }
+.form label.button { display: inline-block; font-weight: normal; }
 .inline-fields { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
 .form .inline-fields input[type="date"],
 .form .inline-fields input[type="time"] { width: auto; }

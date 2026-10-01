@@ -116,6 +116,8 @@ final class MessageController extends Controller
             'errors' => $errors,
             'message' => $message,
             'imageUrl' => $message !== null ? Media::url($this->app, $message['media_path']) : null,
+            'maxBytes' => Media::limitBytes($this->app),
+            'maxLabel' => Media::formatBytes(Media::limitBytes($this->app)),
             'groups' => Groups::pickerItems($this->app),
             'devices' => Devices::targetItems($this->app),
             'deviceNames' => Devices::options($this->app),
