@@ -3,6 +3,7 @@
     <a class="button primary" href="<?= e(url('/admin/users/new')) ?>">Ajouter un utilisateur</a>
 </div>
 
+<div class="table-wrap">
 <table class="table">
     <thead>
     <tr>
@@ -32,3 +33,4 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

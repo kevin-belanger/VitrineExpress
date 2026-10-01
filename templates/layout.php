@@ -36,17 +36,25 @@ $isActive = static function (string $path) use ($current): bool {
         <a class="brand" href="<?= e(url('/admin')) ?>">
             <img src="<?= e(asset('/assets/brand/logo-light.png')) ?>" alt="VitrineExpress" width="218" height="32">
         </a>
-        <nav class="mainnav" aria-label="Navigation principale">
-            <?php foreach ($nav as $path => $label): ?>
-                <a href="<?= e(url($path)) ?>"<?= $isActive($path) ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>
-            <?php endforeach; ?>
-        </nav>
-        <div class="usermenu">
-            <a href="<?= e(url('/admin/account')) ?>" title="Changer mon mot de passe"><?= e($user['display_name'] !== '' ? $user['display_name'] : $user['username']) ?></a>
-            <form method="post" action="<?= e(url('/logout')) ?>">
-                <?= csrf_field() ?>
-                <button type="submit" class="link">Déconnexion</button>
-            </form>
+        <?php // Quand tout ne tient plus sur une ligne, le menu se replie derrière ce bouton (admin.js). ?>
+        <button type="button" class="menu-toggle" aria-expanded="false" aria-controls="topnav">
+            <svg class="icon-open" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <svg class="icon-close" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+            Menu
+        </button>
+        <div class="topnav" id="topnav">
+            <nav class="mainnav" aria-label="Navigation principale">
+                <?php foreach ($nav as $path => $label): ?>
+                    <a href="<?= e(url($path)) ?>"<?= $isActive($path) ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>
+                <?php endforeach; ?>
+            </nav>
+            <div class="usermenu">
+                <a href="<?= e(url('/admin/account')) ?>" title="Changer mon mot de passe"><?= e($user['display_name'] !== '' ? $user['display_name'] : $user['username']) ?></a>
+                <form method="post" action="<?= e(url('/logout')) ?>">
+                    <?= csrf_field() ?>
+                    <button type="submit" class="link">Déconnexion</button>
+                </form>
+            </div>
         </div>
     </header>
 <?php endif; ?>

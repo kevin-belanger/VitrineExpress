@@ -97,6 +97,50 @@ h2 { font-size: 1.15rem; margin: 1.5rem 0 .75rem; }
 button.link { background: none; border: 0; color: #cbd5e1; cursor: pointer; font: inherit; padding: 0; }
 button.link:hover { color: #fff; text-decoration: underline; }
 
+/* Menu repliable (admin.js) : quand la barre ne tient plus sur une ligne, elle reçoit « is-compact » ;
+   le bouton Menu ouvre alors la navigation en panneau vertical sous la barre (« is-open »).
+   Sans JavaScript, la barre passe simplement sur plusieurs lignes. */
+.topnav { display: flex; align-items: center; gap: 2rem; flex: 1; }
+.mainnav a, .usermenu { white-space: nowrap; }
+.topbar.has-menu-js,
+.topbar.has-menu-js .mainnav { flex-wrap: nowrap; }
+.menu-toggle {
+    display: none;
+    align-items: center;
+    gap: .45rem;
+    margin-left: auto;
+    padding: .4rem .75rem;
+    border: 1px solid rgba(255, 255, 255, .25);
+    border-radius: 6px;
+    background: none;
+    color: #fff;
+    font: inherit;
+    cursor: pointer;
+}
+.menu-toggle:hover { background: rgba(255, 255, 255, .08); }
+.menu-toggle svg { width: 1.2rem; height: 1.2rem; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.menu-toggle .icon-close,
+.menu-toggle[aria-expanded="true"] .icon-open { display: none; }
+.menu-toggle[aria-expanded="true"] .icon-close { display: block; }
+.topbar.is-compact { flex-wrap: wrap; }
+.topbar.is-compact .menu-toggle { display: inline-flex; }
+.topbar.is-compact .topnav { display: none; }
+.topbar.is-compact.is-open .topnav {
+    display: flex;
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: .5rem;
+    padding: .25rem 0 1rem;
+}
+.topbar.is-compact.is-open .mainnav { flex-direction: column; gap: .15rem; }
+.topbar.is-compact.is-open .mainnav a { padding: .6rem .75rem; }
+.topbar.is-compact.is-open .usermenu {
+    justify-content: space-between;
+    padding: .75rem .75rem 0;
+    border-top: 1px solid rgba(255, 255, 255, .12);
+}
+
 /* Page */
 .page { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
 .page-head {
@@ -146,7 +190,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .form { display: flex; flex-direction: column; gap: 1rem; }
 .form.narrow { max-width: 520px; }
 .form label, .form fieldset { display: flex; flex-direction: column; gap: .35rem; font-weight: 600; }
-.form fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem 1rem; margin: 0; }
+.form fieldset { border: 1px solid var(--border); border-radius: var(--radius); padding: .75rem 1rem 1rem; margin: 0; min-width: 0; }
 .form legend { padding: 0 .35rem; }
 .form input[type="text"],
 .form input[type="password"],
@@ -179,15 +223,17 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .row { display: flex; gap: 1rem; flex-wrap: wrap; }
 .row > * { flex: 1 1 200px; }
 
-/* Tableaux */
-.table {
-    width: 100%;
-    border-collapse: collapse;
+/* Tableaux : le cadre défile horizontalement si le tableau est plus large que l'écran (pas toute la page). */
+.table-wrap {
+    overflow-x: auto;
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    overflow: hidden;
     box-shadow: var(--shadow);
+}
+.table {
+    width: 100%;
+    border-collapse: collapse;
 }
 .table th, .table td { padding: .65rem .85rem; text-align: left; border-bottom: 1px solid var(--border); vertical-align: middle; }
 .table th { background: #f9fafb; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
@@ -252,7 +298,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
     flex-wrap: wrap;
     margin-bottom: 1rem;
 }
-.filters label { display: flex; flex-direction: column; gap: .25rem; font-size: .8rem; font-weight: 600; color: var(--muted); }
+.filters label { display: flex; flex-direction: column; gap: .25rem; max-width: 100%; font-size: .8rem; font-weight: 600; color: var(--muted); }
 .filters select {
     font: inherit;
     font-size: .95rem;
@@ -261,7 +307,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
     border: 1px solid var(--border);
     border-radius: 6px;
     background: #fff;
-    min-width: 200px;
+    min-width: min(200px, 100%);
 }
 .hint-box {
     background: var(--accent-soft);
@@ -462,7 +508,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .picker-summary.is-ok { background: var(--success-soft); color: var(--success); }
 .picker-summary.is-warning { background: var(--warning-soft); color: var(--warning); }
 
-.target-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .5rem; margin-bottom: .25rem; }
+.target-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: .5rem; margin-bottom: .25rem; }
 .form .target-mode {
     flex-direction: row;
     align-items: flex-start;
@@ -480,7 +526,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
 
 /* Tableau de bord */
 .small { font-size: .85rem; }
-.dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.25rem; align-items: start; }
+.dash { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr)); gap: 1.25rem; align-items: start; }
 .dash-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -574,5 +620,12 @@ button.link:hover { color: #fff; text-decoration: underline; }
     .page { padding: 1rem; }
     .split, .split-wide { grid-template-columns: minmax(0, 1fr); }
     .preview-panel { position: static; order: -1; }
-    .table { display: block; overflow-x: auto; }
+}
+
+@media (max-width: 420px) {
+    .brand img { height: 26px; }
+}
+
+@media (max-width: 340px) {
+    .brand img { height: 22px; }
 }

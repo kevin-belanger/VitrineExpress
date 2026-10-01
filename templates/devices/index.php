@@ -9,6 +9,7 @@ use VitrineExpress\View;
     <a class="button primary" href="<?= e(url('/admin/devices/new')) ?>">Ajouter un périphérique d’affichage</a>
 </div>
 
+<div class="table-wrap">
 <table class="table">
     <thead>
     <tr>
@@ -64,3 +65,4 @@ use VitrineExpress\View;
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

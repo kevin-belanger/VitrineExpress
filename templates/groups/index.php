@@ -3,6 +3,7 @@
     <a class="button primary" href="<?= e(url('/admin/groups/new')) ?>">Ajouter un groupe</a>
 </div>
 
+<div class="table-wrap">
 <table class="table">
     <thead>
     <tr>
@@ -35,3 +36,4 @@
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

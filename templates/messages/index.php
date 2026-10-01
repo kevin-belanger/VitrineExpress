@@ -59,6 +59,7 @@ $now = now();
     </p>
 <?php endif; ?>
 
+<div class="table-wrap">
 <table class="table">
     <thead>
     <tr>
@@ -115,3 +116,4 @@ $now = now();
     <?php endforeach; ?>
     </tbody>
 </table>
+</div>

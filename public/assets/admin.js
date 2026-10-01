@@ -2,6 +2,43 @@
 (function () {
     'use strict';
 
+    // Barre du haut : quand le logo, le menu et l'utilisateur ne tiennent plus sur une ligne,
+    // le menu se replie derrière le bouton « Menu » (mesuré, pas de largeur d'écran fixe).
+    var topbar = document.querySelector('.topbar');
+    if (topbar) {
+        var menuToggle = topbar.querySelector('.menu-toggle');
+        var setMenuOpen = function (open) {
+            topbar.classList.toggle('is-open', open);
+            menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        };
+        var fitMenu = function () {
+            topbar.classList.remove('is-compact'); // mesure dans la disposition normale, sur une ligne
+            var compact = topbar.scrollWidth > topbar.clientWidth;
+            topbar.classList.toggle('is-compact', compact);
+            if (!compact) {
+                setMenuOpen(false);
+            }
+        };
+        topbar.classList.add('has-menu-js');
+        menuToggle.addEventListener('click', function () {
+            setMenuOpen(!topbar.classList.contains('is-open'));
+        });
+        document.addEventListener('click', function (event) {
+            if (topbar.classList.contains('is-open') && !topbar.contains(event.target)) {
+                setMenuOpen(false);
+            }
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && topbar.classList.contains('is-open')) {
+                setMenuOpen(false);
+                menuToggle.focus();
+            }
+        });
+        window.addEventListener('resize', fitMenu);
+        window.addEventListener('load', fitMenu); // polices et logo chargés
+        fitMenu();
+    }
+
     // Confirmation avant l'envoi des formulaires marqués data-confirm (suppressions, déconnexions…),
     // dans une fenêtre de l'application plutôt que la boîte du navigateur.
     // Le texte du bouton vient du bouton du formulaire ; il est rouge si ce bouton a la classe « danger ».

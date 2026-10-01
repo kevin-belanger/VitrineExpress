@@ -139,6 +139,12 @@ docs/              spécification, phases, décisions
   - `icon-light.png` (icône claire) gardée en source, inutilisée pour l'instant.
 - **Couleurs** alignées sur le logo : accent bleu `#0a56c2` (le bleu de la vitrine, contraste suffisant pour du texte blanc), surlignage cyan dans la barre du haut, fond bleu marine sur les écrans de la télé (code, heure). La barre du haut garde l'ardoise `#10202b`, déjà proche du texte foncé du logo.
 
+## D25 — Menu repliable et pages adaptées aux petits écrans
+
+- **Menu** : quand le logo, la navigation et l'utilisateur ne tiennent plus sur une ligne (mesuré par `admin.js`, pas de largeur d'écran fixe), la navigation se replie derrière un bouton « Menu » qui l'ouvre en panneau vertical sous la barre (fermeture : bouton, clic à côté, Échap). Sans JavaScript, la barre passe sur plusieurs lignes.
+- **Tableaux** : chaque liste est dans un cadre qui défile horizontalement au besoin, au lieu de faire défiler toute la page (tablettes, téléphones).
+- **Largeurs minimales** plafonnées à la largeur de l'écran (`min(…, 100%)`), `min-width: 0` sur les fieldsets : aucune page ne déborde de 320 à 2560 px.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.
