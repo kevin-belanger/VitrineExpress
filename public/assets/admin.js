@@ -62,6 +62,33 @@
         }
     }
 
+    // Parties de formulaire repliées derrière un bouton : <button data-reveal="id"> affiche l'élément id,
+    // un bouton [data-conceal] à l'intérieur le referme et vide ses champs (rien n'est alors modifié).
+    // L'élément reste ouvert au chargement s'il porte data-open (ex. une erreur à montrer).
+    var reveals = document.querySelectorAll('[data-reveal]');
+    Array.prototype.forEach.call(reveals, function (button) {
+        var target = document.getElementById(button.getAttribute('data-reveal'));
+        if (!target) {
+            return;
+        }
+        function setOpen(open, byUser) {
+            target.hidden = !open;
+            button.hidden = open;
+            if (!open) {
+                Array.prototype.forEach.call(target.querySelectorAll('input'), function (input) { input.value = ''; });
+            }
+            if (byUser) {
+                (open ? target.querySelector('input') : button).focus();
+            }
+        }
+        button.addEventListener('click', function () { setOpen(true, true); });
+        var cancel = target.querySelector('[data-conceal]');
+        if (cancel) {
+            cancel.addEventListener('click', function () { setOpen(false, true); });
+        }
+        setOpen(target.hasAttribute('data-open'), false);
+    });
+
     // Envoi automatique des formulaires de filtres marqués data-autosubmit.
     document.addEventListener('change', function (event) {
         var form = event.target.form;
