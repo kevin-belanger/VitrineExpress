@@ -1,5 +1,5 @@
-// Sélecteurs à choix multiples (templates/partials/picker.php) : recherche, tout cocher/décocher,
-// compteur et résumé des téléviseurs touchés.
+// Sélecteurs à choix multiples (templates/partials/picker.php) : recherche, compteur, tout cocher/décocher,
+// périphériques inclus par les groupes cochés et résumé des périphériques touchés.
 (function () {
     'use strict';
 
@@ -10,29 +10,76 @@
     }
 
     function setup(picker) {
-        var boxes = picker.querySelectorAll('.picker-list input[type="checkbox"]');
-        var rows = picker.querySelectorAll('.picker-list li');
+        var rows = Array.prototype.slice.call(picker.querySelectorAll('.picker-list li:not(.picker-section)'));
+        var headers = Array.prototype.slice.call(picker.querySelectorAll('.picker-list .picker-section'));
+        var boxOf = function (row) { return row.querySelector('input[type="checkbox"]'); };
+        var inSection = function (key) {
+            return rows.filter(function (row) { return row.getAttribute('data-section') === key; }).map(boxOf);
+        };
+        var boxes = rows.map(boxOf);
+        var groupBoxes = inSection('groups');
+        var deviceBoxes = inSection('devices');
         var search = picker.querySelector('.picker-search');
         var count = picker.querySelector('.picker-count');
         var summary = picker.querySelector('.picker-summary');
         var noMatch = picker.querySelector('.picker-nomatch');
-        var noun = picker.getAttribute('data-noun') || 'éléments';
+        var multi = picker.hasAttribute('data-multi');
         var names = picker.hasAttribute('data-device-names') ? JSON.parse(picker.getAttribute('data-device-names')) : null;
 
+        function labelOf(box) {
+            return box.closest('.picker-item').querySelector('.picker-label').textContent;
+        }
+
+        // Un périphérique inclus par un groupe coché est montré coché et grisé (« inclus par … »).
+        // Il est désactivé, donc pas envoyé : seule la sélection directe est enregistrée.
+        function syncIncluded() {
+            var via = {};
+            groupBoxes.forEach(function (box) {
+                if (!box.checked) { return; }
+                (box.getAttribute('data-devices') || '').split(',').forEach(function (id) {
+                    if (id) { (via[id] = via[id] || []).push(labelOf(box)); }
+                });
+            });
+            deviceBoxes.forEach(function (box) {
+                var groups = via[box.value];
+                var meta = box.closest('.picker-item').querySelector('.picker-meta');
+                if (groups) {
+                    if (!box.checked || box.dataset.auto) {
+                        box.checked = true;
+                        box.disabled = true;
+                        box.dataset.auto = '1';
+                    }
+                    meta.textContent = 'inclus par ' + groups.join(', ');
+                } else {
+                    if (box.dataset.auto) {
+                        box.checked = false;
+                        box.disabled = false;
+                        delete box.dataset.auto;
+                    }
+                    meta.textContent = meta.getAttribute('data-meta');
+                }
+            });
+        }
+
         function update() {
-            var checked = 0;
+            syncIncluded();
+            var chosen = 0;
             var devices = {};
-            for (var i = 0; i < boxes.length; i++) {
-                boxes[i].closest('.picker-item').classList.toggle('is-checked', boxes[i].checked);
-                if (boxes[i].checked) {
-                    checked++;
-                    (boxes[i].getAttribute('data-devices') || '').split(',').forEach(function (id) {
+            boxes.forEach(function (box) {
+                var item = box.closest('.picker-item');
+                item.classList.toggle('is-checked', box.checked && !box.dataset.auto);
+                item.classList.toggle('is-included', !!box.dataset.auto);
+                if (box.checked) {
+                    if (!box.dataset.auto) { chosen++; }
+                    (box.getAttribute('data-devices') || '').split(',').forEach(function (id) {
                         if (id) { devices[id] = true; }
                     });
                 }
-            }
+            });
             if (count) {
-                count.textContent = checked + ' sur ' + boxes.length + ' coché' + (checked > 1 ? 's' : '');
+                count.textContent = multi
+                    ? plural(chosen, 'élément choisi', 'éléments choisis')
+                    : chosen + ' sur ' + boxes.length + ' coché' + (chosen > 1 ? 's' : '');
             }
             if (summary) {
                 renderSummary(Object.keys(devices));
@@ -59,20 +106,16 @@
             summary.className = 'picker-summary is-ok';
         }
 
-        function visibleBoxes() {
-            var result = [];
-            for (var i = 0; i < rows.length; i++) {
-                if (!rows[i].hidden) { result.push(boxes[i]); }
-            }
-            return result;
-        }
-
         function setAll(value) {
-            visibleBoxes().forEach(function (box) { if (!box.disabled) { box.checked = value; } });
+            rows.forEach(function (row) {
+                var box = boxOf(row);
+                if (!row.hidden && !box.disabled) { box.checked = value; }
+            });
             update();
         }
 
-        if (boxes.length >= 2) {
+        // Tout cocher / décocher : seulement pour une liste d'un seul type.
+        if (!multi && boxes.length >= 2) {
             picker.querySelector('.picker-all').hidden = false;
             picker.querySelector('.picker-none').hidden = false;
             picker.querySelector('.picker-all').addEventListener('click', function () { setAll(true); });
@@ -83,13 +126,14 @@
             search.hidden = false;
             search.addEventListener('input', function () {
                 var term = search.value.trim().toLocaleLowerCase('fr');
-                var any = false;
-                for (var i = 0; i < rows.length; i++) {
-                    var match = rows[i].textContent.toLocaleLowerCase('fr').indexOf(term) !== -1;
-                    rows[i].hidden = !match;
-                    any = any || match;
-                }
-                noMatch.hidden = any;
+                var visible = {};
+                rows.forEach(function (row) {
+                    var match = row.querySelector('.picker-label').textContent.toLocaleLowerCase('fr').indexOf(term) !== -1;
+                    row.hidden = !match;
+                    if (match) { visible[row.getAttribute('data-section')] = true; }
+                });
+                headers.forEach(function (header) { header.hidden = !visible[header.getAttribute('data-section')]; });
+                noMatch.hidden = Object.keys(visible).length > 0;
             });
             // Entrée dans la recherche ne doit pas envoyer le formulaire.
             search.addEventListener('keydown', function (event) {
@@ -107,8 +151,8 @@
         setup(pickers[i]);
     }
 
-    // Choix « Tous les périphériques d’affichage » / « Certains groupes » (formulaire de message).
-    // La liste est seulement estompée en mode « tous » : les groupes cochés sont gardés si on revient en arrière.
+    // Choix « Tous les périphériques d'affichage » / « Choisir » (formulaire de message).
+    // La liste est seulement estompée en mode « tous » : les choix sont gardés si on revient en arrière.
     var modes = document.querySelectorAll('input[name="all_devices"][type="radio"]');
     if (modes.length) {
         var target = document.getElementById(modes[0].getAttribute('data-picker-target'));

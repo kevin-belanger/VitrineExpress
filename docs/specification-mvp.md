@@ -21,7 +21,7 @@ Un téléviseur affiche les messages actifs des groupes dont il fait partie ; le
 - **Téléviseur** : une station d'affichage identifiée par un nom (ex. « Télé local 101 ») et un code à 5 chiffres aléatoire et unique. Il appartient à zéro, un ou plusieurs groupes.
 - **Groupe** : un ensemble nommé de téléviseurs, représentant n'importe quoi (local, département, pavillon, « Aire commune »). Un groupe ne contient pas d'autres groupes : on assigne chaque téléviseur à tous les groupes nécessaires.
 - **Message** : une image plein écran ou un texte enrichi sur un arrière-plan prédéfini, avec une période d'affichage (début et fin, date et heure) et une durée à l'écran.
-- **Ciblage** : un message vise un ou plusieurs groupes, ou l'option « Tous les téléviseurs ». Sans cible, il est gardé mais n'est affiché nulle part.
+- **Ciblage** : un message vise « Tous les périphériques d'affichage », ou un choix de groupes et/ou de périphériques précis. Un groupe inclut aussi les périphériques qu'on y ajoutera plus tard ; un périphérique coché directement n'inclut que lui-même. Les groupes sont donc facultatifs. Sans cible, le message est gardé mais n'est affiché nulle part.
 - **File d'un téléviseur** : les messages actifs qui le visent, sans doublon, dans l'ordre de création. Chaque téléviseur peut donc avoir une file différente.
 - **Arrière-plan** : un préréglage pour les messages texte, soit un dégradé ou une couleur CSS, soit une image générique, choisi pour garder le texte lisible.
 
@@ -37,6 +37,7 @@ Huit tables SQLite suffisent ; les dates sont stockées en texte ISO 8601, dans 
 | `device_groups` | Appartenance téléviseur ↔ groupe | device_id, group_id (clé composée) |
 | `messages` | Messages | id, title (interne), type (`image` ou `text`), media_path, media_mime, text_html, background_id, duration_seconds, start_at, end_at (facultatif), all_devices (0/1), created_by, created_at, updated_at |
 | `message_groups` | Ciblage message ↔ groupe | message_id, group_id (clé composée) |
+| `message_devices` | Ciblage message ↔ périphérique (direct) | message_id, device_id (clé composée) |
 | `backgrounds` | Arrière-plans prédéfinis | id, name, kind (`css` ou `image`), css_value, image_path, text_color |
 | `settings` | Paramètres globaux | key, value |
 
@@ -142,7 +143,7 @@ Le serveur calcule la file de chaque téléviseur à chaque demande et retient l
 
 **Calcul de la file** d'un téléviseur, à l'heure actuelle :
 
-1. Prendre les messages dont `all_devices = 1` ou qui visent au moins un groupe du téléviseur.
+1. Prendre les messages dont `all_devices = 1`, ou qui visent au moins un groupe du téléviseur, ou qui visent le téléviseur directement.
 2. Garder ceux dont `start_at <= maintenant` et dont `end_at` est vide ou `>= maintenant`.
 3. Retirer les doublons et trier par `id` croissant (ordre de création).
 

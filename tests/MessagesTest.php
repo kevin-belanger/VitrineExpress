@@ -120,6 +120,46 @@ function test_queue_contains_active_targeted_messages_without_duplicates(): void
     assert_same([$both, $all, $permanent], $ids);
 }
 
+function test_messages_can_target_devices_directly(): void
+{
+    $app = test_app();
+    $now = '2026-06-15 12:00:00';
+    $group = Groups::create($app, 'G', '', []);
+    $inGroup = Devices::create($app, 'Dans le groupe', '', [$group]);
+    $alone = Devices::create($app, 'Seule', '', []);
+    $other = Devices::create($app, 'Autre', '', []);
+
+    [$values, $errors] = Messages::fromForm($app, [
+        'title' => 'Direct', 'start_date' => '2026-06-01', 'duration_seconds' => '20',
+        'devices' => [(string) $alone, '999'], 'groups' => [(string) $group],
+    ], Messages::TYPE_IMAGE);
+    assert_same([], $errors);
+    assert_same([$alone], $values['device_ids'], 'Les périphériques inconnus sont ignorés');
+    $id = Messages::create($app, $values, ['path' => 'x.png', 'mime' => 'image/png'], null);
+    assert_same([$alone], Messages::deviceIds($app, $id));
+
+    $ids = static fn (int $device): array => array_map(static fn (array $m): int => (int) $m['id'], Playlist::queue($app, $device, $now));
+    assert_same([$id], $ids($alone), 'Ciblé directement');
+    assert_same([$id], $ids($inGroup), 'Ciblé par son groupe');
+    assert_same([], $ids($other));
+
+    $row = Messages::search($app, ['device' => $alone])[0];
+    assert_same(['Seule'], $row['device_names']);
+    assert_same(['G'], $row['group_names']);
+
+    // Seulement des périphériques, sans groupe : le message est bien « en diffusion ».
+    $only = make_message($app, 'Périphérique seulement', []);
+    Messages::setDevices($app, $only, [$other]);
+    $live = array_column(Messages::search($app, ['status' => Messages::FILTER_LIVE], $now), 'title');
+    assert_true(in_array('Périphérique seulement', $live, true));
+    assert_same(3, \VitrineExpress\Dashboard::messages($app, $now)['reached']);
+
+    // Supprimer le périphérique retire le lien, pas le message.
+    $app->db->exec("DELETE FROM devices WHERE id = {$other}");
+    assert_same([], Messages::deviceIds($app, $only));
+    assert_same('Périphérique seulement', Messages::search($app, ['status' => Messages::FILTER_UNBROADCAST], $now)[0]['title']);
+}
+
 function test_rotation_cycles_and_tolerates_changes(): void
 {
     $app = test_app();

@@ -116,6 +116,12 @@ docs/              spécification, phases, décisions
 
 - **Décision** (demandée par Kevin) : l'interface dit « périphérique d'affichage » plutôt que « téléviseur » (un écran peut aussi être un PC ou un moniteur). Forme complète dans les titres, la navigation et les boutons ; forme courte « périphérique » là où le contexte est clair (compteurs, colonnes, résumés). Le code garde `device` ; la documentation technique peut encore dire « téléviseur ».
 
+## D22 — Ciblage direct des périphériques
+
+- **Décision** (définie avec Kevin) : un message peut viser des périphériques précis, en plus ou à la place des groupes (table `message_devices`, migration 003). Les groupes deviennent facultatifs.
+- **Interface** : « Tous les périphériques d'affichage » ou « Choisir ». Sous « Choisir », un seul sélecteur à deux sections (Groupes, Périphériques ; la section Groupes n'apparaît que s'il en existe). Un périphérique inclus par un groupe coché est montré coché, grisé, « inclus par … » ; il n'est pas enregistré comme cible directe. Le résumé donne toujours la liste des périphériques touchés.
+- **Règle** : la condition de ciblage est définie une seule fois (`Messages::targetsDeviceSql()`) et réutilisée par la file, la liste, les filtres et le tableau de bord.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

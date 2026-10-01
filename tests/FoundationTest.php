@@ -11,7 +11,8 @@ use VitrineExpress\Users;
 function test_migrations_create_schema_and_defaults(): void
 {
     $app = test_app();
-    assert_same(2, (int) $app->db->query('PRAGMA user_version')->fetchColumn());
+    $latest = count(glob(dirname(__DIR__) . '/migrations/*.sql'));
+    assert_same($latest, (int) $app->db->query('PRAGMA user_version')->fetchColumn(), 'Toutes les migrations sont appliquées');
     assert_same('20', $app->setting('default_duration'));
     assert_same(8, (int) $app->db->query('SELECT COUNT(*) FROM backgrounds')->fetchColumn());
 }

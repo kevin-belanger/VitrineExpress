@@ -117,6 +117,7 @@ final class MessageController extends Controller
             'message' => $message,
             'imageUrl' => $message !== null ? Media::url($this->app, $message['media_path']) : null,
             'groups' => Groups::pickerItems($this->app),
+            'devices' => Devices::targetItems($this->app),
             'deviceNames' => Devices::options($this->app),
             'backgrounds' => Messages::backgrounds($this->app),
             'maxUpload' => Media::formatBytes(Media::maxUploadBytes($this->app)),

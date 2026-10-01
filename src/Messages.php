@@ -64,13 +64,18 @@ final class Messages
         return 'm.start_at <= :now AND (m.end_at IS NULL OR m.end_at >= :now)';
     }
 
-    /** Condition SQL « message affiché sur le périphérique :device » sur l'alias m. */
+    /**
+     * Condition SQL « message affiché sur le périphérique :device » sur l'alias m :
+     * tous les périphériques, ou un groupe qui le contient, ou le périphérique lui-même.
+     */
     public static function targetsDeviceSql(): string
     {
-        return '(m.all_devices = 1 OR EXISTS (
-                    SELECT 1 FROM message_groups mg
-                    JOIN device_groups dg ON dg.group_id = mg.group_id
-                    WHERE mg.message_id = m.id AND dg.device_id = :device))';
+        return '(m.all_devices = 1
+                 OR EXISTS (SELECT 1 FROM message_groups mg
+                            JOIN device_groups dg ON dg.group_id = mg.group_id
+                            WHERE mg.message_id = m.id AND dg.device_id = :device)
+                 OR EXISTS (SELECT 1 FROM message_devices md
+                            WHERE md.message_id = m.id AND md.device_id = :device))';
     }
 
     /**
@@ -93,6 +98,7 @@ final class Messages
             'duration_seconds' => $get('duration_seconds'),
             'all_devices' => !empty($post['all_devices']),
             'group_ids' => [],
+            'device_ids' => [],
             'background_id' => (int) $get('background_id'),
             'text_html' => '',
         ];
@@ -126,10 +132,11 @@ final class Messages
             $values['duration_seconds'] = $duration;
         }
 
-        $requested = is_array($post['groups'] ?? null) ? array_map('intval', $post['groups']) : [];
-        $valid = array_keys(Groups::options($app));
-        // Aucune cible est permis : le message est alors gardé sans être affiché (brouillon).
-        $values['group_ids'] = array_values(array_intersect($valid, $requested));
+        // Cibles : groupes et/ou périphériques. Aucune cible est permis : le message est alors
+        // gardé sans être affiché (brouillon). Les identifiants inconnus sont ignorés.
+        $ids = static fn (string $key): array => is_array($post[$key] ?? null) ? array_map('intval', $post[$key]) : [];
+        $values['group_ids'] = array_values(array_intersect(array_keys(Groups::options($app)), $ids('groups')));
+        $values['device_ids'] = array_values(array_intersect(array_keys(Devices::options($app)), $ids('devices')));
 
         if ($type === self::TYPE_TEXT) {
             $html = HtmlSanitizer::clean(is_string($post['text_html'] ?? null) ? $post['text_html'] : '');
@@ -162,6 +169,7 @@ final class Messages
             'duration_seconds' => (int) $message['duration_seconds'],
             'all_devices' => (bool) $message['all_devices'],
             'group_ids' => self::groupIds($app, (int) $message['id']),
+            'device_ids' => self::deviceIds($app, (int) $message['id']),
             'background_id' => (int) $message['background_id'],
             'text_html' => (string) $message['text_html'],
         ];
@@ -181,6 +189,7 @@ final class Messages
             'duration_seconds' => $app->intSetting('default_duration', 20),
             'all_devices' => false,
             'group_ids' => [],
+            'device_ids' => [],
             'background_id' => (int) $first,
             'text_html' => '',
         ];
@@ -211,6 +220,7 @@ final class Messages
         ]);
         $id = (int) $app->db->lastInsertId();
         self::setGroups($app, $id, $values['group_ids']);
+        self::setDevices($app, $id, $values['device_ids'] ?? []);
         return $id;
     }
 
@@ -243,6 +253,7 @@ final class Messages
             $id,
         ]);
         self::setGroups($app, $id, $values['group_ids']);
+        self::setDevices($app, $id, $values['device_ids'] ?? []);
 
         return $media !== null && $oldMedia !== $media['path'] ? $oldMedia : null;
     }
@@ -273,12 +284,40 @@ final class Messages
         return array_map('intval', $st->fetchAll(PDO::FETCH_COLUMN));
     }
 
-    /** Condition SQL « le message atteint au moins un téléviseur existant » sur l'alias m. */
+    public static function setDevices(App $app, int $messageId, array $deviceIds): void
+    {
+        $app->db->prepare('DELETE FROM message_devices WHERE message_id = ?')->execute([$messageId]);
+        $st = $app->db->prepare('INSERT INTO message_devices (message_id, device_id) SELECT ?, id FROM devices WHERE id = ?');
+        foreach ($deviceIds as $deviceId) {
+            $st->execute([$messageId, $deviceId]);
+        }
+    }
+
+    /** @return list<int> */
+    public static function deviceIds(App $app, int $messageId): array
+    {
+        $st = $app->db->prepare('SELECT device_id FROM message_devices WHERE message_id = ? ORDER BY device_id');
+        $st->execute([$messageId]);
+        return array_map('intval', $st->fetchAll(PDO::FETCH_COLUMN));
+    }
+
+    /** @return array<int, list<string>> noms par message, à partir d'une requête (message_id, name) */
+    private static function namesByMessage(App $app, string $sql): array
+    {
+        $byMessage = [];
+        foreach ($app->db->query($sql)->fetchAll() as $row) {
+            $byMessage[(int) $row['message_id']][] = $row['name'];
+        }
+        return $byMessage;
+    }
+
+    /** Condition SQL « le message atteint au moins un périphérique existant » sur l'alias m. */
     public static function reachesAnyDeviceSql(): string
     {
         return '((m.all_devices = 1 AND EXISTS (SELECT 1 FROM devices))
                  OR EXISTS (SELECT 1 FROM message_groups mg JOIN device_groups dg ON dg.group_id = mg.group_id
-                            WHERE mg.message_id = m.id))';
+                            WHERE mg.message_id = m.id)
+                 OR EXISTS (SELECT 1 FROM message_devices md WHERE md.message_id = m.id))';
     }
 
     /**
@@ -324,15 +363,13 @@ final class Messages
         $st->execute($params);
         $messages = $st->fetchAll();
 
-        $names = $app->db->query(
-            'SELECT mg.message_id, g.name FROM message_groups mg JOIN groups g ON g.id = mg.group_id ORDER BY g.name COLLATE NOCASE'
-        )->fetchAll();
-        $byMessage = [];
-        foreach ($names as $row) {
-            $byMessage[(int) $row['message_id']][] = $row['name'];
-        }
+        $groupNames = self::namesByMessage($app,
+            'SELECT mg.message_id, g.name FROM message_groups mg JOIN groups g ON g.id = mg.group_id ORDER BY g.name COLLATE NOCASE');
+        $deviceNames = self::namesByMessage($app,
+            'SELECT md.message_id, d.name FROM message_devices md JOIN devices d ON d.id = md.device_id ORDER BY d.name COLLATE NOCASE');
         foreach ($messages as &$message) {
-            $message['group_names'] = $byMessage[(int) $message['id']] ?? [];
+            $message['group_names'] = $groupNames[(int) $message['id']] ?? [];
+            $message['device_names'] = $deviceNames[(int) $message['id']] ?? [];
         }
         return $messages;
     }

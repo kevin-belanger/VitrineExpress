@@ -47,14 +47,12 @@ final class Dashboard
         $upcoming = Messages::search($app, ['status' => Messages::STATUS_UPCOMING], $now);
         usort($upcoming, static fn (array $a, array $b): int => strcmp($a['start_at'], $b['start_at']));
 
-        // Téléviseurs qui ont au moins un message actif dans leur file.
+        // Périphériques qui ont au moins un message actif dans leur file
+        // (même règle de ciblage que la file, appliquée à chaque périphérique d).
         $st = $app->db->prepare(
             'SELECT COUNT(*) FROM devices d WHERE EXISTS (
                  SELECT 1 FROM messages m
-                 WHERE ' . Messages::activeSql() . '
-                   AND (m.all_devices = 1 OR EXISTS (
-                        SELECT 1 FROM message_groups mg JOIN device_groups dg ON dg.group_id = mg.group_id
-                        WHERE mg.message_id = m.id AND dg.device_id = d.id)))'
+                 WHERE ' . Messages::activeSql() . ' AND ' . str_replace(':device', 'd.id', Messages::targetsDeviceSql()) . ')'
         );
         $st->execute(['now' => $now]);
 

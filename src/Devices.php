@@ -135,6 +135,25 @@ final class Devices
     }
 
     /**
+     * Éléments du sélecteur de cibles d'un message : nom, groupes (ou description), et lui-même comme périphérique touché.
+     *
+     * @return array<int, array{label: string, meta: string, devices: list<int>}>
+     */
+    public static function targetItems(App $app): array
+    {
+        $items = [];
+        foreach (self::allWithGroups($app) as $device) {
+            $id = (int) $device['id'];
+            $items[$id] = [
+                'label' => $device['name'],
+                'meta' => $device['groups'] ? implode(', ', $device['groups']) : $device['description'],
+                'devices' => [$id],
+            ];
+        }
+        return $items;
+    }
+
+    /**
      * Tous les périphériques d’affichage avec la liste de leurs groupes (clé 'groups' : id => nom).
      *
      * @return list<array>
