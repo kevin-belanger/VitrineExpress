@@ -21,7 +21,6 @@ $plural = static fn (int $n, string $one, string $many): string => $n . ' ' . ($
 $deviceLink = static fn (array $rows): string => count($rows) === 1 ? url('/admin/devices/' . $rows[0]['id'] . '/edit') : url('/admin/devices');
 
 $offlineDetail = Dashboard::names($tv['offline'], static fn (array $d): string => $d['name'] . ' (vu ' . time_ago($d['last_seen_at']) . ')');
-$codesDetail = Dashboard::names($tv['disconnected'], static fn (array $d): string => $d['name'] . ' (code ' . $d['code'] . ')');
 
 $tvAllGood = $tv['total'] > 0 && $tv['online'] === $tv['total'] && !$tv['idle'];
 $live = count($msg['live']);
@@ -43,12 +42,17 @@ $next = $msg['upcoming'][0] ?? null;
                 <?php if ($tvAllGood): ?><span class="dash-ok" aria-hidden="true">✓</span><?php endif; ?>
                 <?= $tv['online'] ?> sur <?= $tv['total'] ?> en ligne
             </p>
-            <p class="dash-sub"><?= $tvAllGood ? 'Tout fonctionne.' : 'Actualisé automatiquement.' ?></p>
+            <?php if ($tvAllGood): ?><p class="dash-sub">Tout fonctionne.</p><?php else: ?><div class="dash-gap"></div><?php endif; ?>
 
             <?= $line(count($tv['offline']), 'danger', $deviceLink($tv['offline']),
                 $plural(count($tv['offline']), 'hors ligne', 'hors ligne'), $offlineDetail) ?>
             <?= $line(count($tv['disconnected']), 'warning', $deviceLink($tv['disconnected']),
-                $plural(count($tv['disconnected']), 'non connecté', 'non connectés'), $codesDetail) ?>
+                count($tv['disconnected']) > 1
+                    ? count($tv['disconnected']) . ' téléviseurs ne sont pas connectés'
+                    : '1 téléviseur n’est pas connecté',
+                count($tv['disconnected']) > 1
+                    ? 'Entrez leur code sur chaque téléviseur pour les connecter.'
+                    : 'Entrez son code sur le téléviseur pour le connecter.') ?>
             <?= $line(count($tv['idle']), 'muted', $deviceLink($tv['idle']),
                 $plural(count($tv['idle']), 'en ligne sans message à afficher', 'en ligne sans message à afficher'),
                 Dashboard::names($tv['idle']) . (count($tv['idle']) > 1 ? ' affichent' : ' affiche') . ' seulement l’heure') ?>

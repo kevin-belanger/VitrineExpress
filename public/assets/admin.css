@@ -391,6 +391,7 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .dash-ok { color: var(--success); margin-right: .25rem; }
 .dash-sub { margin: .2rem 0 .9rem; color: var(--muted); }
 .dash-sub a { color: inherit; }
+.dash-gap { height: .9rem; }
 .dash-line {
     display: flex;
     align-items: flex-start;
