@@ -245,7 +245,8 @@ function test_media_accepts_images_and_rejects_others(): void
     $app->setSetting('max_upload_mb', '1');
     $big = tempnam(sys_get_temp_dir(), 'vx');
     file_put_contents($big, str_repeat('x', 2 * 1024 * 1024));
-    assert_throws(ValidationException::class, fn () => Media::storeImage($app, $big));
+    $error = assert_throws(ValidationException::class, fn () => Media::storeImage($app, $big));
+    assert_same('Fichier trop volumineux (1 Mo maximum).', $error->getMessage());
 
     @unlink($png);
     @unlink($fake);

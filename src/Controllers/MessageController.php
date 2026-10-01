@@ -120,7 +120,6 @@ final class MessageController extends Controller
             'devices' => Devices::targetItems($this->app),
             'deviceNames' => Devices::options($this->app),
             'backgrounds' => Messages::backgrounds($this->app),
-            'maxUpload' => Media::formatBytes(Media::maxUploadBytes($this->app)),
             'styles' => [asset('/assets/vendor/quill/quill.snow.css')],
             'scripts' => [asset('/assets/vendor/quill/quill.js'), asset('/assets/message-form.js')],
         ], $status);

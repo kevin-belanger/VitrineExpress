@@ -35,14 +35,13 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
 
         <div data-for-type="image" class="<?= $isText ? 'hidden' : '' ?>">
             <label>
-                Image <span class="muted">(JPG, PNG, WebP ou GIF, <?= e($maxUpload) ?> maximum<?= $isNew ? '' : ' ; laisser vide pour garder l’image actuelle' ?>)</span>
+                <?= $isNew ? 'Image' : 'Remplacer l’image' ?>
                 <input type="file" name="image" accept="image/jpeg,image/png,image/webp,image/gif">
                 <?= field_error($errors, 'image') ?>
                 <?php if ($errors && !$isText && $isNew && !isset($errors['image'])): ?>
-                    <p class="hint">Sélectionnez de nouveau l’image avant d’enregistrer.</p>
+                    <p class="hint">Sélectionnez de nouveau l’image.</p>
                 <?php endif; ?>
             </label>
-            <p class="hint">L’image est affichée au complet, sans être recadrée. Idéalement au format 16:9 (ex. 1920 × 1080).</p>
         </div>
 
         <div data-for-type="text" class="<?= $isText ? '' : 'hidden' ?> form">

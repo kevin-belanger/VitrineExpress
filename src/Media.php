@@ -54,7 +54,7 @@ final class Media
             throw new ValidationException('Le fichier est vide.');
         }
         if ($size > $maxBytes) {
-            throw new ValidationException('Le fichier dépasse la taille maximale de ' . self::formatBytes($maxBytes) . '.');
+            throw new ValidationException(self::tooLargeMessage($app));
         }
 
         $mime = (string) (new finfo(FILEINFO_MIME_TYPE))->file($source);
@@ -129,6 +129,24 @@ final class Media
         return max(1, $app->intSetting('max_upload_mb', 20)) * 1024 * 1024;
     }
 
+    /**
+     * Taille réellement acceptée : la plus petite entre le paramètre de l'application
+     * et les limites de PHP (upload_max_filesize, post_max_size).
+     */
+    public static function limitBytes(App $app): int
+    {
+        return min(
+            self::maxUploadBytes($app),
+            Installer::iniBytes((string) ini_get('upload_max_filesize')) ?: PHP_INT_MAX,
+            Installer::iniBytes((string) ini_get('post_max_size')) ?: PHP_INT_MAX,
+        );
+    }
+
+    public static function tooLargeMessage(App $app): string
+    {
+        return 'Fichier trop volumineux (' . self::formatBytes(self::limitBytes($app)) . ' maximum).';
+    }
+
     public static function formatBytes(int $bytes): string
     {
         return $bytes >= 1048576 ? round($bytes / 1048576, 1) . ' Mo' : max(1, (int) round($bytes / 1024)) . ' Ko';
@@ -159,8 +177,7 @@ final class Media
     private static function uploadErrorMessage(App $app, int $error): string
     {
         return match ($error) {
-            UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => 'Le fichier dépasse la taille permise par le serveur ('
-                . ini_get('upload_max_filesize') . '). Limite de l’application : ' . self::formatBytes(self::maxUploadBytes($app)) . '.',
+            UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE => self::tooLargeMessage($app),
             UPLOAD_ERR_PARTIAL => 'Le fichier n’a été reçu qu’en partie. Réessayez.',
             UPLOAD_ERR_NO_FILE => 'Choisissez une image.',
             default => 'Le fichier n’a pas pu être reçu (erreur ' . $error . ').',

@@ -26,6 +26,12 @@ Le propriétaire (Kevin) veut que tu avances seul.
 - Page d'affichage (`public/display/`) : JavaScript ES5, sans framework, compatible avec les vieux navigateurs de télé (voir résultats de la phase 0).
 - Tests : `php tests/run.php` doit passer avant chaque commit.
 
+## Textes de l'interface (consignes de Kevin)
+
+- Courts et simples : ne pas tout dire. Pas d'explication préalable des formats, tailles ou règles de validation ; si une saisie est refusée, l'erreur le dit à ce moment-là.
+- Jamais de `alert()` ni `confirm()` du navigateur : utiliser les fenêtres de l'application (`data-confirm` dans la gestion).
+- Vocabulaire : « périphérique d'affichage » (forme courte « périphérique » si le contexte est clair), jamais « téléviseur ».
+
 ## Git
 
 - Branche `main`, dépôt `kevin-belanger/VitrineExpress` (**public**, licence MIT : ne jamais y mettre de secret ni de donnée réelle). Petits commits cohérents, messages en français, poussés régulièrement.
