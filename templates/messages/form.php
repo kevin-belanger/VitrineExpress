@@ -68,34 +68,30 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             </fieldset>
         </div>
 
-        <fieldset>
-            <legend>Période d’affichage</legend>
-            <div class="row">
-                <label>
-                    Début
-                    <span class="inline-fields">
-                        <input type="date" name="start_date" value="<?= e($values['start_date']) ?>" required>
-                        <input type="time" name="start_time" value="<?= e($values['start_time']) ?>">
-                    </span>
-                    <?= field_error($errors, 'start') ?>
-                </label>
-                <label>
-                    Fin <span class="muted">(vide = sans fin)</span>
-                    <span class="inline-fields">
-                        <input type="date" name="end_date" value="<?= e($values['end_date']) ?>">
-                        <input type="time" name="end_time" value="<?= e($values['end_time']) ?>">
-                    </span>
-                    <?= field_error($errors, 'end') ?>
-                </label>
+        <div class="compact-grid">
+            <label for="start_date">Début</label>
+            <div class="inline-fields">
+                <input type="date" id="start_date" name="start_date" value="<?= e($values['start_date']) ?>" required>
+                <input type="time" name="start_time" value="<?= e($values['start_time']) ?>" aria-label="Heure de début">
+                <?= field_error($errors, 'start') ?>
             </div>
-        </fieldset>
 
-        <label class="short">
-            Durée à l’écran (secondes)
-            <input type="number" name="duration_seconds" value="<?= e($values['duration_seconds']) ?>"
-                   min="<?= Messages::MIN_DURATION ?>" max="<?= Messages::MAX_DURATION ?>" required>
-            <?= field_error($errors, 'duration_seconds') ?>
-        </label>
+            <label for="end_date">Fin</label>
+            <div class="inline-fields">
+                <input type="date" id="end_date" name="end_date" value="<?= e($values['end_date']) ?>">
+                <input type="time" name="end_time" value="<?= e($values['end_time']) ?>" aria-label="Heure de fin">
+                <span class="muted">facultative</span>
+                <?= field_error($errors, 'end') ?>
+            </div>
+
+            <label for="duration_seconds">Durée</label>
+            <div class="inline-fields">
+                <input type="number" id="duration_seconds" name="duration_seconds" value="<?= e($values['duration_seconds']) ?>"
+                       min="<?= Messages::MIN_DURATION ?>" max="<?= Messages::MAX_DURATION ?>" required>
+                <span class="muted">secondes</span>
+                <?= field_error($errors, 'duration_seconds') ?>
+            </div>
+        </div>
 
         <fieldset>
             <legend>Afficher sur</legend>

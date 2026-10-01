@@ -116,5 +116,16 @@
         }
     });
 
+    // Sans date de fin, l'heure de fin est grisée : le message n'a pas de fin.
+    // (Désactivée, elle n'est pas envoyée ; le serveur garde alors 23:59 par défaut.)
+    var endDate = form.querySelector('[name="end_date"]');
+    var endTime = form.querySelector('[name="end_time"]');
+    function syncEnd() {
+        endTime.disabled = !endDate.value;
+    }
+    endDate.addEventListener('input', syncEnd);
+    endDate.addEventListener('change', syncEnd);
+    syncEnd();
+
     toggleType();
 })();

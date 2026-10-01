@@ -281,9 +281,20 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .swatch input:checked + .swatch-color { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(15, 118, 110, .25); }
 .swatch input:focus-visible + .swatch-color { outline: 2px solid var(--accent); outline-offset: 2px; }
 .swatch-name { font-size: .8rem; color: var(--muted); }
-.inline-fields { display: flex; gap: .5rem; }
-.inline-fields input[type="time"] { max-width: 8.5rem; }
-.form label.short { max-width: 240px; }
+/* Grille compacte : étiquette à gauche, champs sur la même ligne (début, fin, durée) */
+.compact-grid {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    gap: .5rem .9rem;
+    align-items: center;
+}
+.compact-grid > label { font-weight: 600; }
+.inline-fields { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.form .inline-fields input[type="date"],
+.form .inline-fields input[type="time"] { width: auto; }
+.form .inline-fields input[type="number"] { width: 6rem; }
+.form .inline-fields input:disabled { color: var(--muted); background: #f6f7f9; }
+.inline-fields .field-error { flex-basis: 100%; }
 .check-strong { flex-direction: row !important; align-items: center; gap: .45rem !important; margin-bottom: .5rem; }
 .preview-panel { position: sticky; top: 1rem; }
 .preview-label { margin: 0 0 .5rem; font-size: .8rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
