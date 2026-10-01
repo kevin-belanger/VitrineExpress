@@ -15,10 +15,17 @@ final class DeviceController extends Controller
 {
     public function index(): Response
     {
+        $access = $this->access();
+        // Un gestionnaire voit seulement les périphériques de ses groupes, en lecture seule.
+        $devices = array_values(array_filter(
+            Devices::allWithGroups($this->app),
+            static fn (array $device): bool => in_array((int) $device['id'], $access->deviceIds(), true)
+        ));
         return $this->view('devices/index', [
             'title' => 'Périphériques d’affichage',
-            'devices' => Devices::allWithGroups($this->app),
+            'devices' => $devices,
             'live' => $this->liveState(),
+            'isAdmin' => $access->isAdmin(),
             'scripts' => [asset('/assets/devices-live.js')],
         ]);
     }
@@ -37,6 +44,7 @@ final class DeviceController extends Controller
      */
     private function liveState(): array
     {
+        $access = $this->access();
         $offlineAfter = $this->app->intSetting('offline_after', 180);
         $messages = [];
         foreach (Messages::search($this->app, []) as $message) {
@@ -45,11 +53,19 @@ final class DeviceController extends Controller
 
         $state = [];
         foreach ($this->app->db->query('SELECT id, token_hash, last_seen_at, current_message_id FROM devices')->fetchAll() as $device) {
+            if (!in_array((int) $device['id'], $access->deviceIds(), true)) {
+                continue; // hors du périmètre d'un gestionnaire
+            }
             $status = Devices::status($device, $offlineAfter);
             $current = $status === Devices::STATUS_ONLINE ? ($messages[(int) $device['current_message_id']] ?? null) : null;
             $state[(int) $device['id']] = [
                 'status' => View::render('devices/_status_cell', ['status' => $status, 'lastSeen' => $device['last_seen_at']], null),
-                'current' => View::render('devices/_current', ['current' => $current, 'status' => $status, 'app' => $this->app], null),
+                'current' => View::render('devices/_current', [
+                    'current' => $current,
+                    'status' => $status,
+                    'canEdit' => $current !== null && $access->canEdit($current),
+                    'app' => $this->app,
+                ], null),
                 'key' => $current !== null ? 'message-' . $current['id'] . '-' . $current['updated_at'] : $status,
             ];
         }

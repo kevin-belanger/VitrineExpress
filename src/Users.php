@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace VitrineExpress;
 
 /**
- * Règles et opérations sur les comptes administrateurs.
+ * Règles et opérations sur les comptes de la gestion (administrateurs et gestionnaires de groupes).
  */
 final class Users
 {
     public const MIN_PASSWORD_LENGTH = 8;
+
+    public const ROLE_ADMIN = 'admin';
+    public const ROLE_MANAGER = 'manager';
 
     /**
      * Valide les champs d'un compte. Le mot de passe est obligatoire à la création seulement.
@@ -53,11 +56,29 @@ final class Users
         return [];
     }
 
-    public static function create(App $app, string $username, string $password, string $displayName = ''): int
+    public static function create(App $app, string $username, string $password, string $displayName = '', string $role = self::ROLE_ADMIN): int
     {
-        $app->db->prepare('INSERT INTO users (username, password_hash, display_name, created_at) VALUES (?, ?, ?, ?)')
-            ->execute([$username, password_hash($password, PASSWORD_DEFAULT), $displayName, now()]);
+        $app->db->prepare('INSERT INTO users (username, password_hash, display_name, role, created_at) VALUES (?, ?, ?, ?, ?)')
+            ->execute([$username, password_hash($password, PASSWORD_DEFAULT), $displayName, $role, now()]);
         return (int) $app->db->lastInsertId();
+    }
+
+    /** Remplace les groupes confiés à un gestionnaire (identifiants inconnus ignorés). */
+    public static function setGroups(App $app, int $userId, array $groupIds): void
+    {
+        $app->db->prepare('DELETE FROM user_groups WHERE user_id = ?')->execute([$userId]);
+        $st = $app->db->prepare('INSERT INTO user_groups (user_id, group_id) SELECT ?, id FROM groups WHERE id = ?');
+        foreach ($groupIds as $groupId) {
+            $st->execute([$userId, $groupId]);
+        }
+    }
+
+    /** @return list<int> */
+    public static function groupIds(App $app, int $userId): array
+    {
+        $st = $app->db->prepare('SELECT group_id FROM user_groups WHERE user_id = ? ORDER BY group_id');
+        $st->execute([$userId]);
+        return array_map('intval', $st->fetchAll(\PDO::FETCH_COLUMN));
     }
 
     public static function setPassword(App $app, int $id, string $password): void

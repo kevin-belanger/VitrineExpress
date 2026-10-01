@@ -10,6 +10,11 @@ $nav = [
     '/admin/users' => 'Utilisateurs',
     '/admin/settings' => 'Paramètres',
 ];
+// Seulement les pages accessibles au compte connecté (un gestionnaire n'a pas Groupes, Utilisateurs, Paramètres).
+if (!empty($user)) {
+    $navAccess = new \VitrineExpress\Access($app, $user);
+    $nav = array_filter($nav, static fn (string $path): bool => $navAccess->canVisit($path), ARRAY_FILTER_USE_KEY);
+}
 $isActive = static function (string $path) use ($current): bool {
     $full = url($path);
     return $path === '/admin' ? rtrim($current, '/') === $full : str_starts_with($current, $full);

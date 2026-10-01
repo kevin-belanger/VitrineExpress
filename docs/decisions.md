@@ -150,6 +150,15 @@ docs/              spécification, phases, décisions
 - **Décision** (demandée par Kevin) : la page Périphériques d'affichage ne se recharge plus en entier toutes les 30 s. Elle interroge `/admin/devices/live` (JSON) toutes les 5 s et ne remplace que les cellules « État » et « Affiche en ce moment » ; quand la diapositive affichée change (clé = message + date de modification, ou l'état), la cellule bascule en fondu. Les interrogations s'arrêtent quand l'onglet est caché ; si la session a expiré, la page se recharge (et mène à la connexion).
 - Le HTML des deux cellules est produit par les mêmes gabarits (`devices/_status_cell`, `devices/_current`) pour la page et pour le JSON.
 
+## D27 — Rôles : administrateur et gestionnaire de groupes
+
+- **Décision** (demandée par Kevin, détails dans [specification-gestionnaires.md](specification-gestionnaires.md)) : chaque compte est « Administrateur » (tout) ou « Gestionnaire de groupes » (publie dans les groupes qui lui sont confiés). Colonne `users.role` et table `user_groups` (migration 004) ; les comptes existants deviennent administrateurs.
+- **Une seule classe de règles** : `src/Access.php` (pages permises, périmètre, droits sur un message, fusion des cibles). Le Kernel refuse (403) toute page `/admin` hors de la liste permise aux gestionnaires ; les contrôleurs demandent à `Access` pour chaque message. Le menu est filtré par la même règle.
+- **Fusion des cibles** : quand un gestionnaire enregistre, seules les cibles de son périmètre suivent le formulaire ; les autres sont relues en base et conservées. Plusieurs gestionnaires partagent donc un message sans s'écraser, quel que soit le contenu envoyé.
+- **Message d'un autre** : page « Diffusion » (aperçu en lecture seule + « Afficher sur ») plutôt que le formulaire complet avec des champs désactivés : on montre seulement ce qu'on peut faire.
+- **Périmètre des listes** : liste des messages et tableau de bord d'un gestionnaire limités par défaut à son périmètre (mêmes chiffres des deux côtés) ; « Tous les groupes » dans le filtre montre le reste, pour diffuser chez soi le message d'un autre.
+- **Sans changement pour un administrateur**, sauf l'auteur affiché sous le titre des messages.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

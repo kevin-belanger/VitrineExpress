@@ -18,6 +18,34 @@ $passwordError = isset($errors['password']) || isset($errors['password_confirm']
         <?= field_error($errors, 'display_name') ?>
     </label>
 
+    <?php if ($isSelf): ?>
+        <input type="hidden" name="role" value="admin">
+    <?php else: ?>
+        <fieldset>
+            <legend>Rôle</legend>
+            <div class="target-modes">
+                <label class="target-mode">
+                    <input type="radio" name="role" value="manager" <?= $values['role'] === 'manager' ? 'checked' : '' ?>>
+                    <span><strong>Gestionnaire de groupes</strong><small>Publie dans les groupes choisis</small></span>
+                </label>
+                <label class="target-mode">
+                    <input type="radio" name="role" value="admin" <?= $values['role'] === 'admin' ? 'checked' : '' ?>>
+                    <span><strong>Administrateur</strong><small>Accès complet</small></span>
+                </label>
+            </div>
+            <?= field_error($errors, 'role') ?>
+            <div data-show-if="role=manager">
+                <?= \VitrineExpress\View::render('partials/picker', [
+                    'name' => 'groups[]',
+                    'items' => $groups,
+                    'selected' => $values['group_ids'],
+                    'noun' => 'groupes',
+                    'emptyText' => 'Aucun groupe pour l’instant. <a href="' . e(url('/admin/groups/new')) . '">Créer un groupe</a>',
+                ], null) ?>
+            </div>
+        </fieldset>
+    <?php endif; ?>
+
     <?php if ($id === null): ?>
         <label>
             Mot de passe

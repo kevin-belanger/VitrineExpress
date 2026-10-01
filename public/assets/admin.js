@@ -135,6 +135,24 @@
         setOpen(target.hasAttribute('data-open'), false);
     });
 
+    // Parties affichées selon un choix de boutons radio : data-show-if="nom=valeur".
+    var conditionals = document.querySelectorAll('[data-show-if]');
+    var syncConditionals = function () {
+        Array.prototype.forEach.call(conditionals, function (el) {
+            var rule = el.getAttribute('data-show-if').split('=');
+            var checked = document.querySelector('input[name="' + rule[0] + '"]:checked');
+            el.hidden = !checked || checked.value !== rule[1];
+        });
+    };
+    if (conditionals.length) {
+        document.addEventListener('change', function (event) {
+            if (event.target.type === 'radio') {
+                syncConditionals();
+            }
+        });
+        syncConditionals();
+    }
+
     // Envoi automatique des formulaires de filtres marqués data-autosubmit.
     document.addEventListener('change', function (event) {
         var form = event.target.form;

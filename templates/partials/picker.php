@@ -10,17 +10,20 @@
  *
  * @var string      $noun      nom des éléments au pluriel, pour les textes (ex. 'groupes')
  * @var string      $emptyText texte si tout est vide (HTML permis, déjà échappé)
- * @var bool        $summary   affiche le nombre de périphériques touchés (« Affiché sur 3 périphériques. »)
- * @var string|null $id        identifiant HTML du sélecteur
+ * @var bool        $summary      affiche le nombre de périphériques touchés (« Affiché sur 3 périphériques. »)
+ * @var list<int>   $fixedDevices périphériques déjà atteints par des cibles qu'on ne peut pas changer (comptés au résumé)
+ * @var string|null $id           identifiant HTML du sélecteur
  */
 $summary ??= false;
+$fixedDevices ??= [];
 $id ??= null;
 $sections ??= [['key' => 'items', 'title' => '', 'name' => $name, 'items' => $items, 'selected' => $selected]];
 $sections = array_values(array_filter($sections, static fn (array $s): bool => (bool) $s['items']));
 $total = array_sum(array_map(static fn (array $s): int => count($s['items']), $sections));
 $multi = count($sections) > 1;
 ?>
-<div class="picker" data-picker data-noun="<?= e($noun) ?>" data-total="<?= $total ?>"<?= $multi ? ' data-multi' : '' ?><?= $id !== null ? ' id="' . e($id) . '"' : '' ?>>
+<div class="picker" data-picker data-noun="<?= e($noun) ?>" data-total="<?= $total ?>"<?= $multi ? ' data-multi' : '' ?><?= $id !== null ? ' id="' . e($id) . '"' : '' ?>
+     data-fixed-devices="<?= e(implode(',', $fixedDevices)) ?>">
     <?php if ($total === 0): ?>
         <p class="hint"><?= $emptyText ?></p>
     <?php else: ?>

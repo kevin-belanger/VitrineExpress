@@ -37,6 +37,9 @@ final class Kernel
             if ($isAdmin && Auth::user($this->app) === null) {
                 return Response::redirect(url('/login'));
             }
+            if ($isAdmin && !Access::current($this->app)->canVisit($path)) {
+                throw new HttpException(403, 'Cette page est réservée aux administrateurs.');
+            }
             if ($method === 'POST' && !$_POST && !$_FILES && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
                 // Le corps dépasse post_max_size : PHP l'a ignoré en entier.
                 throw new HttpException(413, Media::tooLargeMessage($this->app));

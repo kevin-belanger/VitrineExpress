@@ -9,6 +9,7 @@
     <tr>
         <th>Code usager</th>
         <th>Nom</th>
+        <th>Rôle</th>
         <th>Dernière connexion</th>
         <th class="actions">Actions</th>
     </tr>
@@ -18,6 +19,18 @@
         <tr>
             <td><strong><?= e($row['username']) ?></strong></td>
             <td><?= e($row['display_name']) ?></td>
+            <td>
+                <?php if ($row['role'] === 'admin'): ?>
+                    <span class="badge badge-accent">Administrateur</span>
+                <?php elseif ($row['group_names']): ?>
+                    Gestionnaire de
+                    <?php foreach ($row['group_names'] as $groupName): ?>
+                        <span class="badge"><?= e($groupName) ?></span>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    Gestionnaire <span class="muted">· aucun groupe</span>
+                <?php endif; ?>
+            </td>
             <td><?= e($row['last_login_at'] ? format_datetime($row['last_login_at']) : 'jamais') ?></td>
             <td class="actions">
                 <a class="button small" href="<?= e(url('/admin/users/' . $row['id'] . '/edit')) ?>">Modifier</a>

@@ -44,4 +44,10 @@ abstract class Controller
     {
         return Auth::user($this->app)['id'] ?? null;
     }
+
+    /** Droits du compte connecté. */
+    protected function access(): Access
+    {
+        return Access::current($this->app);
+    }
 }

@@ -9,6 +9,7 @@ $statusClass = [
     Messages::STATUS_EXPIRED => '',
 ];
 $now = now();
+$hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $filters['all'];
 ?>
 <div class="page-head">
     <h1>Messages</h1>
@@ -22,7 +23,12 @@ $now = now();
     <label>
         Groupe
         <select name="group">
-            <option value="">Tous les groupes</option>
+            <?php if ($access->isAdmin()): ?>
+                <option value="">Tous les groupes</option>
+            <?php else: ?>
+                <option value="">Vos groupes</option>
+                <option value="all" <?= $filters['all'] ? 'selected' : '' ?>>Tous les groupes</option>
+            <?php endif; ?>
             <?php foreach ($groups as $groupId => $groupName): ?>
                 <option value="<?= (int) $groupId ?>" <?= $filters['group'] === $groupId ? 'selected' : '' ?>><?= e($groupName) ?></option>
             <?php endforeach; ?>
@@ -47,7 +53,7 @@ $now = now();
         </select>
     </label>
     <noscript><button type="submit" class="button">Filtrer</button></noscript>
-    <?php if ($filters['group'] || $filters['device'] || $filters['status']): ?>
+    <?php if ($hasFilters): ?>
         <a class="button" href="<?= e(url('/admin/messages')) ?>">Effacer les filtres</a>
     <?php endif; ?>
 </form>
@@ -74,7 +80,9 @@ $now = now();
     </thead>
     <tbody>
     <?php if (!$messages): ?>
-        <tr><td colspan="7" class="empty">Aucun message<?= ($filters['group'] || $filters['device'] || $filters['status']) ? ' pour ces filtres' : '' ?>.</td></tr>
+        <tr><td colspan="7" class="empty">
+            <?= $hasFilters ? 'Aucun message pour ces filtres.' : ($access->isAdmin() ? 'Aucun message.' : 'Aucun message dans vos groupes.') ?>
+        </td></tr>
     <?php endif; ?>
     <?php foreach ($messages as $message): ?>
         <?php $status = Messages::status($message, $now); ?>
@@ -82,7 +90,14 @@ $now = now();
             <td class="thumb-col"><?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?></td>
             <td>
                 <strong><?= e($message['title']) ?></strong><br>
-                <span class="muted"><?= e(Messages::TYPE_LABELS[$message['type']]) ?></span>
+                <span class="muted">
+                    <?= e(Messages::TYPE_LABELS[$message['type']]) ?>
+                    <?php if ($access->owns($message)): ?>
+                        · par vous
+                    <?php elseif ($message['author_name'] !== null): ?>
+                        · par <?= e($message['author_name']) ?>
+                    <?php endif; ?>
+                </span>
             </td>
             <td class="nowrap">
                 <?= e(format_datetime($message['start_at'])) ?><br>
@@ -105,12 +120,21 @@ $now = now();
             </td>
             <td><span class="badge <?= $statusClass[$status] ?>"><?= e(Messages::STATUS_LABELS[$status]) ?></span></td>
             <td class="actions">
-                <a class="button small" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>">Modifier</a>
-                <form method="post" action="<?= e(url('/admin/messages/' . $message['id'] . '/delete')) ?>"
-                      data-confirm="Supprimer le message « <?= e($message['title']) ?> » ?">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="button small danger">Supprimer</button>
-                </form>
+                <?php if ($access->canEditContent($message)): ?>
+                    <a class="button small" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>">Modifier</a>
+                    <?php
+                    // Message partagé hors de son périmètre : la suppression l'enlève aussi ailleurs, on le dit.
+                    $others = $access->isAdmin() ? [] : $access->otherTargets($message)['names'];
+                    $confirm = 'Supprimer le message « ' . $message['title'] . ' » ?'
+                        . ($others ? ' Il est aussi affiché dans : ' . implode(', ', $others) . '.' : '');
+                    ?>
+                    <form method="post" action="<?= e(url('/admin/messages/' . $message['id'] . '/delete')) ?>" data-confirm="<?= e($confirm) ?>">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="button small danger">Supprimer</button>
+                    </form>
+                <?php elseif ($access->canEditTargets($message)): ?>
+                    <a class="button small" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>">Diffusion</a>
+                <?php endif; ?>
             </td>
         </tr>
     <?php endforeach; ?>

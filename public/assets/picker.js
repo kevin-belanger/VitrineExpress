@@ -64,6 +64,10 @@
             syncIncluded();
             var chosen = 0;
             var devices = {};
+            // Périphériques atteints par des cibles hors du périmètre (gardées telles quelles) : comptés aussi.
+            (picker.getAttribute('data-fixed-devices') || '').split(',').forEach(function (id) {
+                if (id) { devices[id] = true; }
+            });
             boxes.forEach(function (box) {
                 var item = box.closest('.picker-item');
                 item.classList.toggle('is-checked', box.checked && !box.dataset.auto);

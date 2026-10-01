@@ -134,10 +134,7 @@ final class Messages
 
         // Cibles : groupes et/ou périphériques. Aucune cible est permis : le message est alors
         // gardé sans être affiché (brouillon). Les identifiants inconnus sont ignorés.
-        // Avec « Tous les périphériques », les choix de groupes et de périphériques ne s'appliquent pas.
-        $ids = static fn (string $key): array => !$values['all_devices'] && is_array($post[$key] ?? null) ? array_map('intval', $post[$key]) : [];
-        $values['group_ids'] = array_values(array_intersect(array_keys(Groups::options($app)), $ids('groups')));
-        $values['device_ids'] = array_values(array_intersect(array_keys(Devices::options($app)), $ids('devices')));
+        $values = array_replace($values, self::targetsFromForm($app, $post));
 
         if ($type === self::TYPE_TEXT) {
             $html = HtmlSanitizer::clean(is_string($post['text_html'] ?? null) ? $post['text_html'] : '');
@@ -155,6 +152,31 @@ final class Messages
         }
 
         return [$values, $errors];
+    }
+
+    /**
+     * Cibles demandées dans un formulaire. Avec « Tous les périphériques », les choix de groupes et de
+     * périphériques ne s'appliquent pas ; les identifiants inconnus sont ignorés. Aucune cible = brouillon.
+     *
+     * @return array{all_devices: bool, group_ids: list<int>, device_ids: list<int>}
+     */
+    public static function targetsFromForm(App $app, array $post): array
+    {
+        $all = !empty($post['all_devices']);
+        $ids = static fn (string $key): array => !$all && is_array($post[$key] ?? null) ? array_map('intval', $post[$key]) : [];
+        return [
+            'all_devices' => $all,
+            'group_ids' => array_values(array_intersect(array_keys(Groups::options($app)), $ids('groups'))),
+            'device_ids' => array_values(array_intersect(array_keys(Devices::options($app)), $ids('devices'))),
+        ];
+    }
+
+    /** Remplace seulement les cibles d'un message (sans toucher au contenu). */
+    public static function setTargets(App $app, int $id, array $targets): void
+    {
+        $app->db->prepare('UPDATE messages SET all_devices = ? WHERE id = ?')->execute([$targets['all_devices'] ? 1 : 0, $id]);
+        self::setGroups($app, $id, $targets['group_ids']);
+        self::setDevices($app, $id, $targets['device_ids']);
     }
 
     /** Valeurs du formulaire pour un message existant. */
@@ -322,15 +344,34 @@ final class Messages
     }
 
     /**
-     * Liste filtrée des messages, dans l'ordre de la file (création), avec arrière-plan et groupes.
+     * Liste filtrée des messages, dans l'ordre de la file (création), avec arrière-plan, auteur et cibles.
      * Filtres d'état : ceux de STATUS_LABELS, plus ceux de FILTER_LABELS (en diffusion, se termine bientôt, non diffusé).
+     * « scope » (périmètre d'un gestionnaire) : ses propres messages, ceux qui visent ses groupes et ceux qui
+     * s'affichent sur ses périphériques.
      *
-     * @param array{group?: int, device?: int, status?: string} $filters
+     * @param array{group?: int, device?: int, status?: string, scope?: array{user_id: int, group_ids: list<int>, device_ids: list<int>}} $filters
      */
     public static function search(App $app, array $filters, ?string $now = null): array
     {
         $where = [];
         $params = [];
+        if (isset($filters['id'])) {
+            $where[] = 'm.id = :id';
+            $params['id'] = (int) $filters['id'];
+        }
+        if (isset($filters['scope'])) {
+            $groupIds = implode(',', array_map('intval', $filters['scope']['group_ids'])) ?: '0';
+            $deviceIds = implode(',', array_map('intval', $filters['scope']['device_ids'])) ?: '0';
+            // Ses messages, ceux qui visent ses groupes, et tout ce qui s'affiche sur ses périphériques
+            // (par « Tous », par un groupe qui en contient un, ou directement).
+            $where[] = "(m.created_by = :scope_user
+                OR (m.all_devices = 1 AND EXISTS (SELECT 1 FROM devices WHERE id IN ($deviceIds)))
+                OR EXISTS (SELECT 1 FROM message_groups mg WHERE mg.message_id = m.id AND mg.group_id IN ($groupIds))
+                OR EXISTS (SELECT 1 FROM message_groups mg JOIN device_groups dg ON dg.group_id = mg.group_id
+                           WHERE mg.message_id = m.id AND dg.device_id IN ($deviceIds))
+                OR EXISTS (SELECT 1 FROM message_devices md WHERE md.message_id = m.id AND md.device_id IN ($deviceIds)))";
+            $params['scope_user'] = (int) $filters['scope']['user_id'];
+        }
         if (!empty($filters['group'])) {
             $where[] = '(m.all_devices = 1 OR EXISTS (SELECT 1 FROM message_groups mg WHERE mg.message_id = m.id AND mg.group_id = :group))';
             $params['group'] = (int) $filters['group'];
@@ -356,8 +397,11 @@ final class Messages
             }
         }
 
-        $sql = 'SELECT m.*, b.css_value AS background_css, b.text_color AS background_color
-                FROM messages m LEFT JOIN backgrounds b ON b.id = m.background_id'
+        $sql = 'SELECT m.*, b.css_value AS background_css, b.text_color AS background_color,
+                       COALESCE(NULLIF(u.display_name, \'\'), u.username) AS author_name
+                FROM messages m
+                LEFT JOIN backgrounds b ON b.id = m.background_id
+                LEFT JOIN users u ON u.id = m.created_by'
             . ($where ? ' WHERE ' . implode(' AND ', $where) : '')
             . ' ORDER BY m.id';
         $st = $app->db->prepare($sql);

@@ -200,7 +200,7 @@ Ces évolutions sont prévues plus tard ; le modèle de données leur laisse la 
 | Évolution | Ce que ça demandera |
 | --- | --- |
 | Vidéos | Type `video` : MP4 (H.264) et WebM, taille maximale paramétrable ; durée = celle de la vidéo |
-| Permissions fines | Droits par compte, par exemple limités à certains groupes |
+| Permissions fines | **Fait** : gestionnaires de groupes, voir [specification-gestionnaires.md](specification-gestionnaires.md) |
 | Limite de tentatives | Blocage temporaire après plusieurs codes à 5 chiffres erronés |
 | Réorganisation de la file | Champ de position, avec une règle claire quand les files diffèrent d'une télé à l'autre |
 | Groupes imbriqués | Table de groupes parents, avec protection contre les boucles |

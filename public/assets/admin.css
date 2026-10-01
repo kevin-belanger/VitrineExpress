@@ -542,6 +542,11 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .target-mode input { margin-top: .25rem; accent-color: var(--accent); }
 .target-mode span { display: flex; flex-direction: column; }
 .target-mode small { color: var(--muted); }
+.target-fixed { margin: 0; font-weight: normal; }
+
+/* Page « Diffusion » (message d'un autre) : rappel du message, en lecture seule */
+.message-heading { display: flex; flex-direction: column; gap: .2rem; }
+.message-heading strong { font-size: 1.15rem; overflow-wrap: anywhere; }
 
 /* Tableau de bord */
 .small { font-size: .85rem; }

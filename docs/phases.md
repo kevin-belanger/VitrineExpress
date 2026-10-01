@@ -79,3 +79,15 @@ En attendant, la page d'affichage a été écrite au plus prudent (ES5, XMLHttpR
 - [ ] Mise en production — **demander à Kevin avant**
 
 **Bilan** : tableau de bord (compteurs + tableau, actualisé toutes les 30 s, lien vers la file de chaque télé), paramètres (logo téléversé, retrait possible), en-têtes de sécurité dont une CSP stricte sur les scripts, `.htaccess` racine de secours, guide d'installation. Revue de sécurité : mots de passe `password_hash`, session `HttpOnly`/`SameSite=Lax`/`Secure` en HTTPS et régénérée à la connexion, CSRF sur tout POST de gestion, requêtes préparées, HTML nettoyé par liste blanche (testé), fichiers validés par contenu et servis hors racine web avec noms aléatoires, jetons des télés stockés hachés, échappement systématique dans les gabarits. Limites connues (hors MVP) : pas de limite de tentatives sur la connexion ni sur les codes à 5 chiffres.
+
+## Phase 6 — Gestionnaires de groupes
+
+Spécification : [specification-gestionnaires.md](specification-gestionnaires.md).
+
+- [x] Rôle de chaque compte (Administrateur, Gestionnaire de groupes) et groupes confiés (migration 004)
+- [x] Règles centralisées dans `Access` : pages permises, périmètre, droits sur un message, fusion des cibles
+- [x] Messages : création dans le périmètre, modification et suppression de ses messages, « Diffusion » pour ceux des autres
+- [x] Périphériques en lecture seule, tableau de bord et liste des messages limités au périmètre
+- [x] Fiche et liste des utilisateurs : rôle et groupes
+
+**Bilan** : 53 tests, dont 8 de bout en bout pour un gestionnaire (pages refusées, cibles hors périmètre ignorées, diffusion du message d'un autre sans toucher au contenu, suppression refusée, listes et tableau de bord limités). Vérifié dans le navigateur sur une copie de la base de développement, avec un compte gestionnaire : menu, tableau de bord, liste des messages (« Vos groupes » / « Tous les groupes »), page Diffusion, création, périphériques en lecture seule, refus d'un message « Tous ».

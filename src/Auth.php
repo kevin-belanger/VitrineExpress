@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace VitrineExpress;
 
 /**
- * Authentification des administrateurs (session PHP).
+ * Authentification des comptes de la gestion (session PHP). Les droits : voir Access.
  */
 final class Auth
 {
@@ -18,7 +18,7 @@ final class Auth
             return null;
         }
         if (self::$user === null || self::$user['id'] !== $id) {
-            $st = $app->db->prepare('SELECT id, username, display_name FROM users WHERE id = ?');
+            $st = $app->db->prepare('SELECT id, username, display_name, role FROM users WHERE id = ?');
             $st->execute([$id]);
             $row = $st->fetch();
             if ($row === false) {

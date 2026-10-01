@@ -17,8 +17,11 @@ $line = static function (int $count, string $tone, string $href, string $title, 
         . '<span class="dash-chevron" aria-hidden="true">›</span></a>';
 };
 $plural = static fn (int $n, string $one, string $many): string => $n . ' ' . ($n > 1 ? $many : $one);
-// Lien vers la fiche si un seul téléviseur est concerné, sinon vers la liste.
-$deviceLink = static fn (array $rows): string => count($rows) === 1 ? url('/admin/devices/' . $rows[0]['id'] . '/edit') : url('/admin/devices');
+// Lien vers la fiche si un seul périphérique est concerné, sinon vers la liste
+// (toujours la liste pour un gestionnaire : les fiches sont réservées aux administrateurs).
+$deviceLink = static fn (array $rows): string => $isAdmin && count($rows) === 1
+    ? url('/admin/devices/' . $rows[0]['id'] . '/edit')
+    : url('/admin/devices');
 
 $offlineDetail = Dashboard::names($tv['offline'], static fn (array $d): string => $d['name'] . ' (vu ' . time_ago($d['last_seen_at']) . ')');
 
@@ -33,7 +36,10 @@ $next = $msg['upcoming'][0] ?? null;
 <div class="dash">
     <section class="dash-card" aria-labelledby="dash-tv">
         <p class="dash-label" id="dash-tv">Périphériques d’affichage</p>
-        <?php if ($tv['total'] === 0): ?>
+        <?php if ($tv['total'] === 0 && !$isAdmin): ?>
+            <p class="dash-big">Aucun périphérique d’affichage</p>
+            <p class="dash-sub">Vos groupes n’ont pas encore de périphérique d’affichage.</p>
+        <?php elseif ($tv['total'] === 0): ?>
             <p class="dash-big">Aucun périphérique d’affichage</p>
             <p class="dash-sub">Ajoutez un périphérique d’affichage pour obtenir son code de connexion.</p>
             <a class="button primary" href="<?= e(url('/admin/devices/new')) ?>">Ajouter un périphérique d’affichage</a>
@@ -50,9 +56,12 @@ $next = $msg['upcoming'][0] ?? null;
                 count($tv['disconnected']) > 1
                     ? count($tv['disconnected']) . ' périphériques ne sont pas connectés'
                     : '1 périphérique n’est pas connecté',
-                count($tv['disconnected']) > 1
-                    ? 'Entrez leur code sur chaque périphérique pour les connecter.'
-                    : 'Entrez son code sur le périphérique pour le connecter.') ?>
+                // Le code de connexion n'est visible que par les administrateurs.
+                !$isAdmin
+                    ? Dashboard::names($tv['disconnected'])
+                    : (count($tv['disconnected']) > 1
+                        ? 'Entrez leur code sur chaque périphérique pour les connecter.'
+                        : 'Entrez son code sur le périphérique pour le connecter.')) ?>
             <?= $line(count($tv['idle']), 'muted', $deviceLink($tv['idle']),
                 $plural(count($tv['idle']), 'en ligne sans message à afficher', 'en ligne sans message à afficher'),
                 Dashboard::names($tv['idle']) . (count($tv['idle']) > 1 ? ' affichent' : ' affiche') . ' seulement l’heure') ?>
@@ -87,7 +96,7 @@ $next = $msg['upcoming'][0] ?? null;
                 $plural(count($msg['unbroadcast']), 'non diffusé', 'non diffusés'),
                 'Aucun périphérique visé : ' . Dashboard::names($msg['unbroadcast'], 'title')) ?>
             <?= $line($msg['expired'], 'muted', url('/admin/messages?status=' . Messages::STATUS_EXPIRED),
-                $plural($msg['expired'], 'expiré', 'expirés'), 'À supprimer quand vous voulez') ?>
+                $plural($msg['expired'], 'expiré', 'expirés'), $isAdmin ? 'À supprimer quand vous voulez' : '') ?>
 
             <a class="dash-more" href="<?= e(url('/admin/messages')) ?>">Voir les messages →</a>
         <?php endif; ?>

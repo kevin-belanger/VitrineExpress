@@ -10,14 +10,18 @@ namespace VitrineExpress;
 final class Dashboard
 {
     /**
+     * @param list<int>|null $deviceIds périmètre d'un gestionnaire (null = tous les périphériques)
      * @return array{total: int, online: int, offline: list<array>, disconnected: list<array>, idle: list<array>}
      */
-    public static function devices(App $app, ?string $now = null): array
+    public static function devices(App $app, ?string $now = null, ?array $deviceIds = null): array
     {
         $offlineAfter = $app->intSetting('offline_after', 180);
         $summary = ['total' => 0, 'online' => 0, 'offline' => [], 'disconnected' => [], 'idle' => []];
 
         foreach (Devices::allWithGroups($app) as $device) {
+            if ($deviceIds !== null && !in_array((int) $device['id'], $deviceIds, true)) {
+                continue;
+            }
             $summary['total']++;
             $status = Devices::status($device, $offlineAfter);
             if ($status === Devices::STATUS_ONLINE) {
@@ -37,33 +41,39 @@ final class Dashboard
     }
 
     /**
+     * @param array{user_id: int, group_ids: list<int>, device_ids: list<int>}|null $scope périmètre d'un gestionnaire
+     *        (ses messages et ceux qui visent ses groupes ou ses périphériques ; null = tout)
      * @return array{total: int, live: list<array>, reached: int, ending: list<array>, upcoming: list<array>, unbroadcast: list<array>, expired: int}
      */
-    public static function messages(App $app, ?string $now = null): array
+    public static function messages(App $app, ?string $now = null, ?array $scope = null): array
     {
         $now ??= now();
-        $ending = Messages::search($app, ['status' => Messages::FILTER_ENDING], $now);
+        $search = static fn (string $status): array => Messages::search($app, ['status' => $status] + ($scope !== null ? ['scope' => $scope] : []), $now);
+        $ending = $search(Messages::FILTER_ENDING);
         usort($ending, static fn (array $a, array $b): int => strcmp($a['end_at'], $b['end_at']));
-        $upcoming = Messages::search($app, ['status' => Messages::STATUS_UPCOMING], $now);
+        $upcoming = $search(Messages::STATUS_UPCOMING);
         usort($upcoming, static fn (array $a, array $b): int => strcmp($a['start_at'], $b['start_at']));
 
-        // Périphériques qui ont au moins un message actif dans leur file
+        // Périphériques (du périmètre) qui ont au moins un message actif dans leur file
         // (même règle de ciblage que la file, appliquée à chaque périphérique d).
+        $inScope = $scope !== null ? ' AND d.id IN (' . (implode(',', array_map('intval', $scope['device_ids'])) ?: '0') . ')' : '';
         $st = $app->db->prepare(
             'SELECT COUNT(*) FROM devices d WHERE EXISTS (
                  SELECT 1 FROM messages m
-                 WHERE ' . Messages::activeSql() . ' AND ' . str_replace(':device', 'd.id', Messages::targetsDeviceSql()) . ')'
+                 WHERE ' . Messages::activeSql() . ' AND ' . str_replace(':device', 'd.id', Messages::targetsDeviceSql()) . ')' . $inScope
         );
         $st->execute(['now' => $now]);
 
         return [
-            'total' => (int) $app->db->query('SELECT COUNT(*) FROM messages')->fetchColumn(),
-            'live' => Messages::search($app, ['status' => Messages::FILTER_LIVE], $now),
+            'total' => $scope !== null
+                ? count(Messages::search($app, ['scope' => $scope]))
+                : (int) $app->db->query('SELECT COUNT(*) FROM messages')->fetchColumn(),
+            'live' => $search(Messages::FILTER_LIVE),
             'reached' => (int) $st->fetchColumn(),
             'ending' => $ending,
             'upcoming' => $upcoming,
-            'unbroadcast' => Messages::search($app, ['status' => Messages::FILTER_UNBROADCAST], $now),
-            'expired' => count(Messages::search($app, ['status' => Messages::STATUS_EXPIRED], $now)),
+            'unbroadcast' => $search(Messages::FILTER_UNBROADCAST),
+            'expired' => count($search(Messages::STATUS_EXPIRED)),
         ];
     }
 
