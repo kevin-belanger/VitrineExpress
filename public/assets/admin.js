@@ -12,12 +12,16 @@
             menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         };
         var fitMenu = function () {
-            topbar.classList.remove('is-compact'); // mesure dans la disposition normale, sur une ligne
+            // Mesure dans la disposition normale, sur une ligne, sans déclencher les animations du panneau.
+            topbar.classList.add('is-measuring');
+            topbar.classList.remove('is-compact');
             var compact = topbar.scrollWidth > topbar.clientWidth;
             topbar.classList.toggle('is-compact', compact);
             if (!compact) {
                 setMenuOpen(false);
             }
+            void topbar.offsetHeight; // applique l'état final avant de réactiver les animations
+            topbar.classList.remove('is-measuring');
         };
         topbar.classList.add('has-menu-js');
         menuToggle.addEventListener('click', function () {

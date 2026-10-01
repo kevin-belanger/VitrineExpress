@@ -43,17 +43,19 @@ $isActive = static function (string $path) use ($current): bool {
             Menu
         </button>
         <div class="topnav" id="topnav">
-            <nav class="mainnav" aria-label="Navigation principale">
-                <?php foreach ($nav as $path => $label): ?>
-                    <a href="<?= e(url($path)) ?>"<?= $isActive($path) ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>
-                <?php endforeach; ?>
-            </nav>
-            <div class="usermenu">
-                <a href="<?= e(url('/admin/account')) ?>" title="Changer mon mot de passe"><?= e($user['display_name'] !== '' ? $user['display_name'] : $user['username']) ?></a>
-                <form method="post" action="<?= e(url('/logout')) ?>">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="link">Déconnexion</button>
-                </form>
+            <div class="topnav-inner">
+                <nav class="mainnav" aria-label="Navigation principale">
+                    <?php foreach ($nav as $path => $label): ?>
+                        <a href="<?= e(url($path)) ?>"<?= $isActive($path) ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>
+                    <?php endforeach; ?>
+                </nav>
+                <div class="usermenu">
+                    <a href="<?= e(url('/admin/account')) ?>" title="Changer mon mot de passe"><?= e($user['display_name'] !== '' ? $user['display_name'] : $user['username']) ?></a>
+                    <form method="post" action="<?= e(url('/logout')) ?>">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="link">Déconnexion</button>
+                    </form>
+                </div>
             </div>
         </div>
     </header>
