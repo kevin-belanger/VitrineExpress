@@ -77,9 +77,7 @@
                 }
             });
             if (count) {
-                count.textContent = multi
-                    ? plural(chosen, 'élément choisi', 'éléments choisis')
-                    : chosen + ' sur ' + boxes.length + ' coché' + (chosen > 1 ? 's' : '');
+                count.textContent = chosen + ' sur ' + boxes.length + ' coché' + (chosen > 1 ? 's' : '');
             }
             if (summary) {
                 renderSummary(Object.keys(devices));

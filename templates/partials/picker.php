@@ -27,7 +27,9 @@ $multi = count($sections) > 1;
     <?php else: ?>
         <div class="picker-tools">
             <input type="search" class="picker-search" placeholder="Rechercher parmi les <?= e($noun) ?>…" aria-label="Rechercher parmi les <?= e($noun) ?>" hidden>
-            <span class="picker-count muted"></span>
+            <?php if (!$multi): // avec plusieurs sections, le résumé des périphériques touchés suffit ?>
+                <span class="picker-count muted"></span>
+            <?php endif; ?>
             <button type="button" class="picker-all" hidden>Tout cocher</button>
             <button type="button" class="picker-none" hidden>Tout décocher</button>
         </div>
