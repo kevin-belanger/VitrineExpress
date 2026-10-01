@@ -80,11 +80,12 @@
     </div>
 </div>
 
-<!-- Menu caché (apparaît au mouvement de la souris) -->
-<div id="menu" class="menu hidden">
+<!-- Menu caché : descend au mouvement de la souris ; le trait du bas rétrécit jusqu'à ce qu'il remonte -->
+<div id="menu" class="menu">
     <span id="menu-name" class="menu-name"></span>
     <button type="button" id="menu-fullscreen">Plein écran</button>
     <button type="button" id="menu-logout">Déconnecter cet appareil</button>
+    <div class="menu-timer" aria-hidden="true"><span id="menu-timer-bar"></span></div>
 </div>
 
 <script src="<?= e(asset('/assets/slide.js')) ?>"></script>

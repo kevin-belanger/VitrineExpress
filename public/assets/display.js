@@ -397,12 +397,35 @@
         if (paired) { show($('menu-logout')); } else { hide($('menu-logout')); }
     }
 
+    var timerBar = $('menu-timer-bar');
+    var lastWake = 0;
+
+    function setScaleX(el, value) {
+        el.style.webkitTransform = el.style.msTransform = el.style.transform = 'scaleX(' + value + ')';
+    }
+
+    // Trait du bas : repart à pleine largeur puis rétrécit jusqu'à zéro pendant le délai.
+    function restartTimerBar() {
+        timerBar.style.webkitTransition = timerBar.style.transition = 'none';
+        setScaleX(timerBar, 1);
+        void timerBar.offsetWidth; // applique l'état de départ avant de lancer l'animation
+        timerBar.style.webkitTransition = '-webkit-transform ' + MENU_DELAY_MS + 'ms linear';
+        timerBar.style.transition = 'transform ' + MENU_DELAY_MS + 'ms linear';
+        setScaleX(timerBar, 0);
+    }
+
     function wakeMenu() {
-        show(menu);
+        var now = new Date().getTime();
+        if (now - lastWake < 150) {
+            return; // la souris envoie beaucoup d'événements : inutile de tout relancer à chacun
+        }
+        lastWake = now;
+        addClass(menu, 'is-visible');
         removeClass(document.body, 'idle');
+        restartTimerBar();
         window.clearTimeout(menuTimer);
         menuTimer = window.setTimeout(function () {
-            hide(menu);
+            removeClass(menu, 'is-visible');
             addClass(document.body, 'idle');
         }, MENU_DELAY_MS);
     }
