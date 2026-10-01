@@ -121,7 +121,7 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
                     ],
                     'noun' => $groups ? 'groupes et périphériques' : 'périphériques',
                     'emptyText' => 'Aucun périphérique d’affichage pour l’instant. <a href="' . e(url('/admin/devices/new')) . '">Ajouter un périphérique d’affichage</a>',
-                    'deviceNames' => $deviceNames,
+                    'summary' => true,
                 ], null) ?>
                 <?php if ($groups): ?>
                     <p class="hint">Un groupe coché inclut aussi les périphériques qu’on y ajoutera plus tard.</p>

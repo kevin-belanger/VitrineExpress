@@ -8,20 +8,19 @@
  * Une section : $name, $items, $selected. Plusieurs : $sections = list<array{key, title, name, items, selected}>,
  * key = 'groups' ou 'devices'. Un élément : ['label' => string, 'meta' => string, 'devices' => list<int>].
  *
- * @var string     $noun        nom des éléments au pluriel, pour les textes (ex. 'groupes')
- * @var string     $emptyText   texte si tout est vide (HTML permis, déjà échappé)
- * @var array|null $deviceNames id => nom ; si fourni, affiche le résumé des périphériques touchés
- * @var string|null $id         identifiant HTML du sélecteur
+ * @var string      $noun      nom des éléments au pluriel, pour les textes (ex. 'groupes')
+ * @var string      $emptyText texte si tout est vide (HTML permis, déjà échappé)
+ * @var bool        $summary   affiche le nombre de périphériques touchés (« Affiché sur 3 périphériques. »)
+ * @var string|null $id        identifiant HTML du sélecteur
  */
-$deviceNames ??= null;
+$summary ??= false;
 $id ??= null;
 $sections ??= [['key' => 'items', 'title' => '', 'name' => $name, 'items' => $items, 'selected' => $selected]];
 $sections = array_values(array_filter($sections, static fn (array $s): bool => (bool) $s['items']));
 $total = array_sum(array_map(static fn (array $s): int => count($s['items']), $sections));
 $multi = count($sections) > 1;
 ?>
-<div class="picker" data-picker data-noun="<?= e($noun) ?>" data-total="<?= $total ?>"<?= $multi ? ' data-multi' : '' ?><?= $id !== null ? ' id="' . e($id) . '"' : '' ?>
-    <?php if ($deviceNames !== null): ?> data-device-names="<?= e(json_encode($deviceNames, JSON_UNESCAPED_UNICODE)) ?>"<?php endif; ?>>
+<div class="picker" data-picker data-noun="<?= e($noun) ?>" data-total="<?= $total ?>"<?= $multi ? ' data-multi' : '' ?><?= $id !== null ? ' id="' . e($id) . '"' : '' ?>>
     <?php if ($total === 0): ?>
         <p class="hint"><?= $emptyText ?></p>
     <?php else: ?>
@@ -53,7 +52,7 @@ $multi = count($sections) > 1;
         </ul>
         <p class="picker-nomatch muted" hidden>Aucun résultat.</p>
     <?php endif; ?>
-    <?php if ($deviceNames !== null): ?>
+    <?php if ($summary): ?>
         <p class="picker-summary" aria-live="polite"></p>
     <?php endif; ?>
 </div>

@@ -1,5 +1,5 @@
 // Sélecteurs à choix multiples (templates/partials/picker.php) : recherche, compteur, tout cocher/décocher,
-// périphériques inclus par les groupes cochés et résumé des périphériques touchés.
+// périphériques inclus par les groupes cochés et nombre de périphériques touchés.
 (function () {
     'use strict';
 
@@ -24,7 +24,6 @@
         var summary = picker.querySelector('.picker-summary');
         var noMatch = picker.querySelector('.picker-nomatch');
         var multi = picker.hasAttribute('data-multi');
-        var names = picker.hasAttribute('data-device-names') ? JSON.parse(picker.getAttribute('data-device-names')) : null;
 
         function labelOf(box) {
             return box.closest('.picker-item').querySelector('.picker-label').textContent;
@@ -90,11 +89,7 @@
                 summary.className = 'picker-summary is-warning';
                 return;
             }
-            var list = ids.map(function (id) { return names[id]; }).filter(Boolean).sort(function (a, b) {
-                return a.localeCompare(b, 'fr');
-            });
-            var shown = list.slice(0, 6).join(', ') + (list.length > 6 ? ' et ' + (list.length - 6) + ' autre(s)' : '');
-            summary.textContent = 'Affiché sur ' + plural(list.length, 'périphérique', 'périphériques') + ' : ' + shown + '.';
+            summary.textContent = 'Affiché sur ' + plural(ids.length, 'périphérique', 'périphériques') + '.';
             summary.className = 'picker-summary is-ok';
         }
 

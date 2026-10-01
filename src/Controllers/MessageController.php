@@ -120,7 +120,6 @@ final class MessageController extends Controller
             'maxLabel' => Media::formatBytes(Media::limitBytes($this->app)),
             'groups' => Groups::pickerItems($this->app),
             'devices' => Devices::targetItems($this->app),
-            'deviceNames' => Devices::options($this->app),
             'backgrounds' => Messages::backgrounds($this->app),
             'styles' => [asset('/assets/vendor/quill/quill.snow.css')],
             'scripts' => [asset('/assets/vendor/quill/quill.js'), asset('/assets/message-form.js')],
