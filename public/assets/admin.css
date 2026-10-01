@@ -512,7 +512,6 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .current-message .thumb { width: 64px; height: 36px; flex: none; font-size: .8rem; }
 
 /* Paramètres */
-.logo-preview { max-width: 240px; max-height: 100px; object-fit: contain; background: #10202b; padding: .5rem; border-radius: 6px; }
 
 /* Connexion */
 .no-nav .page { max-width: 420px; padding-top: 10vh; }

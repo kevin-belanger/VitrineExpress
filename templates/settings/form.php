@@ -12,17 +12,19 @@
             <input type="text" name="org_name" value="<?= e($values['org_name']) ?>" maxlength="100">
             <?= field_error($errors, 'org_name') ?>
         </label>
-        <label>
-            Logo <span class="muted">(facultatif, affiché avec le nom)</span>
-            <?php if ($logoUrl): ?>
-                <img class="logo-preview" src="<?= e($logoUrl) ?>" alt="Logo actuel">
-            <?php endif; ?>
-            <input type="file" name="logo" accept="image/jpeg,image/png,image/webp,image/gif">
-            <?= field_error($errors, 'logo') ?>
-        </label>
-        <?php if ($logoUrl): ?>
-            <label class="check-strong"><input type="checkbox" name="remove_logo" value="1"> Retirer le logo</label>
-        <?php endif; ?>
+        <div class="field">
+            <span class="field-label">Logo</span>
+            <?= \VitrineExpress\View::render('partials/image-field', [
+                'id' => 'logo',
+                'name' => 'logo',
+                'currentUrl' => $logoUrl,
+                'currentLabel' => 'Logo actuel',
+                'maxBytes' => $maxBytes,
+                'maxLabel' => $maxLabel,
+                'error' => $errors['logo'] ?? null,
+                'removeName' => 'remove_logo',
+            ], null) ?>
+        </div>
     </fieldset>
 
     <fieldset>

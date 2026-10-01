@@ -87,6 +87,8 @@ final class SettingsController extends Controller
             'values' => $values,
             'errors' => $errors,
             'logoUrl' => Media::url($this->app, (string) $values['logo_path']),
+            'maxBytes' => Media::limitBytes($this->app),
+            'maxLabel' => Media::formatBytes(Media::limitBytes($this->app)),
             'timezones' => timezone_identifiers_list(),
             // Limite réelle de l'hébergement : la plus petite des deux limites PHP, en Mo.
             'serverLimitMb' => (int) floor(min(

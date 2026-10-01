@@ -34,28 +34,16 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
 
         <div data-for-type="image" class="field <?= $isText ? 'hidden' : '' ?>">
             <span class="field-label">Image</span>
-            <?php // Comportement (choix, glisser-déposer, coller, vérifications) : public/assets/message-form.js ?>
-            <div class="image-field" id="image-field"
-                 data-max-bytes="<?= (int) $maxBytes ?>" data-max-label="<?= e($maxLabel) ?>"
-                 data-current-url="<?= e($imageUrl ?? '') ?>">
-                <input type="file" id="image" name="image" class="visually-hidden" accept="image/jpeg,image/png,image/webp,image/gif">
-                <label for="image" class="dropzone"<?= $imageUrl ? ' hidden' : '' ?>>
-                    <svg class="dropzone-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l4.6-4.6a2 2 0 0 1 2.8 0L16 16m-2-2 1.6-1.6a2 2 0 0 1 2.8 0L20 14M14 8h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
-                    <span><strong>Choisir une image</strong> ou la glisser ici</span>
-                </label>
-                <div class="image-card"<?= $imageUrl ? '' : ' hidden' ?>>
-                    <img class="image-card-thumb" src="<?= e($imageUrl ?? '') ?>" alt="">
-                    <span class="image-card-info">
-                        <strong class="image-card-name"><?= $imageUrl ? 'Image actuelle' : '' ?></strong>
-                        <span class="image-card-meta muted"></span>
-                    </span>
-                    <span class="image-card-actions">
-                        <label for="image" class="button small">Remplacer</label>
-                        <button type="button" class="button small image-card-undo" hidden>Annuler</button>
-                    </span>
-                </div>
-                <p class="field-error image-error"<?= isset($errors['image']) || ($errors && !$isText && $isNew) ? '' : ' hidden' ?>><?= e($errors['image'] ?? 'Sélectionnez de nouveau l’image.') ?></p>
-            </div>
+            <?= View::render('partials/image-field', [
+                'id' => 'image',
+                'name' => 'image',
+                'currentUrl' => $imageUrl,
+                'currentLabel' => 'Image actuelle',
+                'maxBytes' => $maxBytes,
+                'maxLabel' => $maxLabel,
+                // Après une erreur ailleurs, le navigateur a oublié le fichier choisi : il faut le reprendre.
+                'error' => $errors['image'] ?? ($errors && !$isText && $isNew ? 'Sélectionnez de nouveau l’image.' : null),
+            ], null) ?>
         </div>
 
         <div data-for-type="text" class="<?= $isText ? '' : 'hidden' ?> form">
