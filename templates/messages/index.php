@@ -29,9 +29,9 @@ $now = now();
         </select>
     </label>
     <label>
-        Téléviseur
+        Périphérique d’affichage
         <select name="device">
-            <option value="">Tous les téléviseurs</option>
+            <option value="">Tous les périphériques d’affichage</option>
             <?php foreach ($devices as $deviceId => $deviceName): ?>
                 <option value="<?= (int) $deviceId ?>" <?= $filters['device'] === $deviceId ? 'selected' : '' ?>><?= e($deviceName) ?></option>
             <?php endforeach; ?>
@@ -90,7 +90,7 @@ $now = now();
             <td><?= (int) $message['duration_seconds'] ?> s</td>
             <td>
                 <?php if ($message['all_devices']): ?>
-                    <span class="badge badge-accent">Tous les téléviseurs</span>
+                    <span class="badge badge-accent">Tous les périphériques d’affichage</span>
                 <?php endif; ?>
                 <?php foreach ($message['group_names'] as $groupName): ?>
                     <span class="badge"><?= e($groupName) ?></span>

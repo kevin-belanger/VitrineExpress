@@ -8,7 +8,7 @@
     <tr>
         <th>Nom</th>
         <th>Description</th>
-        <th>Téléviseurs</th>
+        <th>Périphériques</th>
         <th>Messages</th>
         <th class="actions">Actions</th>
     </tr>
@@ -26,7 +26,7 @@
             <td class="actions">
                 <a class="button small" href="<?= e(url('/admin/groups/' . $group['id'] . '/edit')) ?>">Modifier</a>
                 <form method="post" action="<?= e(url('/admin/groups/' . $group['id'] . '/delete')) ?>"
-                      data-confirm="Supprimer le groupe « <?= e($group['name']) ?> » ? Les téléviseurs et les messages seront conservés.">
+                      data-confirm="Supprimer le groupe « <?= e($group['name']) ?> » ? Les périphériques d’affichage et les messages seront conservés.">
                     <?= csrf_field() ?>
                     <button type="submit" class="button small danger">Supprimer</button>
                 </form>

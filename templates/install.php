@@ -24,7 +24,7 @@
         <?= csrf_field() ?>
         <h2 class="install-step">2. Votre organisme et votre compte</h2>
         <label>
-            Nom de l’organisme <span class="muted">(affiché sur les téléviseurs sans message ; modifiable plus tard)</span>
+            Nom de l’organisme <span class="muted">(affiché sur les périphériques d’affichage sans message ; modifiable plus tard)</span>
             <input type="text" name="org_name" value="<?= e($values['org_name']) ?>" maxlength="100" placeholder="ex. Cégep de…">
             <?= field_error($errors, 'org_name') ?>
         </label>

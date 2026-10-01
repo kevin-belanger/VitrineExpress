@@ -32,11 +32,11 @@ $next = $msg['upcoming'][0] ?? null;
 
 <div class="dash">
     <section class="dash-card" aria-labelledby="dash-tv">
-        <p class="dash-label" id="dash-tv">Téléviseurs</p>
+        <p class="dash-label" id="dash-tv">Périphériques d’affichage</p>
         <?php if ($tv['total'] === 0): ?>
-            <p class="dash-big">Aucun téléviseur</p>
-            <p class="dash-sub">Ajoutez un téléviseur pour obtenir son code de connexion.</p>
-            <a class="button primary" href="<?= e(url('/admin/devices/new')) ?>">Ajouter un téléviseur</a>
+            <p class="dash-big">Aucun périphérique d’affichage</p>
+            <p class="dash-sub">Ajoutez un périphérique d’affichage pour obtenir son code de connexion.</p>
+            <a class="button primary" href="<?= e(url('/admin/devices/new')) ?>">Ajouter un périphérique d’affichage</a>
         <?php else: ?>
             <p class="dash-big">
                 <?php if ($tvAllGood): ?><span class="dash-ok" aria-hidden="true">✓</span><?php endif; ?>
@@ -48,16 +48,16 @@ $next = $msg['upcoming'][0] ?? null;
                 $plural(count($tv['offline']), 'hors ligne', 'hors ligne'), $offlineDetail) ?>
             <?= $line(count($tv['disconnected']), 'warning', $deviceLink($tv['disconnected']),
                 count($tv['disconnected']) > 1
-                    ? count($tv['disconnected']) . ' téléviseurs ne sont pas connectés'
-                    : '1 téléviseur n’est pas connecté',
+                    ? count($tv['disconnected']) . ' périphériques ne sont pas connectés'
+                    : '1 périphérique n’est pas connecté',
                 count($tv['disconnected']) > 1
-                    ? 'Entrez leur code sur chaque téléviseur pour les connecter.'
-                    : 'Entrez son code sur le téléviseur pour le connecter.') ?>
+                    ? 'Entrez leur code sur chaque périphérique pour les connecter.'
+                    : 'Entrez son code sur le périphérique pour le connecter.') ?>
             <?= $line(count($tv['idle']), 'muted', $deviceLink($tv['idle']),
                 $plural(count($tv['idle']), 'en ligne sans message à afficher', 'en ligne sans message à afficher'),
                 Dashboard::names($tv['idle']) . (count($tv['idle']) > 1 ? ' affichent' : ' affiche') . ' seulement l’heure') ?>
 
-            <a class="dash-more" href="<?= e(url('/admin/devices')) ?>">Voir les téléviseurs →</a>
+            <a class="dash-more" href="<?= e(url('/admin/devices')) ?>">Voir les périphériques d’affichage →</a>
         <?php endif; ?>
     </section>
 
@@ -65,15 +65,15 @@ $next = $msg['upcoming'][0] ?? null;
         <p class="dash-label" id="dash-msg">Messages</p>
         <?php if ($msg['total'] === 0): ?>
             <p class="dash-big">Aucun message</p>
-            <p class="dash-sub">Créez une image ou un texte à diffuser sur vos téléviseurs.</p>
+            <p class="dash-sub">Créez une image ou un texte à diffuser sur vos périphériques d’affichage.</p>
             <a class="button primary" href="<?= e(url('/admin/messages/new')) ?>">Créer un message</a>
         <?php else: ?>
             <p class="dash-big"><?= $live === 0 ? 'Aucun message' : $plural($live, 'message', 'messages') ?> en diffusion</p>
             <p class="dash-sub">
                 <?php if ($live > 0): ?>
-                    <a href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">destinés à <?= $plural($msg['reached'], 'téléviseur', 'téléviseurs') ?></a>
+                    <a href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">destinés à <?= $plural($msg['reached'], 'périphérique', 'périphériques') ?></a>
                 <?php else: ?>
-                    Les téléviseurs connectés affichent l’heure et la date.
+                    Les périphériques connectés affichent l’heure et la date.
                 <?php endif; ?>
             </p>
 
@@ -85,7 +85,7 @@ $next = $msg['upcoming'][0] ?? null;
                 $next ? 'Prochain : ' . $next['title'] . ', ' . format_datetime($next['start_at']) : '') ?>
             <?= $line(count($msg['unbroadcast']), 'muted', url('/admin/messages?status=' . Messages::FILTER_UNBROADCAST),
                 $plural(count($msg['unbroadcast']), 'non diffusé', 'non diffusés'),
-                'Aucun téléviseur visé : ' . Dashboard::names($msg['unbroadcast'], 'title')) ?>
+                'Aucun périphérique visé : ' . Dashboard::names($msg['unbroadcast'], 'title')) ?>
             <?= $line($msg['expired'], 'muted', url('/admin/messages?status=' . Messages::STATUS_EXPIRED),
                 $plural($msg['expired'], 'expiré', 'expirés'), 'À supprimer quand vous voulez') ?>
 

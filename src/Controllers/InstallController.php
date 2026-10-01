@@ -43,7 +43,7 @@ final class InstallController extends Controller
             return $this->redirect('/login');
         }
         Auth::attempt($this->app, $values['username'], $password);
-        flash('success', 'Installation terminée. Bienvenue ! Commencez par créer vos groupes et vos téléviseurs.');
+        flash('success', 'Installation terminée. Bienvenue ! Commencez par créer vos groupes et vos périphériques d’affichage.');
         return $this->redirect('/admin');
     }
 

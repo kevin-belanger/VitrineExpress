@@ -15,13 +15,13 @@
         <?= field_error($errors, 'description') ?>
     </label>
     <fieldset>
-        <legend>Téléviseurs du groupe</legend>
+        <legend>Périphériques d’affichage du groupe</legend>
         <?= \VitrineExpress\View::render('partials/picker', [
             'name' => 'devices[]',
             'items' => $devices,
             'selected' => $selected,
-            'noun' => 'téléviseurs',
-            'emptyText' => 'Aucun téléviseur pour l’instant. <a href="' . e(url('/admin/devices/new')) . '">Ajouter un téléviseur</a>',
+            'noun' => 'périphériques',
+            'emptyText' => 'Aucun périphérique d’affichage pour l’instant. <a href="' . e(url('/admin/devices/new')) . '">Ajouter un périphérique d’affichage</a>',
         ], null) ?>
     </fieldset>
     <div class="form-actions">

@@ -58,7 +58,7 @@ final class GroupController extends Controller
     {
         $group = $this->findOr404('groups', (int) $id);
         $this->app->db->prepare('DELETE FROM groups WHERE id = ?')->execute([$group['id']]);
-        flash('success', 'Groupe « ' . $group['name'] . ' » supprimé. Les téléviseurs et les messages sont conservés.');
+        flash('success', 'Groupe « ' . $group['name'] . ' » supprimé. Les périphériques d’affichage et les messages sont conservés.');
         return $this->redirect('/admin/groups');
     }
 

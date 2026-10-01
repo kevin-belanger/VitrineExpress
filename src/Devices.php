@@ -135,7 +135,7 @@ final class Devices
     }
 
     /**
-     * Tous les téléviseurs avec la liste de leurs groupes (clé 'groups' : id => nom).
+     * Tous les périphériques d’affichage avec la liste de leurs groupes (clé 'groups' : id => nom).
      *
      * @return list<array>
      */

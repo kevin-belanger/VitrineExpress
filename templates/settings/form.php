@@ -8,7 +8,7 @@
     <fieldset>
         <legend>Organisme</legend>
         <label>
-            Nom <span class="muted">(affiché sur les téléviseurs quand ils n’ont aucun message)</span>
+            Nom <span class="muted">(affiché sur les périphériques d’affichage quand ils n’ont aucun message)</span>
             <input type="text" name="org_name" value="<?= e($values['org_name']) ?>" maxlength="100">
             <?= field_error($errors, 'org_name') ?>
         </label>

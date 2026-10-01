@@ -35,7 +35,7 @@ final class Messages
     public const FILTER_LABELS = [
         self::FILTER_LIVE => 'En diffusion',
         self::FILTER_ENDING => 'Se termine dans les 48 h',
-        self::FILTER_UNBROADCAST => 'Non diffusé (aucune télé visée)',
+        self::FILTER_UNBROADCAST => 'Non diffusé (aucun périphérique visé)',
         self::STATUS_UPCOMING => 'À venir',
         self::STATUS_EXPIRED => 'Expiré',
         self::STATUS_ACTIVE => 'Actif (diffusé ou non)',
@@ -64,7 +64,7 @@ final class Messages
         return 'm.start_at <= :now AND (m.end_at IS NULL OR m.end_at >= :now)';
     }
 
-    /** Condition SQL « message affiché sur le téléviseur :device » sur l'alias m. */
+    /** Condition SQL « message affiché sur le périphérique :device » sur l'alias m. */
     public static function targetsDeviceSql(): string
     {
         return '(m.all_devices = 1 OR EXISTS (

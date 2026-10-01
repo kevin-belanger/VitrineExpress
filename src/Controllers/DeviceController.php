@@ -19,7 +19,7 @@ final class DeviceController extends Controller
             $messages[(int) $message['id']] = $message;
         }
         return $this->view('devices/index', [
-            'title' => 'Téléviseurs',
+            'title' => 'Périphériques d’affichage',
             'devices' => Devices::allWithGroups($this->app),
             'messages' => $messages,
             'offlineAfter' => $this->app->intSetting('offline_after', 180),
@@ -41,7 +41,7 @@ final class DeviceController extends Controller
             return $this->form($values, $groupIds, $errors, null, 422);
         }
         $id = $this->app->transaction(fn () => Devices::create($this->app, $values['name'], $values['description'], $groupIds));
-        flash('success', 'Téléviseur « ' . $values['name'] . ' » ajouté. Entrez son code sur le téléviseur pour le connecter.');
+        flash('success', 'Périphérique « ' . $values['name'] . ' » ajouté. Entrez son code sur le périphérique pour le connecter.');
         return $this->redirect('/admin/devices/' . $id . '/edit');
     }
 
@@ -61,7 +61,7 @@ final class DeviceController extends Controller
             return $this->form($values, $groupIds, $errors, $deviceId, 422);
         }
         $this->app->transaction(fn () => Devices::update($this->app, $deviceId, $values['name'], $values['description'], $groupIds));
-        flash('success', 'Téléviseur « ' . $values['name'] . ' » modifié.');
+        flash('success', 'Périphérique « ' . $values['name'] . ' » modifié.');
         return $this->redirect('/admin/devices');
     }
 
@@ -69,7 +69,7 @@ final class DeviceController extends Controller
     {
         $device = $this->findOr404('devices', (int) $id);
         $this->app->db->prepare('DELETE FROM devices WHERE id = ?')->execute([$device['id']]);
-        flash('success', 'Téléviseur « ' . $device['name'] . ' » supprimé.');
+        flash('success', 'Périphérique « ' . $device['name'] . ' » supprimé.');
         return $this->redirect('/admin/devices');
     }
 
@@ -77,7 +77,7 @@ final class DeviceController extends Controller
     {
         $device = $this->findOr404('devices', (int) $id);
         Devices::disconnect($this->app, (int) $device['id']);
-        flash('success', 'Téléviseur « ' . $device['name'] . ' » déconnecté. Il reviendra à l’écran de code à sa prochaine requête.');
+        flash('success', 'Périphérique « ' . $device['name'] . ' » déconnecté. Il reviendra à l’écran de code à sa prochaine requête.');
         return $this->redirect('/admin/devices/' . $device['id'] . '/edit');
     }
 
@@ -102,7 +102,7 @@ final class DeviceController extends Controller
             $device['status'] = Devices::status($device, $this->app->intSetting('offline_after', 180));
         }
         return $this->view('devices/form', [
-            'title' => $id === null ? 'Nouveau téléviseur' : 'Modifier le téléviseur',
+            'title' => $id === null ? 'Nouveau périphérique d’affichage' : 'Modifier le périphérique d’affichage',
             'values' => $values,
             'groups' => Groups::pickerItems($this->app),
             'selected' => $groupIds,

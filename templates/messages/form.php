@@ -103,11 +103,11 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             <div class="target-modes">
                 <label class="target-mode">
                     <input type="radio" name="all_devices" value="1" data-picker-target="group-picker" <?= $values['all_devices'] ? 'checked' : '' ?>>
-                    <span><strong>Tous les téléviseurs</strong><small>Y compris ceux ajoutés plus tard</small></span>
+                    <span><strong>Tous les périphériques d’affichage</strong><small>Y compris ceux ajoutés plus tard</small></span>
                 </label>
                 <label class="target-mode">
                     <input type="radio" name="all_devices" value="0" data-picker-target="group-picker" <?= $values['all_devices'] ? '' : 'checked' ?>>
-                    <span><strong>Certains groupes</strong><small>Les téléviseurs des groupes cochés</small></span>
+                    <span><strong>Certains groupes</strong><small>Les périphériques des groupes cochés</small></span>
                 </label>
             </div>
             <?= View::render('partials/picker', [

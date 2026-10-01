@@ -40,7 +40,7 @@ use VitrineExpress\View;
         <aside class="card device-code">
             <p class="device-code-label">Code de connexion</p>
             <p class="device-code-value"><?= e($device['code']) ?></p>
-            <p class="hint">Sur le téléviseur, ouvrez <strong><?= e((is_https() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . url('/display')) ?></strong> et entrez ce code.</p>
+            <p class="hint">Sur le périphérique d’affichage, ouvrez <strong><?= e((is_https() ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? '') . url('/display')) ?></strong> et entrez ce code.</p>
 
             <dl class="facts">
                 <dt>État</dt>
@@ -60,7 +60,7 @@ use VitrineExpress\View;
             <div class="stack">
                 <?php if ($device['token_hash']): ?>
                     <form method="post" action="<?= e(url('/admin/devices/' . $id . '/disconnect')) ?>"
-                          data-confirm="Déconnecter ce téléviseur ? Il reviendra à l’écran de code.">
+                          data-confirm="Déconnecter ce périphérique ? Il reviendra à l’écran de code.">
                         <?= csrf_field() ?>
                         <button type="submit" class="button">Déconnecter</button>
                     </form>
@@ -71,7 +71,7 @@ use VitrineExpress\View;
                     <button type="submit" class="button">Régénérer le code</button>
                 </form>
                 <form method="post" action="<?= e(url('/admin/devices/' . $id . '/delete')) ?>"
-                      data-confirm="Supprimer le téléviseur « <?= e($device['name']) ?> » ?">
+                      data-confirm="Supprimer le périphérique d’affichage « <?= e($device['name']) ?> » ?">
                     <?= csrf_field() ?>
                     <button type="submit" class="button danger">Supprimer</button>
                 </form>

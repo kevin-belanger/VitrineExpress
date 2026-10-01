@@ -112,6 +112,10 @@ docs/              spécification, phases, décisions
 - **Écarté** : ligne « télés sans groupe » (déjà couverte par « sans message à afficher ») ; compteurs à zéro ; tableau détaillé sur le tableau de bord.
 - Code : `src/Dashboard.php` (calculs, testés), nouveaux filtres de la liste des messages (`live`, `ending`, `unbroadcast`).
 
+## D21 — Vocabulaire : « périphérique d'affichage »
+
+- **Décision** (demandée par Kevin) : l'interface dit « périphérique d'affichage » plutôt que « téléviseur » (un écran peut aussi être un PC ou un moniteur). Forme complète dans les titres, la navigation et les boutons ; forme courte « périphérique » là où le contexte est clair (compteurs, colonnes, résumés). Le code garde `device` ; la documentation technique peut encore dire « téléviseur ».
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

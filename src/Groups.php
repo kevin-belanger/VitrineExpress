@@ -88,7 +88,7 @@ final class Groups
         }
         foreach ($items as &$item) {
             $n = count($item['devices']);
-            $item['meta'] = $n === 0 ? 'aucun téléviseur' : $n . ' téléviseur' . ($n > 1 ? 's' : '');
+            $item['meta'] = $n === 0 ? 'aucun périphérique' : $n . ' périphérique' . ($n > 1 ? 's' : '');
         }
         return $items;
     }

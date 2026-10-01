@@ -30,7 +30,7 @@ final class DeviceApiController extends Controller
         return match ($result['status']) {
             DeviceSession::PAIR_UNKNOWN => Response::json(['error' => 'Code inconnu.'], 404),
             DeviceSession::PAIR_CONFLICT => Response::json([
-                'error' => 'Ce téléviseur est déjà connecté sur un autre appareil.',
+                'error' => 'Ce périphérique d’affichage est déjà connecté sur un autre appareil.',
                 'device' => ['name' => $result['device']['name']],
             ], 409),
             default => $this->paired($result['token'], $result['device']),

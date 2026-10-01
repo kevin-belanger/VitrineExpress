@@ -37,7 +37,7 @@
 <div id="conflict" class="screen panel hidden">
     <div class="pair-box">
         <p class="conflict-text">
-            Ce téléviseur (<strong id="conflict-name"></strong>) est déjà connecté sur un autre appareil.<br>
+            Ce périphérique d’affichage (<strong id="conflict-name"></strong>) est déjà connecté sur un autre appareil.<br>
             Voulez-vous le déconnecter et utiliser cet appareil à la place&nbsp;?
         </p>
         <div class="conflict-actions">

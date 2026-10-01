@@ -42,12 +42,12 @@
         function renderSummary(ids) {
             if (picker.classList.contains('is-all')) {
                 var total = Object.keys(names).length;
-                summary.textContent = 'Affiché sur tous les téléviseurs : les ' + total + ' actuels et ceux ajoutés plus tard.';
+                summary.textContent = 'Affiché sur tous les périphériques : les ' + total + ' actuels et ceux ajoutés plus tard.';
                 summary.className = 'picker-summary is-ok';
                 return;
             }
             if (!ids.length) {
-                summary.textContent = 'Affiché sur aucun téléviseur : le message est gardé comme brouillon.';
+                summary.textContent = 'Affiché sur aucun périphérique : le message est gardé comme brouillon.';
                 summary.className = 'picker-summary is-warning';
                 return;
             }
@@ -55,7 +55,7 @@
                 return a.localeCompare(b, 'fr');
             });
             var shown = list.slice(0, 6).join(', ') + (list.length > 6 ? ' et ' + (list.length - 6) + ' autre(s)' : '');
-            summary.textContent = 'Affiché sur ' + plural(list.length, 'téléviseur', 'téléviseurs') + ' : ' + shown + '.';
+            summary.textContent = 'Affiché sur ' + plural(list.length, 'périphérique', 'périphériques') + ' : ' + shown + '.';
             summary.className = 'picker-summary is-ok';
         }
 
@@ -107,7 +107,7 @@
         setup(pickers[i]);
     }
 
-    // Choix « Tous les téléviseurs » / « Certains groupes » (formulaire de message).
+    // Choix « Tous les périphériques d’affichage » / « Certains groupes » (formulaire de message).
     // La liste est seulement estompée en mode « tous » : les groupes cochés sont gardés si on revient en arrière.
     var modes = document.querySelectorAll('input[name="all_devices"][type="radio"]');
     if (modes.length) {
