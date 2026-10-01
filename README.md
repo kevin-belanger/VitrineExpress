@@ -20,3 +20,9 @@ php bin/install.php          # crée la base et le premier compte
 bin/dev-server.sh            # http://localhost:8080
 php tests/run.php            # tests
 ```
+
+## Licence
+
+[MIT](LICENSE) © 2026 Kevin Bélanger.
+
+Inclut l'éditeur [Quill](https://quilljs.com) 2.0.3 (licence BSD-3-Clause, voir `public/assets/vendor/quill/LICENSE`).

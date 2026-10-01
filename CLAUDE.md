@@ -28,6 +28,6 @@ Le propriétaire (Kevin) veut que tu avances seul.
 
 ## Git
 
-- Branche `main`, dépôt `kevin-belanger/VitrineExpress` (privé). Petits commits cohérents, messages en français, poussés régulièrement.
+- Branche `main`, dépôt `kevin-belanger/VitrineExpress` (**public**, licence MIT : ne jamais y mettre de secret ni de donnée réelle). Petits commits cohérents, messages en français, poussés régulièrement.
 - Identité du dépôt : `Kevin Bélanger <58676407+kevin-belanger@users.noreply.github.com>` (à configurer localement au clonage si absente).
 - Ne jamais committer : la base SQLite, `storage/uploads/`, `config/config.local.php`.
