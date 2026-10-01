@@ -65,6 +65,20 @@
     </div>
 </div>
 
+<!-- Confirmation de déconnexion (menu caché) -->
+<div id="logout-confirm" class="confirm-layer hidden" role="dialog" aria-modal="true" aria-labelledby="logout-text">
+    <div class="confirm-box">
+        <p id="logout-text" class="conflict-text">
+            Déconnecter cet appareil&nbsp;?<br>
+            <small>Il faudra entrer de nouveau un code pour le reconnecter.</small>
+        </p>
+        <div class="conflict-actions">
+            <button type="button" id="logout-yes" class="pad-ok">Déconnecter</button>
+            <button type="button" id="logout-no">Annuler</button>
+        </div>
+    </div>
+</div>
+
 <!-- Menu caché (apparaît au mouvement de la souris) -->
 <div id="menu" class="menu hidden">
     <span id="menu-name" class="menu-name"></span>

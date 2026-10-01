@@ -351,6 +351,18 @@
         var code = event.keyCode || event.which;
         wakeMenu();
 
+        if (confirmOpen()) {
+            if (code === 27 || code === 8 || code === 461 || code === 10009) { // Échap, retour (navigateurs de télé)
+                closeConfirm();
+                return false;
+            }
+            if (code === 37 || code === 39) {
+                (document.activeElement === $('logout-yes') ? $('logout-no') : $('logout-yes')).focus();
+                return false;
+            }
+            return true;
+        }
+
         if (state === 'pair') {
             if (code >= 48 && code <= 57) { pressKey(String(code - 48)); return false; }
             if (code >= 96 && code <= 105) { pressKey(String(code - 96)); return false; }
@@ -406,10 +418,22 @@
         }
     };
 
+    // Confirmation dans la page (pas de boîte du navigateur, souvent mal gérée par les télés).
+    var logoutConfirm = $('logout-confirm');
+
+    function confirmOpen() { return !hasClass(logoutConfirm, 'hidden'); }
+
+    function closeConfirm() {
+        hide(logoutConfirm);
+    }
+
     $('menu-logout').onclick = function () {
-        if (!window.confirm('Déconnecter cet appareil ? Il faudra entrer de nouveau un code pour le reconnecter.')) {
-            return;
-        }
+        show(logoutConfirm);
+        $('logout-no').focus();
+    };
+    $('logout-no').onclick = closeConfirm;
+    $('logout-yes').onclick = function () {
+        closeConfirm();
         request('POST', '/logout', {}, function () {
             unpaired(false);
         });

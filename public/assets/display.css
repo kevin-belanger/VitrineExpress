@@ -134,6 +134,33 @@ body.idle, body.idle * { cursor: none !important; }
 @-webkit-keyframes vx-spin { to { -webkit-transform: rotate(360deg); } }
 @keyframes vx-spin { to { transform: rotate(360deg); } }
 
+/* Confirmation de déconnexion */
+.confirm-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    background: rgba(0, 0, 0, .7);
+}
+.confirm-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 80%;
+    max-width: 760px;
+    padding: 36px 40px;
+    text-align: center;
+    background: #0f1b24;
+    border: 2px solid rgba(255, 255, 255, .15);
+    border-radius: 16px;
+    -webkit-transform: translate(-50%, -50%);
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+.confirm-box small { font-size: 22px; color: #94a3b8; }
+
 /* Menu caché */
 .menu {
     position: absolute;

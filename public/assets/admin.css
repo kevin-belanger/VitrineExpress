@@ -450,6 +450,21 @@ button.link:hover { color: #fff; text-decoration: underline; }
 .checklist .muted { overflow-wrap: anywhere; }
 .button[disabled] { opacity: .5; cursor: not-allowed; }
 
+/* Fenêtre de confirmation (admin.js) */
+.confirm-dialog {
+    width: min(440px, calc(100vw - 2rem));
+    padding: 1.4rem 1.5rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(16, 24, 40, .18);
+    color: var(--text);
+}
+.confirm-dialog::backdrop { background: rgba(16, 24, 40, .45); }
+.confirm-message { margin: 0 0 1.25rem; font-size: 1.02rem; line-height: 1.5; }
+.confirm-actions { display: flex; justify-content: flex-end; gap: .5rem; }
+.button.danger-solid { background: var(--danger); border-color: var(--danger); color: #fff; }
+.button.danger-solid:hover { background: #912018; }
+
 /* Erreurs */
 .error-page { text-align: center; padding: 3rem 1rem; }
 .error-code { font-size: 4rem; font-weight: 700; color: var(--border); margin: 0; }

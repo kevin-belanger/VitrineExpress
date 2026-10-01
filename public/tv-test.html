@@ -90,7 +90,8 @@
     document.getElementById('fs').onclick = function () {
         var d = document.documentElement;
         var fn = d.requestFullscreen || d.webkitRequestFullscreen || d.webkitRequestFullScreen || d.mozRequestFullScreen || d.msRequestFullscreen;
-        if (fn) { try { fn.call(d); } catch (e) { alert('Plein écran refusé : ' + e); } } else { alert('Plein écran non pris en charge.'); }
+        var button = document.getElementById('fs');
+        if (fn) { try { fn.call(d); } catch (e) { button.innerHTML = 'Plein écran refusé : ' + escape(e); } } else { button.innerHTML = 'Plein écran non pris en charge'; }
     };
 })();
 </script>
