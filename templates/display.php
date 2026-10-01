@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex">
     <title>VitrineExpress — Affichage</title>
+    <?= \VitrineExpress\View::render('partials/icons', [], null) ?>
     <link rel="stylesheet" href="<?= e(asset('/assets/slide.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('/assets/display.css')) ?>">
 </head>
@@ -16,7 +17,7 @@
 <!-- Écran de connexion par code -->
 <div id="pair" class="screen panel hidden">
     <div class="pair-box">
-        <h1 class="pair-brand">Vitrine<span>Express</span></h1>
+        <h1 class="pair-brand"><img src="<?= e(asset('/assets/brand/logo-light-large.png')) ?>" alt="VitrineExpress"></h1>
         <p class="pair-title">Connexion d’un périphérique d’affichage</p>
         <p id="pair-notice" class="pair-notice hidden"></p>
         <div id="pair-digits" class="pair-digits" aria-live="polite">

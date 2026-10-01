@@ -130,6 +130,15 @@ docs/              spécification, phases, décisions
 - **Date de fin** : lien « Définir une date de fin » ; les champs n'apparaissent qu'à la demande, avec un bouton pour les retirer. Cachés, ils sont désactivés et non envoyés : pas de fin. Sans JavaScript, les champs restent visibles.
 - **Écarté** : case à cocher « Fin » (demandait une interprétation) ; bibliothèque de téléversement (Dropzone, FilePond) — inutile pour un seul fichier.
 
+## D24 — Identité visuelle
+
+- **Logos et icônes** fournis par Kevin : sources dans `resources/brand/`, images d'usage générées par `php bin/build-brand.php resources/brand` (rognées, redimensionnées, en PNG pour les vieux navigateurs de télé) dans `public/assets/brand/`, plus `public/favicon.ico` (16, 32, 48 px).
+  - Logo à texte blanc : barre du haut de la gestion, écran de connexion des périphériques.
+  - Logo à texte foncé : pages de connexion et d'installation.
+  - Icône à contour marine : favicon, icône d'écran d'accueil (iOS, fond blanc).
+  - `icon-light.png` (icône claire) gardée en source, inutilisée pour l'instant.
+- **Couleurs** alignées sur le logo : accent bleu `#0a56c2` (le bleu de la vitrine, contraste suffisant pour du texte blanc), surlignage cyan dans la barre du haut, fond bleu marine sur les écrans de la télé (code, heure). La barre du haut garde l'ardoise `#10202b`, déjà proche du texte foncé du logo.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

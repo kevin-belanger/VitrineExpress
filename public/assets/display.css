@@ -34,9 +34,9 @@ body.idle, body.idle * { cursor: none !important; }
 
 /* Panneaux plein écran (code, conflit, file vide, coupure) */
 .panel {
-    background: #0f1b24;
-    background: -webkit-linear-gradient(-45deg, #0f2027, #203a43, #2c5364);
-    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    background: #0b1f3d;
+    background: -webkit-linear-gradient(-45deg, #081a33, #0b2a5b, #0a3b7f);
+    background: linear-gradient(135deg, #081a33, #0b2a5b, #0a3b7f);
     text-align: center;
     z-index: 5;
 }
@@ -52,8 +52,8 @@ body.idle, body.idle * { cursor: none !important; }
 }
 
 /* Connexion par code */
-.pair-brand { margin: 0 0 .2em; font-size: 48px; font-weight: 700; }
-.pair-brand span { color: #5eead4; }
+.pair-brand { margin: 0 0 16px; line-height: 0; }
+.pair-brand img { height: 72px; width: auto; max-width: 90%; }
 .pair-title { margin: 0 0 24px; font-size: 26px; color: #cbd5e1; }
 .pair-notice { margin: 0 auto 20px; padding: 12px 20px; max-width: 640px; font-size: 22px; background: rgba(245, 158, 11, .18); color: #fde68a; border-radius: 10px; }
 .pair-digits { margin: 0 0 10px; }
@@ -70,7 +70,7 @@ body.idle, body.idle * { cursor: none !important; }
     border: 2px solid rgba(255, 255, 255, .25);
     vertical-align: middle;
 }
-.pair-digits span.filled { border-color: #5eead4; }
+.pair-digits span.filled { border-color: #22d3ee; }
 .pair-error { min-height: 32px; margin: 8px 0; font-size: 24px; color: #fca5a5; }
 .pad { width: 420px; margin: 0 auto; font-size: 0; }
 .pad button, .conflict-actions button, .menu button {
@@ -91,11 +91,11 @@ body.idle, body.idle * { cursor: none !important; }
     vertical-align: top;
 }
 .pad button.pad-muted { font-size: 22px; }
-.pad-ok { background: #0f766e !important; }
+.pad-ok { background: #0a56c2 !important; }
 .pad button:focus, .conflict-actions button:focus, .menu button:focus,
 .pad button:hover, .conflict-actions button:hover, .menu button:hover {
-    border-color: #5eead4;
-    background: rgba(94, 234, 212, .25);
+    border-color: #22d3ee;
+    background: rgba(0, 224, 240, .22);
 }
 .pair-help { margin-top: 24px; font-size: 20px; color: #94a3b8; }
 
@@ -126,7 +126,7 @@ body.idle, body.idle * { cursor: none !important; }
     height: 36px;
     margin-right: 16px;
     border: 4px solid rgba(255, 255, 255, .25);
-    border-top-color: #5eead4;
+    border-top-color: #22d3ee;
     border-radius: 50%;
     -webkit-animation: vx-spin 1s linear infinite;
     animation: vx-spin 1s linear infinite;
@@ -152,7 +152,7 @@ body.idle, body.idle * { cursor: none !important; }
     max-width: 760px;
     padding: 36px 40px;
     text-align: center;
-    background: #0f1b24;
+    background: #0b1f3d;
     border: 2px solid rgba(255, 255, 255, .15);
     border-radius: 16px;
     -webkit-transform: translate(-50%, -50%);

@@ -1,5 +1,7 @@
 <div class="login-box">
-    <h1 class="brand brand-large">Vitrine<span>Express</span></h1>
+    <h1 class="brand-large">
+        <img src="<?= e(asset('/assets/brand/logo-dark.png')) ?>" alt="VitrineExpress" width="324" height="56">
+    </h1>
     <form method="post" action="<?= e(url('/login')) ?>" class="card form">
         <?= csrf_field() ?>
         <label>

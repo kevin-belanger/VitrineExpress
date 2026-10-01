@@ -23,6 +23,7 @@ $isActive = static function (string $path) use ($current): bool {
     <?php if (!empty($refresh)): ?>
         <meta http-equiv="refresh" content="<?= (int) $refresh ?>">
     <?php endif; ?>
+    <?= \VitrineExpress\View::render('partials/icons', [], null) ?>
     <link rel="stylesheet" href="<?= e(asset('/assets/admin.css')) ?>">
     <link rel="stylesheet" href="<?= e(asset('/assets/slide.css')) ?>">
     <?php foreach ($styles ?? [] as $href): ?>
@@ -32,7 +33,9 @@ $isActive = static function (string $path) use ($current): bool {
 <body class="<?= !empty($user) ? 'has-nav' : 'no-nav' ?>">
 <?php if (!empty($user)): ?>
     <header class="topbar">
-        <a class="brand" href="<?= e(url('/admin')) ?>">Vitrine<span>Express</span></a>
+        <a class="brand" href="<?= e(url('/admin')) ?>">
+            <img src="<?= e(asset('/assets/brand/logo-light.png')) ?>" alt="VitrineExpress" width="218" height="32">
+        </a>
         <nav class="mainnav" aria-label="Navigation principale">
             <?php foreach ($nav as $path => $label): ?>
                 <a href="<?= e(url($path)) ?>"<?= $isActive($path) ? ' aria-current="page"' : '' ?>><?= e($label) ?></a>

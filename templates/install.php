@@ -1,5 +1,7 @@
 <div class="install-box">
-    <h1 class="brand brand-large">Vitrine<span>Express</span></h1>
+    <h1 class="brand-large">
+        <img src="<?= e(asset('/assets/brand/logo-dark.png')) ?>" alt="VitrineExpress" width="324" height="56">
+    </h1>
     <p class="install-intro">Bienvenue ! Encore une étape : créer le premier compte administrateur.</p>
 
     <section class="card">
