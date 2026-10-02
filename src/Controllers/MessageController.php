@@ -46,12 +46,9 @@ final class MessageController extends Controller
 
     public function create(): Response
     {
-        $values = Messages::defaults($this->app);
+        $values = Messages::defaults($this->app); // type Image par défaut
         // « Tous les périphériques d'affichage » par défaut, quand le compte peut le choisir.
         $values['all_devices'] = $this->access()->canTargetAll();
-        if (($_GET['type'] ?? '') === Messages::TYPE_TEXT) {
-            $values['type'] = Messages::TYPE_TEXT;
-        }
         return $this->form($values, [], null);
     }
 

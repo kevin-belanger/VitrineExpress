@@ -13,10 +13,7 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
 ?>
 <div class="page-head">
     <h1>Messages</h1>
-    <div class="head-actions">
-        <a class="button primary" href="<?= e(url('/admin/messages/new')) ?>">Nouvelle image</a>
-        <a class="button primary" href="<?= e(url('/admin/messages/new?type=text')) ?>">Nouveau texte</a>
-    </div>
+    <a class="button primary" href="<?= e(url('/admin/messages/new')) ?>">Nouveau message</a>
 </div>
 
 <form method="get" action="<?= e(url('/admin/messages')) ?>" class="filters" data-autosubmit>
