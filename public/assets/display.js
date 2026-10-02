@@ -309,6 +309,11 @@
                 digits = '';
                 renderDigits();
                 setError('Code inconnu. Vérifiez le code dans l’interface de gestion.');
+            } else if (status === 429 && data && data.error) {
+                // Trop d'essais depuis cette adresse : le serveur dit combien de temps attendre.
+                digits = '';
+                renderDigits();
+                setError(data.error);
             } else {
                 setError('Serveur injoignable. Vérifiez la connexion réseau et réessayez.');
             }

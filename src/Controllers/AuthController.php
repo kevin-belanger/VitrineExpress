@@ -7,6 +7,7 @@ namespace VitrineExpress\Controllers;
 use VitrineExpress\Auth;
 use VitrineExpress\Controller;
 use VitrineExpress\Response;
+use VitrineExpress\Throttle;
 
 final class AuthController extends Controller
 {
@@ -27,11 +28,22 @@ final class AuthController extends Controller
     {
         $username = input('username');
         $password = (string) ($_POST['password'] ?? '');
+        $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        $account = mb_strtolower($username);
+        $throttle = new Throttle($this->app);
+
+        $wait = $throttle->retryAfter(Throttle::KIND_LOGIN, $ip, $account);
+        if ($wait > 0) {
+            flash('error', Throttle::message($wait));
+            return $this->view('auth/login', ['title' => 'Connexion', 'username' => $username], 429);
+        }
 
         if ($username !== '' && $password !== '' && Auth::attempt($this->app, $username, $password)) {
+            $throttle->clear(Throttle::KIND_LOGIN, $ip, $account);
             return $this->redirect('/admin');
         }
 
+        $throttle->recordFailure(Throttle::KIND_LOGIN, $ip, $account);
         flash('error', 'Code usager ou mot de passe invalide.');
         return $this->view('auth/login', ['title' => 'Connexion', 'username' => $username], 422);
     }

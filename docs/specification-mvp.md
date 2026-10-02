@@ -201,7 +201,7 @@ Ces évolutions sont prévues plus tard ; le modèle de données leur laisse la 
 | --- | --- |
 | Vidéos | Type `video` : MP4 (H.264) et WebM, taille maximale paramétrable ; durée = celle de la vidéo |
 | Permissions fines | **Fait** : gestionnaires de groupes, voir [specification-gestionnaires.md](specification-gestionnaires.md) |
-| Limite de tentatives | Blocage temporaire après plusieurs codes à 5 chiffres erronés |
+| Limite de tentatives | **Fait** : décision D31 (attente de 15 minutes par adresse IP, codes et connexion) |
 | Réorganisation de la file | Champ de position, avec une règle claire quand les files diffèrent d'une télé à l'autre |
 | Groupes imbriqués | Table de groupes parents, avec protection contre les boucles |
 | Mode portrait | Orientation par téléviseur, et aperçu adapté |

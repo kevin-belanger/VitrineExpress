@@ -11,6 +11,7 @@ use VitrineExpress\HttpException;
 use VitrineExpress\Messages;
 use VitrineExpress\Playlist;
 use VitrineExpress\Response;
+use VitrineExpress\Throttle;
 
 /**
  * API JSON de la page d'affichage (spec, section Logique serveur).
@@ -19,16 +20,27 @@ final class DeviceApiController extends Controller
 {
     public function pair(): Response
     {
+        $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+        $throttle = new Throttle($this->app);
+        $wait = $throttle->retryAfter(Throttle::KIND_PAIR, $ip);
+        if ($wait > 0) {
+            throw new HttpException(429, Throttle::message($wait));
+        }
+
         $result = DeviceSession::pair(
             $this->app,
             (string) ($_POST['code'] ?? ''),
             ($_POST['force'] ?? '') === '1',
             (string) ($_SERVER['HTTP_USER_AGENT'] ?? ''),
-            (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
+            $ip,
         );
+        if ($result['status'] === DeviceSession::PAIR_UNKNOWN) {
+            $throttle->recordFailure(Throttle::KIND_PAIR, $ip);
+            return Response::json(['error' => 'Code inconnu.'], 404);
+        }
+        $throttle->clear(Throttle::KIND_PAIR, $ip); // code reconnu, connecté ou non
 
         return match ($result['status']) {
-            DeviceSession::PAIR_UNKNOWN => Response::json(['error' => 'Code inconnu.'], 404),
             DeviceSession::PAIR_CONFLICT => Response::json([
                 'error' => 'Ce périphérique d’affichage est déjà connecté sur un autre appareil.',
                 'device' => ['name' => $result['device']['name']],
@@ -77,12 +89,17 @@ final class DeviceApiController extends Controller
         ]);
     }
 
-    /** Téléviseur authentifié par son jeton, sinon 401. */
+    /** Téléviseur authentifié par son jeton, sinon 401. Son adresse IP est tenue à jour (elle sert à la limite de tentatives). */
     private function device(): array
     {
         $device = DeviceSession::find($this->app, DeviceSession::tokenFromRequest());
         if ($device === null) {
             throw new HttpException(401, 'Appareil non connecté.');
+        }
+        $ip = mb_substr((string) ($_SERVER['REMOTE_ADDR'] ?? ''), 0, 45);
+        if ($ip !== '' && $device['ip'] !== $ip) {
+            $this->app->db->prepare('UPDATE devices SET ip = ? WHERE id = ?')->execute([$ip, $device['id']]);
+            $device['ip'] = $ip;
         }
         return $device;
     }

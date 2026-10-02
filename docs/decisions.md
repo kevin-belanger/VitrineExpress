@@ -186,6 +186,13 @@ docs/              spécification, phases, décisions
 - **Journal** : `src/Log.php` ; au-delà de 1 Mo, `app.log` devient `app.log.1` (le précédent est écrasé). Pas de logrotate à configurer sur l'hébergement.
 - **Écarté pour l'instant** (proposé, non retenu) : limite de tentatives sur la connexion et les codes à 5 chiffres, duplication d'un message, expiration de la session.
 
+## D31 — Limite de tentatives (règles de Kevin)
+
+- **Codes de périphérique** (`/api/device/pair`), par adresse IP, après des échecs consécutifs dans les 15 dernières minutes : adresse locale → 5 échecs ; adresse publique d'où un périphérique s'est connecté dans les 24 dernières heures → 20 (on ne bloque pas tout un organisme parce que quelqu'un se trompe) ; adresse publique inconnue → 5. Attente de 15 minutes après le dernier échec ; réponse 429 avec le délai, affichée sur l'écran de code. Un code reconnu (connecté ou en conflit) remet le compte à zéro ; rien n'est compté pendant l'attente.
+- **Connexion des comptes** (`/login`) : 5 échecs par compte depuis une adresse, 20 par adresse tous comptes confondus ; même attente, même message.
+- **Mise en œuvre** : `src/Throttle.php`, table `login_attempts` (migration 005) purgée au fil de l'eau. L'adresse est celle vue par PHP (`REMOTE_ADDR`) : derrière un mandataire inverse, le serveur web doit rétablir l'adresse du client (voir le guide d'installation). L'adresse IP d'un périphérique est tenue à jour à chaque requête, pour que la règle « périphérique connu » suive les changements d'adresse publique.
+- **Écarté** : un verrou par compte sans égard à l'adresse (un inconnu pourrait bloquer l'administrateur à volonté).
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

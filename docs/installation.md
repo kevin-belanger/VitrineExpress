@@ -139,6 +139,10 @@ sqlite3 storage/database.sqlite ".backup '/chemin/sauvegarde/vitrine-$(date +%F)
 rsync -a storage/uploads/ /chemin/sauvegarde/uploads/
 ```
 
+## Limite de tentatives et mandataire inverse
+
+Après plusieurs codes de périphérique erronés ou plusieurs mots de passe erronés, l'adresse IP attend 15 minutes. L'adresse est celle que voit PHP. Si le site est derrière un mandataire inverse (Cloudflare, un répartiteur de charge…), toutes les requêtes semblent venir de la même adresse : configurez le serveur web pour rétablir celle du client (`mod_remoteip` sur Apache, `real_ip` sur Nginx), sinon un seul visiteur maladroit bloque tout le monde.
+
 ## Journal d'erreurs
 
 Les erreurs inattendues sont consignées dans `storage/logs/app.log`. Quand il dépasse 1 Mo, il est renommé `app.log.1` (le précédent `.1` est écrasé) : le journal n'occupe jamais plus de 2 Mo.
