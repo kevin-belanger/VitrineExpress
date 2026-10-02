@@ -16,24 +16,24 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
         <?= csrf_field() ?>
 
         <?php if ($isNew): ?>
-            <fieldset class="segmented">
-                <legend>Type de message</legend>
-                <label><input type="radio" name="type" value="image" <?= !$isText ? 'checked' : '' ?>> Image</label>
-                <label><input type="radio" name="type" value="text" <?= $isText ? 'checked' : '' ?>> Texte</label>
-            </fieldset>
+            <?php // Le type se choisit à la création ; ensuite, le champ de contenu suffit à le montrer. ?>
+            <div class="type-switch" role="radiogroup" aria-label="Type de message">
+                <label>
+                    <input type="radio" name="type" value="image" <?= !$isText ? 'checked' : '' ?>>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l4.6-4.6a2 2 0 0 1 2.8 0L16 16m-2-2 1.6-1.6a2 2 0 0 1 2.8 0L20 14M14 8h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
+                    Image
+                </label>
+                <label>
+                    <input type="radio" name="type" value="text" <?= $isText ? 'checked' : '' ?>>
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg>
+                    Texte
+                </label>
+            </div>
         <?php else: ?>
             <input type="hidden" name="type" value="<?= e($values['type']) ?>">
-            <p class="muted">Type : <?= e(Messages::TYPE_LABELS[$values['type']]) ?></p>
         <?php endif; ?>
 
-        <label>
-            Titre <span class="muted">(pour vous retrouver, n’est pas affiché)</span>
-            <input type="text" name="title" value="<?= e($values['title']) ?>" required maxlength="150">
-            <?= field_error($errors, 'title') ?>
-        </label>
-
-        <div data-for-type="image" class="field <?= $isText ? 'hidden' : '' ?>">
-            <span class="field-label">Image</span>
+        <div data-for-type="image" class="<?= $isText ? 'hidden' : '' ?>">
             <?= View::render('partials/image-field', [
                 'id' => 'image',
                 'name' => 'image',
@@ -48,7 +48,37 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
 
         <div data-for-type="text" class="<?= $isText ? '' : 'hidden' ?> form">
             <div class="field">
-                <span class="field-label">Texte</span>
+                <?php // Barre de l'éditeur (Quill) : peu de boutons, libellés en français ; affichée par message-form.js. ?>
+                <div id="editor-toolbar" hidden>
+                    <span class="ql-formats">
+                        <select class="ql-header">
+                            <option selected>Texte</option>
+                            <option value="1">Titre</option>
+                            <option value="2">Sous-titre</option>
+                        </select>
+                        <select class="ql-size">
+                            <option value="small">Petit</option>
+                            <option selected></option>
+                            <option value="large">Grand</option>
+                            <option value="huge">Très grand</option>
+                        </select>
+                    </span>
+                    <span class="ql-formats">
+                        <button type="button" class="ql-bold" title="Gras"></button>
+                        <button type="button" class="ql-italic" title="Italique"></button>
+                        <button type="button" class="ql-underline" title="Souligné"></button>
+                        <select class="ql-align">
+                            <option selected></option>
+                            <option value="center"></option>
+                            <option value="right"></option>
+                        </select>
+                    </span>
+                    <span class="ql-formats">
+                        <button type="button" class="ql-list" value="bullet" title="Liste à puces"></button>
+                        <button type="button" class="ql-list" value="ordered" title="Liste numérotée"></button>
+                        <button type="button" class="ql-clean" title="Effacer la mise en forme"></button>
+                    </span>
+                </div>
                 <div id="editor"></div>
                 <textarea name="text_html" hidden><?= e($values['text_html']) ?></textarea>
                 <?= field_error($errors, 'text_html') ?>
@@ -62,13 +92,19 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
                                    data-css="<?= e($bg['css_value']) ?>" data-color="<?= e($bg['text_color']) ?>"
                                 <?= (int) $values['background_id'] === (int) $bg['id'] ? 'checked' : '' ?>>
                             <span class="swatch-color" style="background: <?= e($bg['css_value']) ?>; color: <?= e($bg['text_color']) ?>">Aa</span>
-                            <span class="swatch-name"><?= e($bg['name']) ?></span>
+                            <span class="visually-hidden"><?= e($bg['name']) ?></span>
                         </label>
                     <?php endforeach; ?>
                 </div>
                 <?= field_error($errors, 'background_id') ?>
             </fieldset>
         </div>
+
+        <label>
+            <span>Titre <span class="label-hint">(pour vous retrouver, n’est pas affiché)</span></span>
+            <input type="text" name="title" value="<?= e($values['title']) ?>" required maxlength="150">
+            <?= field_error($errors, 'title') ?>
+        </label>
 
         <div class="compact-grid">
             <label for="start_date">Début</label>
@@ -90,7 +126,7 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
                 <?= field_error($errors, 'end') ?>
             </div>
 
-            <label for="duration_seconds">Durée</label>
+            <label for="duration_seconds">Durée à l’écran</label>
             <div class="inline-fields">
                 <input type="number" id="duration_seconds" name="duration_seconds" value="<?= e($values['duration_seconds']) ?>"
                        min="<?= Messages::MIN_DURATION ?>" max="<?= Messages::MAX_DURATION ?>" required>
@@ -109,7 +145,8 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             'contentNote' => true,
         ], null) ?>
 
-        <div class="form-actions">
+        <?php // Formulaire long : la rangée d'actions reste au bas de l'écran pendant qu'on le parcourt. ?>
+        <div class="form-actions sticky-actions">
             <button type="submit" class="button primary">Enregistrer</button>
             <a class="button" href="<?= e(url('/admin/messages')) ?>">Annuler</a>
             <?php if ($canDelete): ?>

@@ -3,7 +3,8 @@
 // le serveur). Le vrai <input type="file"> reste dans le formulaire : c'est lui qui est envoyé.
 //
 // Chaque champ reçoit une petite API (element.imageField : url(), showError(texte)) et émet l'événement
-// « imagechange » (detail.url : image montrée, '' si aucune), par exemple pour un aperçu.
+// « imagechange » (detail.url : image montrée, '' si aucune ; detail.name : nom du fichier qu'on vient de
+// choisir, '' sinon), par exemple pour un aperçu.
 (function () {
     'use strict';
 
@@ -38,9 +39,9 @@
             errorEl.hidden = !text;
         }
 
-        function notify(url) {
+        function notify(url, name) {
             shownUrl = url;
-            field.dispatchEvent(new CustomEvent('imagechange', { detail: { url: url } }));
+            field.dispatchEvent(new CustomEvent('imagechange', { detail: { url: url, name: name || '' } }));
         }
 
         function showCard(url, name, size) {
@@ -92,7 +93,7 @@
                 undo.hidden = false;
                 if (remove) { remove.hidden = true; }
                 if (removeInput) { removeInput.value = ''; } // la nouvelle image remplace l'ancienne
-                notify(objectUrl);
+                notify(objectUrl, file.name);
                 return;
             }
             // Fichier refusé : on garde le choix précédent.

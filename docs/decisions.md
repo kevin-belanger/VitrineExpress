@@ -167,6 +167,16 @@ docs/              spécification, phases, décisions
 - **Suppression** : formulaire séparé (`partials/delete-form.php`), placé hors du formulaire principal puisque les formulaires ne s'imbriquent pas ; le bouton s'y rattache par `form="delete-form"`. Pour un périphérique, « Supprimer » quitte le panneau du code, qui garde les actions de connexion (Déconnecter, Régénérer le code).
 - **Écarté** : lien étiré sur toute la ligne en CSS (`position: relative` sur `tr` mal pris en charge par certains navigateurs).
 
+## D29 — Formulaire de message : deuxième passe
+
+- **Demandé par Kevin** : rendre le formulaire le plus intuitif possible en le gardant très simple.
+- **Type** : contrôle segmenté « Image | Texte » à la création ; en modification, plus de ligne « Type : … » (le champ de contenu suffit).
+- **Ordre** : le contenu d'abord (image, ou texte et arrière-plan), puis le titre. Tant qu'on n'a rien écrit dans le titre, il reprend le nom du fichier choisi (« affiche_noel-2026.jpg » → « Affiche noel 2026 ») ou la première ligne du texte ; une fois tapé à la main, il n'est plus touché.
+- **Barre de l'éditeur** écrite dans le gabarit, en français, avec infobulles : Style (Texte, Titre, Sous-titre), Taille (Petit, Normal, Grand, Très grand), gras, italique, souligné, alignement (gauche, centre, droite), listes, effacer la mise en forme. Avant, deux listes affichaient « Normal » et certains libellés étaient en anglais. Retirés : barré, titre de niveau 3, justifié (le contenu existant qui les utilise s'affiche toujours).
+- **Arrière-plans** : deux rangées égales, noms en infobulle seulement.
+- **« Durée à l'écran »** au lieu de « Durée » : sous Début et Fin, « 20 secondes » pouvait se lire comme la durée totale.
+- **Actions** collées au bas de l'écran (formulaire long). Sur écran étroit, étiquettes de date au-dessus des champs.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

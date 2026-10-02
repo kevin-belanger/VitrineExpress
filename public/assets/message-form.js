@@ -69,29 +69,67 @@
         }
     });
 
+    // ---------- Titre proposé ----------
+    // Tant qu'on n'a pas écrit de titre, il reprend le nom de l'image choisie ou la première ligne du texte.
+
+    var titleInput = form.querySelector('[name="title"]');
+    var titleIsAuto = titleInput.value === '';
+    titleInput.addEventListener('input', function () {
+        titleIsAuto = titleInput.value === '';
+    });
+
+    function suggestTitle(text) {
+        if (titleIsAuto) {
+            titleInput.value = text.slice(0, Number(titleInput.getAttribute('maxlength')) || 150);
+        }
+    }
+
+    function firstLine(text) {
+        var lines = text.split('\n');
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i].replace(/\s+/g, ' ').trim();
+            if (line) {
+                return line;
+            }
+        }
+        return '';
+    }
+
+    // « affiche_noel-2026.jpg » → « Affiche noel 2026 » ; rien pour un nom générique (image collée).
+    function titleFromFileName(name) {
+        var base = name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim();
+        if (!base || /^image( \d+)?$/i.test(base)) {
+            return '';
+        }
+        return base.charAt(0).toUpperCase() + base.slice(1);
+    }
+
     // ---------- Éditeur de texte enrichi ----------
 
     var editor = document.getElementById('editor');
-    if (editor && window.Quill) {
+    var toolbar = document.getElementById('editor-toolbar');
+    if (editor && toolbar && window.Quill) {
+        // La barre est écrite dans le gabarit (libellés et infobulles en français).
+        toolbar.hidden = false;
         quill = new window.Quill(editor, {
             theme: 'snow',
             placeholder: 'Votre message…',
-            modules: {
-                toolbar: [
-                    [{ header: [1, 2, 3, false] }],
-                    [{ size: ['small', false, 'large', 'huge'] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ list: 'ordered' }, { list: 'bullet' }],
-                    [{ align: [] }],
-                    ['clean']
-                ]
+            modules: { toolbar: toolbar }
+        });
+        var pickerTitles = { 'ql-header': 'Style', 'ql-size': 'Taille', 'ql-align': 'Alignement' };
+        Object.keys(pickerTitles).forEach(function (name) {
+            var label = toolbar.querySelector('.ql-picker.' + name + ' .ql-picker-label');
+            if (label) {
+                label.title = pickerTitles[name];
             }
         });
+        quill.root.setAttribute('aria-label', 'Texte du message');
         if (htmlField.value) {
             quill.clipboard.dangerouslyPasteHTML(htmlField.value, 'silent');
         }
         quill.on('text-change', function () {
             htmlField.value = quill.getLength() > 1 ? quill.root.innerHTML : '';
+            suggestTitle(firstLine(quill.getText()));
             refreshSoon();
         });
     }
@@ -110,6 +148,10 @@
     imageUrl = imageField.imageField.url();
     imageField.addEventListener('imagechange', function (event) {
         imageUrl = event.detail.url;
+        var fromName = titleFromFileName(event.detail.name || '');
+        if (fromName) {
+            suggestTitle(fromName);
+        }
         refresh();
     });
 
