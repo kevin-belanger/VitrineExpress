@@ -30,7 +30,7 @@ final class MessageController extends Controller
             'device' => isset($devices[(int) ($_GET['device'] ?? 0)]) ? (int) $_GET['device'] : 0,
             'status' => array_key_exists((string) ($_GET['status'] ?? ''), Messages::FILTER_LABELS) ? (string) $_GET['status'] : '',
             // Gestionnaire : par défaut « Vos groupes » (son périmètre, comme les chiffres du tableau de bord) ;
-            // « Tous les groupes » montre aussi les messages des autres, qu'il peut ouvrir et diffuser chez lui.
+            // « Tous les messages » montre aussi ceux des autres, qu'il peut ouvrir et diffuser chez lui.
             'all' => !$access->isAdmin() && ($_GET['group'] ?? '') === 'all',
         ];
         $scope = $filters['all'] ? null : $access->scope();

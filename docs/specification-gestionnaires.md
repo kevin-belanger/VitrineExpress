@@ -15,7 +15,7 @@ Le **périmètre** d'un gestionnaire = ses groupes + les périphériques de ces 
 
 | Action | Administrateur | Gestionnaire de groupes |
 |---|---|---|
-| Voir la liste des messages | Tous | Ceux de son périmètre par défaut ; « Tous les groupes » montre aussi ceux des autres. Tout message s'ouvre et peut être diffusé dans ses groupes |
+| Voir la liste des messages | Tous | Ceux de son périmètre par défaut (« Vos groupes ») ; « Tous les messages » montre aussi ceux des autres. Tout message s'ouvre et peut être diffusé dans ses groupes |
 | Créer un message | Oui, cibles libres | Oui, cibles dans son périmètre |
 | « Tous les périphériques d'affichage » | Oui | Non |
 | Modifier **son** message | Tout | Contenu, dates, durée ; cibles de son périmètre |

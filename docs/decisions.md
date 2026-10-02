@@ -158,7 +158,7 @@ docs/              spécification, phases, décisions
 - **Fusion des cibles** : quand un gestionnaire enregistre, seules les cibles de son périmètre suivent le formulaire ; les autres sont relues en base et conservées. Plusieurs gestionnaires partagent donc un message sans s'écraser, quel que soit le contenu envoyé.
 - **Message d'un autre** : page « Diffusion » (aperçu en lecture seule + « Afficher sur ») plutôt que le formulaire complet avec des champs désactivés : on montre seulement ce qu'on peut faire.
 - **Tout message s'ouvre** (demandé par Kevin : trop étrange de ne pas pouvoir cliquer sur certains) : lignes et miniatures toujours cliquables ; un message « Tous » ou un gestionnaire sans groupe donne la page Diffusion en lecture seule, avec « Retour ». L'enregistrement reste refusé par le serveur dans ces cas.
-- **Périmètre des listes** : liste des messages et tableau de bord d'un gestionnaire limités par défaut à son périmètre (mêmes chiffres des deux côtés) ; « Tous les groupes » dans le filtre montre le reste, pour diffuser chez soi le message d'un autre.
+- **Périmètre des listes** : liste des messages et tableau de bord d'un gestionnaire limités par défaut à son périmètre (mêmes chiffres des deux côtés) ; « Tous les messages » dans le filtre montre le reste, pour diffuser chez soi le message d'un autre.
 - **Sans changement pour un administrateur**, sauf l'auteur affiché sous le titre des messages.
 
 ## D28 — Listes : lignes cliquables, suppression dans la fiche

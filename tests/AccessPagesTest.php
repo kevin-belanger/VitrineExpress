@@ -164,7 +164,8 @@ function test_manager_message_list_defaults_to_their_groups(): void
     } finally {
         $_GET = [];
     }
-    assert_contains('Pour l’aire commune', $all, '« Tous les groupes » : aussi les messages des autres');
+    assert_contains('Pour l’aire commune', $all, '« Tous les messages » : aussi ceux des autres');
+    assert_contains('<option value="all" selected>Tous les messages</option>', $all);
     assert_contains('data-href="/admin/messages/' . $commune['id'] . '/edit"', $all, 'Ligne cliquable vers la page Diffusion');
 }
 

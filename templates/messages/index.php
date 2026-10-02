@@ -27,7 +27,7 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
                 <option value="">Tous les groupes</option>
             <?php else: ?>
                 <option value="">Vos groupes</option>
-                <option value="all" <?= $filters['all'] ? 'selected' : '' ?>>Tous les groupes</option>
+                <option value="all" <?= $filters['all'] ? 'selected' : '' ?>>Tous les messages</option>
             <?php endif; ?>
             <?php foreach ($groups as $groupId => $groupName): ?>
                 <option value="<?= (int) $groupId ?>" <?= $filters['group'] === $groupId ? 'selected' : '' ?>><?= e($groupName) ?></option>
