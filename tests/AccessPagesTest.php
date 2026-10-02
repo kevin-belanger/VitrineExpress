@@ -106,7 +106,7 @@ function test_manager_changes_only_the_broadcast_of_someone_elses_message(): voi
     $global = message_by($f, 'admin', [], true);
     $page = $kernel->handle('GET', '/admin/messages/' . $global['id'] . '/edit');
     assert_same(200, $page->status);
-    assert_contains('choisi par un administrateur', $page->body);
+    assert_contains('<p class="target-fixed">Tous les périphériques d’affichage</p>', $page->body);
     assert_contains('>Retour</a>', $page->body);
     assert_false(str_contains($page->body, 'Enregistrer'), 'Rien à enregistrer');
     assert_same(403, post_form($kernel, '/admin/messages/' . $global['id'], ['groups' => [(string) $f['compta']]])->status);

@@ -24,7 +24,7 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
         Groupe
         <select name="group">
             <?php if ($access->isAdmin()): ?>
-                <option value="">Tous les groupes</option>
+                <option value="">Tous les messages</option>
             <?php else: ?>
                 <option value="">Vos groupes</option>
                 <option value="all" <?= $filters['all'] ? 'selected' : '' ?>>Tous les messages</option>
