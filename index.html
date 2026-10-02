@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>VitrineExpress — Affichage numérique libre</title>
+    <meta name="description" content="VitrineExpress affiche vos messages sur les écrans de votre organisme. Logiciel libre : un serveur PHP suffit, et rien à installer sur les écrans.">
+    <meta property="og:title" content="VitrineExpress">
+    <meta property="og:description" content="Affichez vos messages sur les écrans de votre organisme. Logiciel libre, un serveur PHP suffit.">
+    <meta property="og:image" content="https://kevin-belanger.github.io/VitrineExpress/img/og.jpg">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="site.css">
+</head>
+<body>
+
+<header class="top">
+    <div class="wrap">
+        <a class="logo" href="#"><img src="img/logo-light.png" alt="VitrineExpress" width="218" height="32"></a>
+        <nav>
+            <a href="#comment">Comment ça marche</a>
+            <a href="#quotidien">Au quotidien</a>
+            <a href="#installer">Installer</a>
+            <a class="btn btn-light" href="https://github.com/kevin-belanger/VitrineExpress">GitHub</a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="wrap">
+        <div class="hero-text">
+            <h1>Affichez vos messages sur les écrans de votre organisme.</h1>
+            <p>VitrineExpress est un logiciel libre d’affichage numérique. Vous créez un message, vous choisissez les écrans où il passe, et il s’affiche en rotation avec les autres.</p>
+            <div class="hero-actions">
+                <a class="btn btn-primary" href="#comment">Comment ça marche</a>
+                <a class="btn btn-light" href="https://github.com/kevin-belanger/VitrineExpress">Voir le code</a>
+            </div>
+        </div>
+        <div class="tv-wrap">
+            <div class="tv">
+                <div class="tv-screen" aria-label="Exemple d’écran : les messages défilent">
+                    <div class="slide slide-text slide-ocean">
+                        <h2>Bienvenue au Centre communautaire des Érables</h2>
+                        <p>Accueil ouvert de 8 h à 21 h, tous les jours</p>
+                    </div>
+                    <img class="slide" src="img/affiche-yoga.webp" alt="" width="1600" height="900">
+                    <div class="slide slide-text slide-soleil">
+                        <h2>Heure du conte</h2>
+                        <p class="big">Samedi 10 h 30 · Bibliothèque</p>
+                        <p>Pour les 3 à 6 ans, avec un parent</p>
+                    </div>
+                    <img class="slide" src="img/affiche-sang.webp" alt="" width="1600" height="900">
+                </div>
+                <div class="tv-stand"></div>
+                <div class="tv-foot"></div>
+            </div>
+            <p class="tv-caption">Ce que voit un écran. Chaque message reste affiché le temps que vous avez choisi, puis le suivant prend sa place.</p>
+        </div>
+    </div>
+</section>
+
+<section id="comment">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <h2 class="title">Comment ça marche</h2>
+            <p class="lead">Trois étapes.</p>
+        </div>
+        <ol class="rows">
+            <li class="row reveal">
+                <div class="row-text">
+                    <span class="num">1</span>
+                    <h3>Créez un message</h3>
+                    <p>Une image, ou un texte sur un arrière-plan. L’aperçu montre le résultat tel qu’il paraîtra à l’écran.</p>
+                </div>
+                <div class="frame">
+                    <div class="frame-bar"><i></i><i></i><i></i></div>
+                    <img src="img/message.webp" alt="Formulaire d’un message texte, avec l’éditeur, le choix de l’arrière-plan et l’aperçu" width="2000" height="924" loading="lazy">
+                </div>
+            </li>
+            <li class="row reveal">
+                <div class="row-text">
+                    <span class="num">2</span>
+                    <h3>Choisissez où l’afficher</h3>
+                    <p>Un groupe d’écrans, certains écrans, ou tous. Indiquez quand commencer et, si vous voulez, quand arrêter.</p>
+                </div>
+                <div class="frame">
+                    <div class="frame-bar"><i></i><i></i><i></i></div>
+                    <img src="img/cibles.webp" alt="Partie « Afficher sur » du formulaire : groupes et écrans à cocher" width="1580" height="1120" loading="lazy">
+                </div>
+            </li>
+            <li class="row reveal">
+                <div class="row-text">
+                    <span class="num">3</span>
+                    <h3>Connectez un écran</h3>
+                    <p>Sur l’écran, ouvrez la page d’affichage dans un navigateur et entrez le code à 5 chiffres de cet écran. Le code n’est demandé qu’une fois : l’écran reste connecté, même après une coupure.</p>
+                </div>
+                <div class="tv-frame">
+                    <img src="img/ecran-code.webp" alt="Écran de connexion : cinq cases pour le code et un pavé numérique" width="1600" height="900" loading="lazy">
+                </div>
+            </li>
+        </ol>
+    </div>
+</section>
+
+<section id="quotidien" class="alt">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <h2 class="title">Au quotidien</h2>
+            <p class="lead">Ce que vous voyez en ouvrant la gestion.</p>
+        </div>
+        <div class="rows">
+            <div class="row reveal">
+                <div class="row-text">
+                    <h3>Vous voyez ce que chaque écran affiche</h3>
+                    <p>La liste des écrans indique si chacun est en ligne et quel message il montre en ce moment. Elle se met à jour toute seule.</p>
+                </div>
+                <div class="frame">
+                    <div class="frame-bar"><i></i><i></i><i></i></div>
+                    <img src="img/ecrans.webp" alt="Liste des écrans avec leur état et une vignette du message affiché" width="2000" height="958" loading="lazy">
+                </div>
+            </div>
+            <div class="row reveal">
+                <div class="row-text">
+                    <h3>Le tableau de bord ne montre que ce qui demande votre attention</h3>
+                    <p>Un écran hors ligne, un message qui se termine bientôt, un message qui ne vise aucun écran. Le reste, il n’en parle pas.</p>
+                </div>
+                <div class="frame">
+                    <div class="frame-bar"><i></i><i></i><i></i></div>
+                    <img src="img/tableau-de-bord.webp" alt="Tableau de bord : écrans en ligne, messages en diffusion et points à régler" width="2000" height="1069" loading="lazy">
+                </div>
+            </div>
+            <div class="row reveal">
+                <div class="row-text">
+                    <h3>Déléguez par groupe</h3>
+                    <p>Un gestionnaire de groupes publie ses messages sur les écrans de ses groupes seulement. Il peut aussi reprendre un message existant pour l’afficher chez lui. L’administrateur garde la main sur tout.</p>
+                </div>
+                <div class="frame">
+                    <div class="frame-bar"><i></i><i></i><i></i></div>
+                    <img src="img/diffusion.webp" alt="Page Diffusion d’un gestionnaire : il choisit parmi ses groupes seulement" width="2000" height="986" loading="lazy">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="installer" class="install">
+    <div class="wrap">
+        <div class="section-head reveal">
+            <h2 class="title">Un serveur PHP suffit</h2>
+            <p class="lead">VitrineExpress tourne avec PHP 8.1 et SQLite. Rien d’autre à installer, aucun service externe. Vos données restent chez vous.</p>
+        </div>
+        <div class="facts reveal">
+            <div class="fact">
+                <strong>Les écrans</strong>
+                <span>Une télé avec navigateur, un vieux PC, un mini-ordinateur. Si le réseau coupe, l’écran l’indique et reprend tout seul.</span>
+            </div>
+            <div class="fact">
+                <strong>L’hébergement</strong>
+                <span>Un hébergement web ordinaire, avec Apache ou Nginx. L’installation se fait dans le navigateur.</span>
+            </div>
+            <div class="fact">
+                <strong>Licence MIT</strong>
+                <span>Code ouvert, gratuit, que vous pouvez modifier.</span>
+            </div>
+            <div class="fact">
+                <strong>En français</strong>
+                <span>L’interface, la documentation et les messages d’erreur.</span>
+            </div>
+        </div>
+        <div class="actions reveal">
+            <a class="btn btn-primary" href="https://github.com/kevin-belanger/VitrineExpress/blob/main/docs/installation.md">Guide d’installation</a>
+            <a class="btn btn-light" href="https://github.com/kevin-belanger/VitrineExpress">Dépôt GitHub</a>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="wrap">
+        <span>VitrineExpress — logiciel libre sous licence MIT.</span>
+        <span>© 2026 Kevin Bélanger · <a href="https://github.com/kevin-belanger/VitrineExpress">GitHub</a></span>
+    </div>
+</footer>
+
+<script src="site.js"></script>
+</body>
+</html>
