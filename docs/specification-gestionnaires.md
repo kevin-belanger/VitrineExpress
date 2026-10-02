@@ -36,6 +36,7 @@ Quand un gestionnaire enregistre un message, **seules les cibles de son périmè
 - Créateur supprimé : le message reste ; seul un administrateur en modifie le contenu.
 - Gestionnaire sans groupe : il peut créer des brouillons (sans cible).
 - Périphérique ciblé directement qui quitte le groupe du gestionnaire : le ciblage reste jusqu'à la prochaine modification par quelqu'un qui le peut.
+- Périphérique dans deux groupes : un message de l'autre groupe qui s'y affiche apparaît dans « Vos groupes », et le gestionnaire peut l'étendre à ses groupes, comme tout message d'un autre (comportement confirmé par Kevin).
 - Un administrateur ne peut pas retirer son propre rôle (il reste toujours au moins un administrateur).
 
 ## Interface
