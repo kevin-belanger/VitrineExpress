@@ -157,6 +157,15 @@ function test_manager_dashboard_covers_their_scope(): void
     assert_contains('Télé compta', $page, 'Périphérique non connecté nommé');
     assert_false(str_contains($page, '/admin/devices/' . $f['tv_compta'] . '/edit'), 'Pas de lien vers la fiche');
     assert_contains('Créez une image ou un texte', $page, 'Le message de l’aire commune ne compte pas');
+
+    // Miniatures en diffusion : celle d'un message « Tous » n'est pas cliquable pour un gestionnaire.
+    $global = message_by($f, 'admin', [], true, 'Pour tous');
+    $own = message_by($f, 'julie', [$f['compta']], false, 'Pour la compta');
+    $page = manager_kernel($f)->handle('GET', '/admin')->body;
+    assert_contains('2 messages en diffusion', $page);
+    assert_contains('<span class="current-thumb" title="Pour tous">', $page);
+    assert_false(str_contains($page, 'href="/admin/messages/' . $global['id'] . '/edit"'));
+    assert_contains('href="/admin/messages/' . $own['id'] . '/edit"', $page);
 }
 
 function test_admin_edits_any_message_with_every_target(): void

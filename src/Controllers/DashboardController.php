@@ -21,6 +21,7 @@ final class DashboardController extends Controller
             'tv' => Dashboard::devices($this->app, null, $scope['device_ids'] ?? null),
             'msg' => Dashboard::messages($this->app, null, $scope),
             'isAdmin' => $access->isAdmin(),
+            'access' => $access,
             'refresh' => 30,
         ]);
     }

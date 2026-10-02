@@ -57,6 +57,27 @@ function test_dashboard_message_summary(): void
     assert_same(1, $msg['expired']);
 }
 
+function test_dashboard_shows_live_message_thumbnails(): void
+{
+    $app = test_app();
+    $_SESSION['user_id'] = \VitrineExpress\Users::create($app, 'admin', 'secret123');
+    $group = Groups::create($app, 'G', '', []);
+    Devices::create($app, 'Télé', '', [$group]);
+    $ids = [];
+    foreach (range(1, 7) as $n) {
+        $ids[] = make_message($app, 'Diapo ' . $n, [$group]);
+    }
+    make_message($app, 'Brouillon', []);
+
+    $page = (new \VitrineExpress\Kernel($app))->handle('GET', '/admin')->body;
+    assert_contains('7 messages en diffusion', $page);
+    assert_contains('href="/admin/messages/' . $ids[0] . '/edit"', $page, 'Miniature cliquable vers le message');
+    assert_contains('title="Diapo 6"', $page);
+    assert_false(str_contains($page, 'title="Diapo 7"'), 'Six miniatures au plus');
+    assert_false(str_contains($page, 'title="Brouillon"'), 'Seulement les messages en diffusion');
+    assert_contains('href="/admin/messages?status=live">Détails</a>', $page);
+}
+
 function test_dashboard_names(): void
 {
     $rows = [['name' => 'A'], ['name' => 'B'], ['name' => 'C'], ['name' => 'D'], ['name' => 'E']];

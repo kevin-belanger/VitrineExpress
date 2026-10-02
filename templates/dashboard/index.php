@@ -2,6 +2,7 @@
 
 use VitrineExpress\Dashboard;
 use VitrineExpress\Messages;
+use VitrineExpress\View;
 
 /**
  * Une ligne du tableau de bord (affichée seulement si $count > 0).
@@ -27,6 +28,7 @@ $offlineDetail = Dashboard::names($tv['offline'], static fn (array $d): string =
 
 $tvAllGood = $tv['total'] > 0 && $tv['online'] === $tv['total'] && !$tv['idle'];
 $live = count($msg['live']);
+$thumbsShown = 6;
 $next = $msg['upcoming'][0] ?? null;
 ?>
 <div class="page-head">
@@ -79,12 +81,28 @@ $next = $msg['upcoming'][0] ?? null;
         <?php else: ?>
             <p class="dash-big"><?= $live === 0 ? 'Aucun message' : $plural($live, 'message', 'messages') ?> en diffusion</p>
             <p class="dash-sub">
-                <?php if ($live > 0): ?>
-                    <a href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">destinés à <?= $plural($msg['reached'], 'périphérique', 'périphériques') ?></a>
-                <?php else: ?>
-                    Les périphériques connectés affichent l’heure et la date.
-                <?php endif; ?>
+                <?= $live > 0
+                    ? 'destinés à ' . $plural($msg['reached'], 'périphérique', 'périphériques')
+                    : 'Les périphériques connectés affichent l’heure et la date.' ?>
             </p>
+            <?php if ($live > 0): ?>
+                <?php // Miniatures des premiers messages en diffusion (le total est dans le titre), puis la liste complète. ?>
+                <div class="dash-thumbs">
+                    <?php foreach (array_slice($msg['live'], 0, $thumbsShown) as $message): ?>
+                        <?php if ($access->canEdit($message)): ?>
+                            <a class="current-thumb" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>"
+                               title="<?= e($message['title']) ?>" aria-label="<?= e($message['title']) ?>">
+                                <?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?>
+                            </a>
+                        <?php else: ?>
+                            <span class="current-thumb" title="<?= e($message['title']) ?>">
+                                <?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?>
+                            </span>
+                        <?php endif; ?>
+                    <?php endforeach; ?>
+                    <a class="button small" href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">Détails</a>
+                </div>
+            <?php endif; ?>
 
             <?= $line(count($msg['ending']), 'warning', url('/admin/messages?status=' . Messages::FILTER_ENDING),
                 $plural(count($msg['ending']), 'se termine', 'se terminent') . ' dans les ' . Messages::ENDING_SOON_HOURS . ' h',
