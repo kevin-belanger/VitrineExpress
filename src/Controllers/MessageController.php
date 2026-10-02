@@ -29,8 +29,8 @@ final class MessageController extends Controller
             'group' => isset($groups[(int) ($_GET['group'] ?? 0)]) ? (int) $_GET['group'] : 0,
             'device' => isset($devices[(int) ($_GET['device'] ?? 0)]) ? (int) $_GET['device'] : 0,
             'status' => array_key_exists((string) ($_GET['status'] ?? ''), Messages::FILTER_LABELS) ? (string) $_GET['status'] : '',
-            // Gestionnaire : par défaut, les messages de son périmètre (comme le tableau de bord) ;
-            // « Tous les groupes » montre aussi ceux des autres, pour les diffuser chez lui.
+            // Gestionnaire : par défaut « Vos groupes » (son périmètre, comme les chiffres du tableau de bord) ;
+            // « Tous les groupes » montre aussi les messages des autres, qu'il peut ouvrir et diffuser chez lui.
             'all' => !$access->isAdmin() && ($_GET['group'] ?? '') === 'all',
         ];
         $scope = $filters['all'] ? null : $access->scope();
@@ -86,14 +86,12 @@ final class MessageController extends Controller
     public function edit(string $id): Response
     {
         $message = $this->findOr404('messages', (int) $id);
-        $access = $this->access();
-        if ($access->canEditContent($message)) {
+        // Tout message s'ouvre : en entier pour l'administrateur et le créateur, sinon sa page Diffusion
+        // (en lecture seule si le compte n'y peut rien, ex. un message « Tous les périphériques »).
+        if ($this->access()->canEditContent($message)) {
             return $this->form(Messages::toForm($this->app, $message), [], $message);
         }
-        if ($access->canEditTargets($message)) {
-            return $this->targetsForm($message);
-        }
-        throw new HttpException(403, 'Ce message est géré par quelqu’un d’autre.');
+        return $this->targetsForm($message);
     }
 
     public function update(string $id): Response

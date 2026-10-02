@@ -8,15 +8,11 @@ use VitrineExpress\View;
  * toujours une vignette de même taille, pour que le tableau ne bouge pas quand elle change.
  */
 ?>
-<?php if ($current && $canEdit): ?>
+<?php if ($current): ?>
     <a class="current-thumb" href="<?= e(url('/admin/messages/' . $current['id'] . '/edit')) ?>"
-       title="<?= e($current['title']) ?>" aria-label="<?= e('Modifier « ' . $current['title'] . ' »') ?>">
+       title="<?= e($current['title']) ?>" aria-label="<?= e($current['title']) ?>">
         <?= View::render('messages/_thumb', ['message' => $current, 'app' => $app], null) ?>
     </a>
-<?php elseif ($current): ?>
-    <span class="current-thumb" title="<?= e($current['title']) ?>">
-        <?= View::render('messages/_thumb', ['message' => $current, 'app' => $app], null) ?>
-    </span>
 <?php elseif ($status === Devices::STATUS_ONLINE): ?>
     <span class="current-thumb current-placeholder" title="Aucun message : affiche l’heure et la date">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>

@@ -136,11 +136,6 @@ final class Access
         return $this->owns($message) || $this->groupIds() !== [] || $this->deviceIds() !== [];
     }
 
-    public function canEdit(array $message): bool
-    {
-        return $this->canEditContent($message) || $this->canEditTargets($message);
-    }
-
     public function canTargetAll(): bool
     {
         return $this->isAdmin();

@@ -102,8 +102,28 @@ function test_manager_changes_only_the_broadcast_of_someone_elses_message(): voi
     assert_same(403, post_form($kernel, '/admin/messages/' . $id . '/delete', [])->status);
     assert_same(1, (int) $f['app']->db->query("SELECT COUNT(*) FROM messages WHERE id = {$id}")->fetchColumn());
 
+    // Un message « Tous » s'ouvre aussi, en lecture seule : il est déjà partout.
     $global = message_by($f, 'admin', [], true);
-    assert_same(403, $kernel->handle('GET', '/admin/messages/' . $global['id'] . '/edit')->status, '« Tous » : réservé aux administrateurs');
+    $page = $kernel->handle('GET', '/admin/messages/' . $global['id'] . '/edit');
+    assert_same(200, $page->status);
+    assert_contains('choisi par un administrateur', $page->body);
+    assert_contains('>Retour</a>', $page->body);
+    assert_false(str_contains($page->body, 'Enregistrer'), 'Rien à enregistrer');
+    assert_same(403, post_form($kernel, '/admin/messages/' . $global['id'], ['groups' => [(string) $f['compta']]])->status);
+    assert_same([], Messages::groupIds($f['app'], (int) $global['id']), '« Tous » inchangé');
+}
+
+function test_manager_without_group_opens_messages_read_only(): void
+{
+    $f = access_fixture();
+    $lea = Users::create($f['app'], 'lea', 'secret123', 'Léa', Users::ROLE_MANAGER);
+    $f['lea'] = $lea;
+    $message = message_by($f, 'marc', [$f['commune']]);
+    $page = manager_kernel($f, 'lea')->handle('GET', '/admin/messages/' . $message['id'] . '/edit');
+    assert_same(200, $page->status);
+    assert_contains('Aire commune', $page->body, 'Où le message est affiché');
+    assert_contains('aucun groupe ne vous est confié', $page->body);
+    assert_false(str_contains($page->body, 'Enregistrer'), 'Rien à enregistrer');
 }
 
 function test_manager_deletes_their_own_message(): void
@@ -136,7 +156,7 @@ function test_manager_message_list_defaults_to_their_groups(): void
     assert_contains('Pour la compta', $mine);
     assert_false(str_contains($mine, 'Pour l’aire commune'), 'Par défaut : ses groupes seulement');
     assert_contains('Pour tous', $mine);
-    assert_false(str_contains($mine, 'data-href="/admin/messages/' . $global['id'] . '/edit"'), '« Tous » : ligne non cliquable');
+    assert_contains('data-href="/admin/messages/' . $global['id'] . '/edit"', $mine, 'Toutes les lignes s’ouvrent, même « Tous »');
 
     $_GET = ['group' => 'all'];
     try {
@@ -158,13 +178,12 @@ function test_manager_dashboard_covers_their_scope(): void
     assert_false(str_contains($page, '/admin/devices/' . $f['tv_compta'] . '/edit'), 'Pas de lien vers la fiche');
     assert_contains('Créez une image ou un texte', $page, 'Le message de l’aire commune ne compte pas');
 
-    // Miniatures en diffusion : celle d'un message « Tous » n'est pas cliquable pour un gestionnaire.
+    // Miniatures en diffusion : toutes s'ouvrent, même celle d'un message « Tous ».
     $global = message_by($f, 'admin', [], true, 'Pour tous');
     $own = message_by($f, 'julie', [$f['compta']], false, 'Pour la compta');
     $page = manager_kernel($f)->handle('GET', '/admin')->body;
     assert_contains('2 messages en diffusion', $page);
-    assert_contains('<span class="current-thumb" title="Pour tous">', $page);
-    assert_false(str_contains($page, 'href="/admin/messages/' . $global['id'] . '/edit"'));
+    assert_contains('href="/admin/messages/' . $global['id'] . '/edit"', $page);
     assert_contains('href="/admin/messages/' . $own['id'] . '/edit"', $page);
 }
 

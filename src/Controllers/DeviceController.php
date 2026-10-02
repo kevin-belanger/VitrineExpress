@@ -63,7 +63,6 @@ final class DeviceController extends Controller
                 'current' => View::render('devices/_current', [
                     'current' => $current,
                     'status' => $status,
-                    'canEdit' => $current !== null && $access->canEdit($current),
                     'app' => $this->app,
                 ], null),
                 'key' => $current !== null ? 'message-' . $current['id'] . '-' . $current['updated_at'] : $status,

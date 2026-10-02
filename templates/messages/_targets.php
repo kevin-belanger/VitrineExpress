@@ -20,8 +20,12 @@ $others = $otherTargets['names'];
 ?>
 <fieldset>
     <legend>Afficher sur</legend>
-    <?php if (!$canEditTargets): ?>
+    <?php if (!$canEditTargets && $values['all_devices']): ?>
         <p class="target-fixed">Tous les périphériques d’affichage <span class="muted">· choisi par un administrateur</span></p>
+    <?php elseif (!$canEditTargets): ?>
+        <?php // Gestionnaire sans groupe : rien à ajouter ; on montre seulement où le message est affiché. ?>
+        <p class="target-fixed"><?= $others ? e(implode(', ', $others)) : 'Nulle part pour l’instant' ?>
+            <span class="muted">· aucun groupe ne vous est confié</span></p>
     <?php else: ?>
         <?php if ($canTargetAll): ?>
             <div class="target-modes">

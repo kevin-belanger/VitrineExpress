@@ -109,7 +109,7 @@ function test_manager_owns_their_messages_and_cannot_touch_all_devices(): void
 
     $global = message_by($f, 'admin', [], true);
     assert_false($julie->canEditTargets($global), '« Tous » est réservé aux administrateurs');
-    assert_false($julie->canEdit($global));
+    assert_false($julie->canEditContent($global));
     $kept = $julie->mergeTargets($global, false, [$f['compta']], []);
     assert_true($kept['all_devices'], 'Les cibles d’un message « Tous » ne changent pas');
 

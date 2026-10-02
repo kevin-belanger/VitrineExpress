@@ -86,19 +86,13 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
     <?php foreach ($messages as $message): ?>
         <?php
         $status = Messages::status($message, $now);
-        // La ligne ouvre la fiche (ou la page Diffusion pour le message d'un autre) ; rien si on ne peut pas y toucher.
-        $href = $access->canEdit($message) ? url('/admin/messages/' . $message['id'] . '/edit') : null;
+        // La ligne ouvre la fiche, ou la page Diffusion pour le message d'un autre.
+        $href = url('/admin/messages/' . $message['id'] . '/edit');
         ?>
-        <tr class="<?= $status === Messages::STATUS_EXPIRED ? 'is-dim' : '' ?>"<?= $href !== null ? ' data-href="' . e($href) . '"' : '' ?>>
+        <tr class="<?= $status === Messages::STATUS_EXPIRED ? 'is-dim' : '' ?>" data-href="<?= e($href) ?>">
             <td class="thumb-col"><?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?></td>
             <td>
-                <strong>
-                    <?php if ($href !== null): ?>
-                        <a class="row-link" href="<?= e($href) ?>"><?= e($message['title']) ?></a>
-                    <?php else: ?>
-                        <?= e($message['title']) ?>
-                    <?php endif; ?>
-                </strong><br>
+                <strong><a class="row-link" href="<?= e($href) ?>"><?= e($message['title']) ?></a></strong><br>
                 <span class="muted">
                     <?= e(Messages::TYPE_LABELS[$message['type']]) ?>
                     <?php if ($access->owns($message)): ?>

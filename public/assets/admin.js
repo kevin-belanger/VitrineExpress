@@ -115,6 +115,7 @@
 
     // Miniatures des messages texte : rendu réduit du vrai message (slide.js).
     // Aussi appelé sur le HTML inséré plus tard (ex. mise à jour en direct des périphériques).
+    var renderedSlides = [];
     window.vxRenderThumbs = function (root) {
         var thumbs = root.querySelectorAll('.thumb-slide[data-slide]');
         if (!window.VxSlide) {
@@ -125,10 +126,21 @@
                 var slide = window.VxSlide.render(JSON.parse(thumbs[i].getAttribute('data-slide')));
                 thumbs[i].appendChild(slide);
                 window.VxSlide.fit(slide);
+                renderedSlides.push(slide);
             } catch (e) { /* miniature ignorée */ }
         }
     };
     window.vxRenderThumbs(document);
+
+    // Un aperçu dont la taille suit la fenêtre (ex. page Diffusion) est réajusté quand elle change.
+    var refitTimer = null;
+    window.addEventListener('resize', function () {
+        window.clearTimeout(refitTimer);
+        refitTimer = window.setTimeout(function () {
+            renderedSlides = renderedSlides.filter(function (slide) { return document.contains(slide); });
+            renderedSlides.forEach(function (slide) { window.VxSlide.fit(slide); });
+        }, 100);
+    });
 
     // Parties de formulaire repliées derrière un bouton : <button data-reveal="id"> affiche l'élément id,
     // un bouton [data-conceal] à l'intérieur le referme et vide ses champs (rien n'est alors modifié).

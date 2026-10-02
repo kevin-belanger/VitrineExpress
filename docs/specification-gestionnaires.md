@@ -15,7 +15,7 @@ Le **périmètre** d'un gestionnaire = ses groupes + les périphériques de ces 
 
 | Action | Administrateur | Gestionnaire de groupes |
 |---|---|---|
-| Voir la liste des messages | Tous | Ceux de son périmètre par défaut ; « Tous les groupes » montre aussi ceux des autres, pour les diffuser chez lui |
+| Voir la liste des messages | Tous | Ceux de son périmètre par défaut ; « Tous les groupes » montre aussi ceux des autres. Tout message s'ouvre et peut être diffusé dans ses groupes |
 | Créer un message | Oui, cibles libres | Oui, cibles dans son périmètre |
 | « Tous les périphériques d'affichage » | Oui | Non |
 | Modifier **son** message | Tout | Contenu, dates, durée ; cibles de son périmètre |
@@ -44,8 +44,8 @@ Quand un gestionnaire enregistre un message, **seules les cibles de son périmè
 - Fiche utilisateur : rôle (Administrateur / Gestionnaire de groupes) ; pour un gestionnaire, ses groupes.
 - Liste des utilisateurs : « Administrateur », ou « Gestionnaire de » suivi de ses groupes.
 - Menu d'un gestionnaire : Tableau de bord, Messages, Périphériques d'affichage (et son compte).
-- Liste des messages : l'auteur sous le titre (« par vous », « par Julie ») ; filtre Groupe « Vos groupes » par défaut pour un gestionnaire ; actions selon les droits (Modifier et Supprimer, ou Diffusion pour le message d'un autre, rien pour un message « Tous »).
-- Message d'un autre (page « Diffusion ») : titre, auteur, période et aperçu en lecture seule, et seulement la partie « Afficher sur », limitée au périmètre ; les autres cibles sont indiquées en une ligne.
+- Liste des messages : l'auteur sous le titre (« par vous », « par Julie ») ; filtre Groupe « Vos groupes » par défaut pour un gestionnaire. Toute ligne s'ouvre (validé par Kevin : pas de message qu'on ne peut pas ouvrir) : la fiche complète pour l'administrateur et le créateur, sinon la page Diffusion.
+- Message d'un autre (page « Diffusion ») : titre, auteur, période et aperçu en lecture seule, et seulement la partie « Afficher sur », limitée au périmètre ; les autres cibles sont indiquées en une ligne. En lecture seule, avec « Retour », pour un message « Tous » (déjà partout) ou pour un gestionnaire sans groupe.
 - Message partagé : une ligne indique où il est aussi affiché (et, pour son créateur, que ses modifications s'y appliquent) ; la confirmation de suppression le rappelle.
-- Périphériques : ceux de ses groupes, sans code ni actions ; la miniature affichée n'ouvre le message que s'il peut le modifier.
+- Périphériques : ceux de ses groupes, sans code ni actions ; la miniature affichée ouvre le message, comme partout.
 - Tableau de bord : compteurs de son périmètre ; liens vers les listes (jamais vers les fiches réservées).

@@ -18,6 +18,8 @@ $line = static function (int $count, string $tone, string $href, string $title, 
         . '<span class="dash-chevron" aria-hidden="true">›</span></a>';
 };
 $plural = static fn (int $n, string $one, string $many): string => $n . ' ' . ($n > 1 ? $many : $one);
+// Liste des messages filtrée (pour un gestionnaire, « Vos groupes » par défaut : mêmes chiffres que la carte).
+$messagesLink = static fn (string $status): string => url('/admin/messages?status=' . $status);
 // Lien vers la fiche si un seul périphérique est concerné, sinon vers la liste
 // (toujours la liste pour un gestionnaire : les fiches sont réservées aux administrateurs).
 $deviceLink = static fn (array $rows): string => $isAdmin && count($rows) === 1
@@ -89,30 +91,24 @@ $next = $msg['upcoming'][0] ?? null;
                 <?php // Miniatures des premiers messages en diffusion (le total est dans le titre). ?>
                 <div class="dash-thumbs">
                     <?php foreach (array_slice($msg['live'], 0, $thumbsShown) as $message): ?>
-                        <?php if ($access->canEdit($message)): ?>
-                            <a class="current-thumb" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>"
-                               title="<?= e($message['title']) ?>" aria-label="<?= e($message['title']) ?>">
-                                <?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?>
-                            </a>
-                        <?php else: ?>
-                            <span class="current-thumb" title="<?= e($message['title']) ?>">
-                                <?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?>
-                            </span>
-                        <?php endif; ?>
+                        <a class="current-thumb" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>"
+                           title="<?= e($message['title']) ?>" aria-label="<?= e($message['title']) ?>">
+                            <?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?>
+                        </a>
                     <?php endforeach; ?>
                 </div>
             <?php endif; ?>
 
-            <?= $line(count($msg['ending']), 'warning', url('/admin/messages?status=' . Messages::FILTER_ENDING),
+            <?= $line(count($msg['ending']), 'warning', $messagesLink(Messages::FILTER_ENDING),
                 $plural(count($msg['ending']), 'se termine', 'se terminent') . ' dans les ' . Messages::ENDING_SOON_HOURS . ' h',
                 Dashboard::names($msg['ending'], 'title')) ?>
-            <?= $line(count($msg['upcoming']), 'accent', url('/admin/messages?status=' . Messages::STATUS_UPCOMING),
+            <?= $line(count($msg['upcoming']), 'accent', $messagesLink(Messages::STATUS_UPCOMING),
                 $plural(count($msg['upcoming']), 'à venir', 'à venir'),
                 $next ? 'Prochain : ' . $next['title'] . ', ' . format_datetime($next['start_at']) : '') ?>
-            <?= $line(count($msg['unbroadcast']), 'muted', url('/admin/messages?status=' . Messages::FILTER_UNBROADCAST),
+            <?= $line(count($msg['unbroadcast']), 'muted', $messagesLink(Messages::FILTER_UNBROADCAST),
                 $plural(count($msg['unbroadcast']), 'non diffusé', 'non diffusés'),
                 'Aucun périphérique visé : ' . Dashboard::names($msg['unbroadcast'], 'title')) ?>
-            <?= $line($msg['expired'], 'muted', url('/admin/messages?status=' . Messages::STATUS_EXPIRED),
+            <?= $line($msg['expired'], 'muted', $messagesLink(Messages::STATUS_EXPIRED),
                 $plural($msg['expired'], 'expiré', 'expirés'), $isAdmin ? 'À supprimer quand vous voulez' : '') ?>
 
             <a class="button dash-details" href="<?= e(url('/admin/messages')) ?>">Détails</a>

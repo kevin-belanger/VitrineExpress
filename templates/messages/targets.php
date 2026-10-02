@@ -31,8 +31,12 @@ $author = $message['author_name'] ?? 'un compte supprimé';
         ], null) ?>
 
         <div class="form-actions">
-            <button type="submit" class="button primary">Enregistrer</button>
-            <a class="button" href="<?= e(url('/admin/messages')) ?>">Annuler</a>
+            <?php if ($canEditTargets): ?>
+                <button type="submit" class="button primary">Enregistrer</button>
+                <a class="button" href="<?= e(url('/admin/messages')) ?>">Annuler</a>
+            <?php else: ?>
+                <a class="button" href="<?= e(url('/admin/messages')) ?>">Retour</a>
+            <?php endif; ?>
         </div>
     </form>
 
