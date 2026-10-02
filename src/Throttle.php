@@ -66,6 +66,57 @@ final class Throttle
         return filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false;
     }
 
+    /**
+     * Adresses actuellement bloquées, pour la page Paramètres.
+     *
+     * @return list<array{kind: string, ip: string, subjects: list<string>, all: bool, until: string}>
+     *         subjects : comptes visés (connexion) ; all : bloquée pour tous les comptes (20 échecs depuis l'adresse)
+     */
+    public function blocked(?string $now = null): array
+    {
+        $now ??= now();
+        $since = date('Y-m-d H:i:s', strtotime($now) - self::WINDOW_SECONDS);
+        $st = $this->app->db->prepare(
+            'SELECT kind, ip, subject, COUNT(*) AS n, MAX(attempted_at) AS last FROM login_attempts
+             WHERE attempted_at > ? GROUP BY kind, ip, subject ORDER BY ip, subject'
+        );
+        $st->execute([$since]);
+
+        $blocked = [];
+        $perIp = [];
+        foreach ($st->fetchAll() as $row) {
+            $key = $row['kind'] . '|' . $row['ip'];
+            if ($row['kind'] === self::KIND_LOGIN) {
+                $perIp[$key] = ['n' => ($perIp[$key]['n'] ?? 0) + (int) $row['n'], 'last' => max($perIp[$key]['last'] ?? '', $row['last']), 'ip' => $row['ip']];
+            }
+            if ((int) $row['n'] >= $this->limit($row['kind'], $row['ip'], $now)) {
+                $blocked[$key] ??= ['kind' => $row['kind'], 'ip' => $row['ip'], 'subjects' => [], 'all' => false, 'last' => ''];
+                if ($row['subject'] !== '') {
+                    $blocked[$key]['subjects'][] = $row['subject'];
+                }
+                $blocked[$key]['last'] = max($blocked[$key]['last'], $row['last']);
+            }
+        }
+        foreach ($perIp as $key => $total) {
+            if ($total['n'] >= self::LIMIT_TRUSTED) {
+                $blocked[$key] ??= ['kind' => self::KIND_LOGIN, 'ip' => $total['ip'], 'subjects' => [], 'all' => false, 'last' => ''];
+                $blocked[$key]['all'] = true;
+                $blocked[$key]['last'] = max($blocked[$key]['last'], $total['last']);
+            }
+        }
+        foreach ($blocked as &$entry) {
+            $entry['until'] = date('Y-m-d H:i:s', strtotime($entry['last']) + self::WINDOW_SECONDS);
+            unset($entry['last']);
+        }
+        return array_values($blocked);
+    }
+
+    /** Lève le blocage d'une adresse (tous comptes confondus) : ses échecs sont oubliés. */
+    public function unblock(string $kind, string $ip): void
+    {
+        $this->app->db->prepare('DELETE FROM login_attempts WHERE kind = ? AND ip = ?')->execute([$kind, $ip]);
+    }
+
     public static function message(int $retryAfter): string
     {
         $minutes = max(1, (int) ceil($retryAfter / 60));

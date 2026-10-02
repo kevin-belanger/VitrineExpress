@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace VitrineExpress\Controllers;
 
 use VitrineExpress\Controller;
+use VitrineExpress\HttpException;
 use VitrineExpress\Installer;
 use VitrineExpress\Media;
 use VitrineExpress\Messages;
 use VitrineExpress\Response;
+use VitrineExpress\Throttle;
 use VitrineExpress\ValidationException;
 
 final class SettingsController extends Controller
@@ -69,6 +71,19 @@ final class SettingsController extends Controller
         return $this->redirect('/admin/settings');
     }
 
+    /** Lève le blocage d'une adresse IP (limite de tentatives). */
+    public function unblock(): Response
+    {
+        $kind = input('kind');
+        $ip = input('ip');
+        if (!in_array($kind, [Throttle::KIND_PAIR, Throttle::KIND_LOGIN], true) || $ip === '') {
+            throw new HttpException(400);
+        }
+        (new Throttle($this->app))->unblock($kind, $ip);
+        flash('success', 'Adresse ' . $ip . ' débloquée.');
+        return $this->redirect('/admin/settings');
+    }
+
     private function current(): array
     {
         return [
@@ -90,6 +105,7 @@ final class SettingsController extends Controller
             'maxBytes' => Media::limitBytes($this->app),
             'maxLabel' => Media::formatBytes(Media::limitBytes($this->app)),
             'timezones' => timezone_identifiers_list(),
+            'blocked' => (new Throttle($this->app))->blocked(),
             // Limite réelle de l'hébergement : la plus petite des deux limites PHP, en Mo.
             'serverLimitMb' => (int) floor(min(
                 Installer::iniBytes((string) ini_get('upload_max_filesize')),

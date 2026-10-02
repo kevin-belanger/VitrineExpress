@@ -64,6 +64,7 @@ return static function (Router $r): void {
 
     $r->get('/admin/settings', [SettingsController::class, 'edit']);
     $r->post('/admin/settings', [SettingsController::class, 'update']);
+    $r->post('/admin/settings/unblock', [SettingsController::class, 'unblock']);
 
     $r->get('/admin/account', [AccountController::class, 'edit']);
     $r->post('/admin/account', [AccountController::class, 'update']);

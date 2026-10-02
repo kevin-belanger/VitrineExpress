@@ -29,7 +29,7 @@ final class AuthController extends Controller
         $username = input('username');
         $password = (string) ($_POST['password'] ?? '');
         $ip = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
-        $account = mb_strtolower($username);
+        $account = mb_substr(mb_strtolower($username), 0, 100);
         $throttle = new Throttle($this->app);
 
         $wait = $throttle->retryAfter(Throttle::KIND_LOGIN, $ip, $account);

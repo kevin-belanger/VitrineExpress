@@ -60,3 +60,47 @@
         <button type="submit" class="button primary">Enregistrer</button>
     </div>
 </form>
+
+<?php // Limite de tentatives (Throttle) : adresses qui attendent, et déblocage immédiat. ?>
+<section class="settings-section">
+    <h2>Adresses bloquées</h2>
+    <?php if (!$blocked): ?>
+        <p class="muted">Aucune adresse n’attend en ce moment.</p>
+    <?php else: ?>
+        <div class="table-wrap">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Adresse IP</th>
+                <th>Pour</th>
+                <th>Fin de l’attente</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($blocked as $entry): ?>
+                <?php
+                $reason = $entry['kind'] === \VitrineExpress\Throttle::KIND_PAIR
+                    ? 'Codes de périphérique'
+                    : 'Connexion' . ($entry['all'] ? ', tous les comptes' : ($entry['subjects'] ? ' : ' . implode(', ', $entry['subjects']) : ''));
+                $minutes = max(1, (int) ceil((strtotime($entry['until']) - time()) / 60));
+                ?>
+                <tr>
+                    <td><strong><?= e($entry['ip']) ?></strong></td>
+                    <td><?= e($reason) ?></td>
+                    <td>dans <?= $minutes ?> min</td>
+                    <td class="right">
+                        <form method="post" action="<?= e(url('/admin/settings/unblock')) ?>">
+                            <?= csrf_field() ?>
+                            <input type="hidden" name="kind" value="<?= e($entry['kind']) ?>">
+                            <input type="hidden" name="ip" value="<?= e($entry['ip']) ?>">
+                            <button type="submit" class="button small">Débloquer</button>
+                        </form>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+            </tbody>
+        </table>
+        </div>
+    <?php endif; ?>
+</section>

@@ -76,6 +76,41 @@ function test_login_throttle_counts_per_account_and_per_address(): void
     assert_true($t->retryAfter(Throttle::KIND_LOGIN, '10.0.0.5', 'julie', $now) > 0, 'Vingt échecs depuis l’adresse : bloqué pour tous les comptes');
 }
 
+function test_blocked_addresses_are_listed_and_can_be_unblocked(): void
+{
+    $app = test_app();
+    $t = new Throttle($app);
+    $now = '2026-06-15 12:00:00';
+    for ($i = 0; $i < 5; $i++) {
+        $t->recordFailure(Throttle::KIND_PAIR, '192.168.1.10', '', $now);
+        $t->recordFailure(Throttle::KIND_LOGIN, '10.0.0.5', 'marie', $now);
+    }
+    $t->recordFailure(Throttle::KIND_PAIR, '192.168.1.11', '', $now); // un seul échec : pas bloquée
+
+    $blocked = $t->blocked($now);
+    assert_same(2, count($blocked));
+    assert_same(['kind' => Throttle::KIND_LOGIN, 'ip' => '10.0.0.5', 'subjects' => ['marie'], 'all' => false, 'until' => '2026-06-15 12:15:00'], $blocked[0]);
+    assert_same(['kind' => Throttle::KIND_PAIR, 'ip' => '192.168.1.10', 'subjects' => [], 'all' => false, 'until' => '2026-06-15 12:15:00'], $blocked[1]);
+
+    $t->unblock(Throttle::KIND_PAIR, '192.168.1.10');
+    assert_same(0, $t->retryAfter(Throttle::KIND_PAIR, '192.168.1.10', '', $now), 'Débloquée tout de suite');
+    assert_same(1, count($t->blocked($now)), 'L’autre reste bloquée');
+
+    // Page Paramètres (à l'heure réelle) : la liste, puis le déblocage par le bouton.
+    for ($i = 0; $i < 5; $i++) {
+        $t->recordFailure(Throttle::KIND_LOGIN, '10.0.0.5', 'marie');
+    }
+    $_SESSION['user_id'] = Users::create($app, 'admin', 'secret123');
+    $kernel = new Kernel($app);
+    $page = $kernel->handle('GET', '/admin/settings')->body;
+    assert_contains('Connexion : marie', $page);
+    assert_contains('<strong>10.0.0.5</strong>', $page);
+    assert_same(303, post_form($kernel, '/admin/settings/unblock', ['kind' => Throttle::KIND_LOGIN, 'ip' => '10.0.0.5'])->status);
+    assert_same([], $t->blocked());
+    assert_contains('Aucune adresse n’attend', $kernel->handle('GET', '/admin/settings')->body);
+    assert_same(400, post_form($kernel, '/admin/settings/unblock', ['kind' => 'autre', 'ip' => '1.2.3.4'])->status);
+}
+
 function test_pairing_is_throttled_by_address(): void
 {
     $app = test_app();

@@ -648,6 +648,10 @@ a.current-thumb:hover, a.current-thumb:focus-visible { box-shadow: 0 0 0 2px var
 .live-slot.is-fading { opacity: 0; }
 
 /* Paramètres */
+.settings-section { margin-top: 2.5rem; max-width: 760px; }
+.settings-section h2 { font-size: 1.15rem; margin: 0 0 .75rem; }
+.table td.right { text-align: right; white-space: nowrap; }
+.table td form { display: inline; margin: 0; }
 
 /* Connexion */
 .no-nav .page { max-width: 420px; padding-top: 10vh; }
