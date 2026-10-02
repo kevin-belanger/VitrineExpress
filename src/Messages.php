@@ -290,6 +290,40 @@ final class Messages
         Media::delete($app, $media);
     }
 
+    /**
+     * Messages expirés à $now : tous, ou seulement ceux créés par $ownerId (un gestionnaire ne supprime que les siens).
+     *
+     * @return list<int>
+     */
+    public static function expiredIds(App $app, ?int $ownerId, ?string $now = null): array
+    {
+        $st = $app->db->prepare(
+            'SELECT id FROM messages WHERE end_at IS NOT NULL AND end_at < :now'
+            . ($ownerId !== null ? ' AND created_by = :owner' : '') . ' ORDER BY id'
+        );
+        $st->execute(['now' => $now ?? now()] + ($ownerId !== null ? ['owner' => $ownerId] : []));
+        return array_map('intval', $st->fetchAll(PDO::FETCH_COLUMN));
+    }
+
+    /** Supprime ces messages et leurs fichiers ; retourne le nombre supprimé. */
+    public static function deleteMany(App $app, array $ids): int
+    {
+        foreach ($ids as $id) {
+            self::delete($app, (int) $id);
+        }
+        return count($ids);
+    }
+
+    /** Texte en minuscules sans accents, pour la recherche (« Fête » → « fete »). */
+    public static function searchKey(string $text): string
+    {
+        return strtr(mb_strtolower($text, 'UTF-8'), [
+            'à' => 'a', 'â' => 'a', 'ä' => 'a', 'á' => 'a', 'ã' => 'a', 'é' => 'e', 'è' => 'e', 'ê' => 'e', 'ë' => 'e',
+            'î' => 'i', 'ï' => 'i', 'í' => 'i', 'ô' => 'o', 'ö' => 'o', 'ó' => 'o', 'õ' => 'o', 'ù' => 'u', 'û' => 'u',
+            'ü' => 'u', 'ú' => 'u', 'ç' => 'c', 'ÿ' => 'y', 'ñ' => 'n', 'œ' => 'oe', 'æ' => 'ae',
+        ]);
+    }
+
     public static function setGroups(App $app, int $messageId, array $groupIds): void
     {
         $app->db->prepare('DELETE FROM message_groups WHERE message_id = ?')->execute([$messageId]);
@@ -349,7 +383,9 @@ final class Messages
      * « scope » (périmètre d'un gestionnaire) : ses propres messages, ceux qui visent ses groupes et ceux qui
      * s'affichent sur ses périphériques.
      *
-     * @param array{group?: int, device?: int, status?: string, scope?: array{user_id: int, group_ids: list<int>, device_ids: list<int>}} $filters
+     * « q » : recherche dans le titre, sans tenir compte de la casse ni des accents.
+     *
+     * @param array{group?: int, device?: int, status?: string, q?: string, scope?: array{user_id: int, group_ids: list<int>, device_ids: list<int>}} $filters
      */
     public static function search(App $app, array $filters, ?string $now = null): array
     {
@@ -407,6 +443,15 @@ final class Messages
         $st = $app->db->prepare($sql);
         $st->execute($params);
         $messages = $st->fetchAll();
+
+        // Recherche par titre en PHP : le LIKE de SQLite ignore la casse des lettres ASCII seulement, pas les accents.
+        if (($filters['q'] ?? '') !== '') {
+            $needle = self::searchKey((string) $filters['q']);
+            $messages = array_values(array_filter(
+                $messages,
+                static fn (array $m): bool => str_contains(self::searchKey((string) $m['title']), $needle)
+            ));
+        }
 
         $groupNames = self::namesByMessage($app,
             'SELECT mg.message_id, g.name FROM message_groups mg JOIN groups g ON g.id = mg.group_id ORDER BY g.name COLLATE NOCASE');

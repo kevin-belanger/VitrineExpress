@@ -14,6 +14,7 @@ if (PHP_SAPI !== 'cli') {
 }
 
 require dirname(__DIR__) . '/src/bootstrap.php';
+require __DIR__ . '/cli-helpers.php';
 
 $config = VitrineExpress\load_config();
 $app = App::fromConfig($config);
@@ -33,26 +34,13 @@ if (Users::count($app) > 0) {
 
 $options = getopt('', ['username:', 'password:', 'name:']);
 
-$ask = static function (string $label, bool $hidden = false): string {
-    echo $label;
-    if ($hidden && DIRECTORY_SEPARATOR === '/' && stream_isatty(STDIN)) {
-        shell_exec('stty -echo');
-        $value = fgets(STDIN);
-        shell_exec('stty echo');
-        echo "\n";
-    } else {
-        $value = fgets(STDIN);
-    }
-    return trim((string) $value);
-};
-
-$username = $options['username'] ?? $ask('Code usager du premier administrateur : ');
+$username = $options['username'] ?? cli_ask('Code usager du premier administrateur : ');
 $name = $options['name'] ?? '';
 if (isset($options['password'])) {
     $password = $confirm = $options['password'];
 } else {
-    $password = $ask('Mot de passe : ', true);
-    $confirm = $ask('Confirmation : ', true);
+    $password = cli_ask('Mot de passe : ', true);
+    $confirm = cli_ask('Confirmation : ', true);
 }
 
 $errors = Users::validate($app, ['username' => $username, 'display_name' => $name], $password, $confirm, null);

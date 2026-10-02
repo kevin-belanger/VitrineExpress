@@ -178,6 +178,14 @@ docs/              spécification, phases, décisions
 - **« Durée à l'écran »** au lieu de « Durée » : sous Début et Fin, « 20 secondes » pouvait se lire comme la durée totale.
 - **Actions** collées au bas de l'écran (formulaire long). Sur écran étroit, étiquettes de date au-dessus des champs.
 
+## D30 — Suite de la passe de relecture (demandes de Kevin)
+
+- **Mot de passe oublié** : `bin/reset-password.php` (liste les comptes, nouveau mot de passe, `--admin` pour rendre un compte administrateur). Remplace la commande `php -r` du guide. Les scripts de `bin/` partagent `bin/cli-helpers.php`.
+- **Messages expirés** : sur la liste filtrée « Expiré » (sans autre filtre), un bouton supprime d'un coup tous les messages expirés (un gestionnaire : les siens), après confirmation. Route `POST /admin/messages/delete-expired`, déclarée avant les routes `{id}`.
+- **Recherche par titre** : champ « Titre » dans les filtres, envoyé avec Entrée. Filtrage en PHP après la requête (`Messages::searchKey` : minuscules sans accents), car le `LIKE` de SQLite ignore la casse des lettres ASCII seulement.
+- **Journal** : `src/Log.php` ; au-delà de 1 Mo, `app.log` devient `app.log.1` (le précédent est écrasé). Pas de logrotate à configurer sur l'hébergement.
+- **Écarté pour l'instant** (proposé, non retenu) : limite de tentatives sur la connexion et les codes à 5 chiffres, duplication d'un message, expiration de la session.
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.

@@ -333,7 +333,11 @@ button.link:hover { color: #fff; text-decoration: underline; }
     margin-bottom: 1rem;
 }
 .filters label { display: flex; flex-direction: column; gap: .25rem; max-width: 100%; font-size: .8rem; font-weight: 600; color: var(--muted); }
-.filters select {
+.filters input[type="search"] { min-width: 15rem; }
+/* Suppression en lot (liste des messages expirés) */
+.bulk-actions { display: flex; justify-content: flex-end; margin: -.25rem 0 1rem; }
+.filters select,
+.filters input[type="search"] {
     font: inherit;
     font-size: .95rem;
     color: var(--text);

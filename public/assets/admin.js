@@ -187,10 +187,11 @@
         syncConditionals();
     }
 
-    // Envoi automatique des formulaires de filtres marqués data-autosubmit.
+    // Envoi automatique des formulaires de filtres marqués data-autosubmit (listes déroulantes ;
+    // un champ de recherche s'envoie avec Entrée, comme d'habitude).
     document.addEventListener('change', function (event) {
         var form = event.target.form;
-        if (form && form.hasAttribute('data-autosubmit')) {
+        if (form && form.hasAttribute('data-autosubmit') && event.target.type !== 'search' && event.target.type !== 'text') {
             form.submit();
         }
     });

@@ -139,12 +139,16 @@ sqlite3 storage/database.sqlite ".backup '/chemin/sauvegarde/vitrine-$(date +%F)
 rsync -a storage/uploads/ /chemin/sauvegarde/uploads/
 ```
 
+## Journal d'erreurs
+
+Les erreurs inattendues sont consignées dans `storage/logs/app.log`. Quand il dépasse 1 Mo, il est renommé `app.log.1` (le précédent `.1` est écrasé) : le journal n'occupe jamais plus de 2 Mo.
+
 ## Mot de passe oublié
 
 S'il reste un autre administrateur, il peut changer le mot de passe dans **Utilisateurs**. Sinon, sur le serveur :
 
 ```bash
-php -r 'require "src/bootstrap.php"; $app = VitrineExpress\App::fromConfig(VitrineExpress\load_config()); VitrineExpress\Users::setPassword($app, 1, "NouveauMotDePasse");'
+php bin/reset-password.php
 ```
 
-(remplacer `1` par l'identifiant du compte).
+Le script liste les comptes, demande lequel et le nouveau mot de passe. Options : `--username=`, `--password=`, et `--admin` pour rendre le compte administrateur (quand plus aucun administrateur ne peut se connecter).

@@ -169,6 +169,39 @@ function test_manager_message_list_defaults_to_their_groups(): void
     assert_contains('data-href="/admin/messages/' . $commune['id'] . '/edit"', $all, 'Ligne cliquable vers la page Diffusion');
 }
 
+function test_expired_messages_bulk_delete_respects_rights(): void
+{
+    $f = access_fixture();
+    $mine = message_by($f, 'julie', [$f['compta']], false, 'Vieux (Julie)');
+    $theirs = message_by($f, 'marc', [$f['compta']], false, 'Vieux (Marc)');
+    $f['app']->db->exec("UPDATE messages SET end_at = '2020-01-01 00:00:00' WHERE id IN ({$mine['id']}, {$theirs['id']})");
+    message_by($f, 'marc', [$f['compta']], false, 'Actuel');
+    $kernel = manager_kernel($f);
+    $titles = static fn (): array => array_column($f['app']->db->query('SELECT title FROM messages ORDER BY id')->fetchAll(), 'title');
+
+    $_GET = ['status' => Messages::STATUS_EXPIRED];
+    try {
+        $expiredList = $kernel->handle('GET', '/admin/messages')->body;
+    } finally {
+        $_GET = [];
+    }
+    assert_contains('Supprimer votre message expiré', $expiredList, 'Gestionnaire : seulement le sien, au singulier');
+    assert_false(str_contains($kernel->handle('GET', '/admin/messages')->body, 'delete-expired'), 'Bouton seulement sur la liste « Expiré »');
+
+    assert_same(303, post_form($kernel, '/admin/messages/delete-expired', [])->status);
+    assert_same(['Vieux (Marc)', 'Actuel'], $titles(), 'Le message expiré de Marc reste');
+
+    $admin = manager_kernel($f, 'admin');
+    $_GET = ['status' => Messages::STATUS_EXPIRED];
+    try {
+        assert_contains('Supprimer le message expiré', $admin->handle('GET', '/admin/messages')->body);
+    } finally {
+        $_GET = [];
+    }
+    post_form($admin, '/admin/messages/delete-expired', []);
+    assert_same(['Actuel'], $titles(), 'Administrateur : tous les expirés');
+}
+
 function test_manager_dashboard_covers_their_scope(): void
 {
     $f = access_fixture();

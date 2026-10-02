@@ -95,13 +95,8 @@ final class Kernel
 
     private function log(Throwable $e): void
     {
-        $path = $this->app->config['log_path'];
-        $dir = dirname($path);
-        if (!is_dir($dir)) {
-            @mkdir($dir, 0775, true);
-        }
         $line = sprintf("[%s] %s: %s in %s:%d\n%s\n", date('c'), get_class($e), $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
-        @file_put_contents($path, $line, FILE_APPEND | LOCK_EX);
+        Log::append($this->app->config['log_path'], $line);
         error_log($e->getMessage());
     }
 }

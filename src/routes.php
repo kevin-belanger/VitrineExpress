@@ -33,6 +33,7 @@ return static function (Router $r): void {
     $r->get('/admin/messages', [MessageController::class, 'index']);
     $r->get('/admin/messages/new', [MessageController::class, 'create']);
     $r->post('/admin/messages', [MessageController::class, 'store']);
+    $r->post('/admin/messages/delete-expired', [MessageController::class, 'deleteExpired']); // avant les routes {id}
     $r->get('/admin/messages/{id}/edit', [MessageController::class, 'edit']);
     $r->post('/admin/messages/{id}', [MessageController::class, 'update']);
     $r->post('/admin/messages/{id}/delete', [MessageController::class, 'delete']);

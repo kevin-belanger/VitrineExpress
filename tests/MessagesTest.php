@@ -207,6 +207,40 @@ function test_rotation_cycles_and_tolerates_changes(): void
     assert_same([$only, null], [(int) $step['current']['id'], $step['next']]);
 }
 
+function test_search_by_title_ignores_case_and_accents(): void
+{
+    $app = test_app();
+    make_message($app, 'Fête de Noël');
+    make_message($app, 'Réunion du CA');
+    make_message($app, 'Cafétéria fermée');
+    $titles = static fn (string $q): array => array_column(Messages::search($app, ['q' => $q]), 'title');
+
+    assert_same(['Fête de Noël'], $titles('NOEL'));
+    assert_same(['Fête de Noël', 'Cafétéria fermée'], $titles('fé'));
+    assert_same([], $titles('zzz'));
+    assert_same(3, count($titles('')), 'Vide : aucun filtre');
+}
+
+function test_expired_messages_are_deleted_in_bulk_by_owner(): void
+{
+    $app = test_app();
+    $now = '2026-06-15 12:00:00';
+    $julie = \VitrineExpress\Users::create($app, 'julie', 'secret123', '', \VitrineExpress\Users::ROLE_MANAGER);
+    $marc = \VitrineExpress\Users::create($app, 'marc', 'secret123', '', \VitrineExpress\Users::ROLE_MANAGER);
+    $old1 = make_message($app, 'Fini (Julie)', [], false, '2026-01-01 00:00:00', '2026-02-01 00:00:00');
+    $old2 = make_message($app, 'Fini (Marc)', [], false, '2026-01-01 00:00:00', '2026-02-01 00:00:00');
+    make_message($app, 'En cours', [], false, '2026-01-01 00:00:00', '2026-12-31 23:59:00');
+    make_message($app, 'Sans fin');
+    $app->db->exec("UPDATE messages SET created_by = {$julie} WHERE id = {$old1}");
+    $app->db->exec("UPDATE messages SET created_by = {$marc} WHERE id = {$old2}");
+
+    assert_same([$old1, $old2], Messages::expiredIds($app, null, $now), 'Administrateur : tous les expirés');
+    assert_same([$old1], Messages::expiredIds($app, $julie, $now), 'Gestionnaire : les siens');
+    assert_same(1, Messages::deleteMany($app, Messages::expiredIds($app, $julie, $now)));
+    assert_same([$old2], Messages::expiredIds($app, null, $now), 'Le message de Marc reste');
+    assert_same(3, (int) $app->db->query('SELECT COUNT(*) FROM messages')->fetchColumn());
+}
+
 function test_search_filters_by_group_device_and_status(): void
 {
     $app = test_app();

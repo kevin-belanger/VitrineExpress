@@ -9,7 +9,11 @@ $statusClass = [
     Messages::STATUS_EXPIRED => '',
 ];
 $now = now();
-$hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $filters['all'];
+$hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $filters['all'] || $filters['q'] !== '';
+// Bouton de suppression en lot (liste « Expiré ») : un administrateur supprime tout, un gestionnaire les siens.
+$bulkLabel = $expiredDeletable === 1
+    ? ($access->isAdmin() ? 'Supprimer le message expiré' : 'Supprimer votre message expiré')
+    : ($access->isAdmin() ? 'Supprimer les ' : 'Supprimer vos ') . $expiredDeletable . ' messages expirés';
 ?>
 <div class="page-head">
     <h1>Messages</h1>
@@ -17,6 +21,10 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
 </div>
 
 <form method="get" action="<?= e(url('/admin/messages')) ?>" class="filters" data-autosubmit>
+    <label>
+        Titre
+        <input type="search" name="q" value="<?= e($filters['q']) ?>" placeholder="Rechercher…" maxlength="100">
+    </label>
     <label>
         Groupe
         <select name="group">
@@ -54,6 +62,14 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
         <a class="button" href="<?= e(url('/admin/messages')) ?>">Effacer les filtres</a>
     <?php endif; ?>
 </form>
+
+<?php if ($expiredDeletable > 0): ?>
+    <form method="post" action="<?= e(url('/admin/messages/delete-expired')) ?>" class="bulk-actions"
+          data-confirm="<?= e($bulkLabel . ' ?') ?>">
+        <?= csrf_field() ?>
+        <button type="submit" class="button danger"><?= e($bulkLabel) ?></button>
+    </form>
+<?php endif; ?>
 
 <?php if ($filters['device']): ?>
     <p class="hint-box">

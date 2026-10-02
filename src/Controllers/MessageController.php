@@ -29,11 +29,17 @@ final class MessageController extends Controller
             'group' => isset($groups[(int) ($_GET['group'] ?? 0)]) ? (int) $_GET['group'] : 0,
             'device' => isset($devices[(int) ($_GET['device'] ?? 0)]) ? (int) $_GET['device'] : 0,
             'status' => array_key_exists((string) ($_GET['status'] ?? ''), Messages::FILTER_LABELS) ? (string) $_GET['status'] : '',
+            'q' => mb_substr(trim((string) ($_GET['q'] ?? '')), 0, 100),
             // Gestionnaire : par défaut « Vos groupes » (son périmètre, comme les chiffres du tableau de bord) ;
             // « Tous les messages » montre aussi ceux des autres, qu'il peut ouvrir et diffuser chez lui.
             'all' => !$access->isAdmin() && ($_GET['group'] ?? '') === 'all',
         ];
         $scope = $filters['all'] ? null : $access->scope();
+        // Suppression en lot proposée sur la liste « Expiré » seule (sans autre filtre) : tous les messages
+        // expirés pour un administrateur, les siens pour un gestionnaire.
+        $expiredDeletable = $filters['status'] === Messages::STATUS_EXPIRED && !$filters['group'] && !$filters['device'] && $filters['q'] === ''
+            ? count(Messages::expiredIds($this->app, $access->isAdmin() ? null : $access->userId()))
+            : 0;
         return $this->view('messages/index', [
             'title' => 'Messages',
             'messages' => Messages::search($this->app, $filters + ($scope !== null ? ['scope' => $scope] : [])),
@@ -41,7 +47,22 @@ final class MessageController extends Controller
             'groups' => $groups,
             'devices' => $devices,
             'access' => $access,
+            'expiredDeletable' => $expiredDeletable,
         ]);
+    }
+
+    /** Supprime d'un coup les messages expirés que le compte peut supprimer. */
+    public function deleteExpired(): Response
+    {
+        $access = $this->access();
+        $ids = Messages::expiredIds($this->app, $access->isAdmin() ? null : $access->userId());
+        $count = $this->app->transaction(fn (): int => Messages::deleteMany($this->app, $ids));
+        flash('success', match (true) {
+            $count === 0 => 'Aucun message expiré à supprimer.',
+            $count === 1 => 'Message expiré supprimé.',
+            default => $count . ' messages expirés supprimés.',
+        });
+        return $this->redirect('/admin/messages');
     }
 
     public function create(): Response

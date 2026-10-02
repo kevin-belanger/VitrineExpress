@@ -21,6 +21,7 @@ Application web d'affichage numérique : des téléviseurs (simples navigateurs 
 php bin/install.php          # crée la base et le premier compte
 bin/dev-server.sh            # http://localhost:8080
 php tests/run.php            # tests
+php bin/reset-password.php   # mot de passe oublié (--admin : rend le compte administrateur)
 php bin/build-brand.php resources/brand   # régénère logos, icônes et favicon
 ```
 
