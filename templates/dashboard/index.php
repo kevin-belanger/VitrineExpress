@@ -81,11 +81,9 @@ $next = $msg['upcoming'][0] ?? null;
         <?php else: ?>
             <p class="dash-big"><?= $live === 0 ? 'Aucun message' : $plural($live, 'message', 'messages') ?> en diffusion</p>
             <p class="dash-sub">
-                <?php if ($live > 0): ?>
-                    <a href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">destinés à <?= $plural($msg['reached'], 'périphérique', 'périphériques') ?></a>
-                <?php else: ?>
-                    Les périphériques connectés affichent l’heure et la date.
-                <?php endif; ?>
+                <?= $live > 0
+                    ? 'destinés à ' . $plural($msg['reached'], 'périphérique', 'périphériques')
+                    : 'Les périphériques connectés affichent l’heure et la date.' ?>
             </p>
             <?php if ($live > 0): ?>
                 <?php // Miniatures des premiers messages en diffusion (le total est dans le titre). ?>

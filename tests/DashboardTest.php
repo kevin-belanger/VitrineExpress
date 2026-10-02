@@ -75,7 +75,8 @@ function test_dashboard_shows_live_message_thumbnails(): void
     assert_contains('title="Diapo 6"', $page);
     assert_false(str_contains($page, 'title="Diapo 7"'), 'Six miniatures au plus');
     assert_false(str_contains($page, 'title="Brouillon"'), 'Seulement les messages en diffusion');
-    assert_contains('href="/admin/messages?status=live">destinés à 1 périphérique</a>', $page);
+    assert_contains('destinés à 1 périphérique', $page);
+    assert_false(str_contains($page, 'href="/admin/messages?status=live"'), 'Pas de lien vers les messages en diffusion');
     assert_contains('href="/admin/messages">Détails</a>', $page, '« Détails » remplace « Voir les messages »');
     assert_false(str_contains($page, 'Voir les messages'));
 }
