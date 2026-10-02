@@ -81,12 +81,14 @@ $next = $msg['upcoming'][0] ?? null;
         <?php else: ?>
             <p class="dash-big"><?= $live === 0 ? 'Aucun message' : $plural($live, 'message', 'messages') ?> en diffusion</p>
             <p class="dash-sub">
-                <?= $live > 0
-                    ? 'destinés à ' . $plural($msg['reached'], 'périphérique', 'périphériques')
-                    : 'Les périphériques connectés affichent l’heure et la date.' ?>
+                <?php if ($live > 0): ?>
+                    <a href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">destinés à <?= $plural($msg['reached'], 'périphérique', 'périphériques') ?></a>
+                <?php else: ?>
+                    Les périphériques connectés affichent l’heure et la date.
+                <?php endif; ?>
             </p>
             <?php if ($live > 0): ?>
-                <?php // Miniatures des premiers messages en diffusion (le total est dans le titre), puis la liste complète. ?>
+                <?php // Miniatures des premiers messages en diffusion (le total est dans le titre). ?>
                 <div class="dash-thumbs">
                     <?php foreach (array_slice($msg['live'], 0, $thumbsShown) as $message): ?>
                         <?php if ($access->canEdit($message)): ?>
@@ -100,7 +102,6 @@ $next = $msg['upcoming'][0] ?? null;
                             </span>
                         <?php endif; ?>
                     <?php endforeach; ?>
-                    <a class="button small" href="<?= e(url('/admin/messages?status=' . Messages::FILTER_LIVE)) ?>">Détails</a>
                 </div>
             <?php endif; ?>
 
@@ -116,7 +117,7 @@ $next = $msg['upcoming'][0] ?? null;
             <?= $line($msg['expired'], 'muted', url('/admin/messages?status=' . Messages::STATUS_EXPIRED),
                 $plural($msg['expired'], 'expiré', 'expirés'), $isAdmin ? 'À supprimer quand vous voulez' : '') ?>
 
-            <a class="dash-more" href="<?= e(url('/admin/messages')) ?>">Voir les messages →</a>
+            <a class="button dash-details" href="<?= e(url('/admin/messages')) ?>">Détails</a>
         <?php endif; ?>
     </section>
 </div>
