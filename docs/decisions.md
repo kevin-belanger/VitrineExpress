@@ -190,3 +190,9 @@ docs/              spécification, phases, décisions
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.
 - **Alignement du texte** : aligné à gauche par défaut (comportement standard de l'éditeur) et centré verticalement ; l'éditeur permet de centrer. On pourrait centrer par défaut si tu préfères.
+
+## Idées pour plus tard (discutées, non retenues pour l’instant)
+
+- **Télé-serveur** (Kevin, 1er octobre 2026) : une application de télé qui hébergerait VitrineExpress, pour se passer d’hébergement. Possible seulement sur Android TV, Google TV et Fire TV (Samsung, LG, Roku n’autorisent pas un serveur dans une application), et fragile avec PHP embarqué. Points faibles : télé éteinte = tous les écrans sans messages, données dans la télé, gestion seulement depuis le réseau local.
+- **Ordre suggéré si on y revient** : 1) une application « lecteur » pour Android TV (plein écran, démarrage avec la télé, pas de veille, reconnexion) sans serveur ; 2) une « boîte » prête à l’emploi (image Raspberry Pi ou Docker) qui sert de serveur et de premier écran ; 3) le serveur dans la télé, en réévaluant alors le choix de PHP.
+- **Questions à trancher avant** : nombre d’écrans typique des organismes visés, gestion sur place seulement acceptable ou non, parc de télés Android ou Samsung/LG.
