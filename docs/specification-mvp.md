@@ -73,7 +73,7 @@ Sept écrans, accessibles après connexion ; tous les comptes ont les mêmes dro
 5. **Messages** : liste et formulaire.
    - Liste : miniature, titre, type, période, durée, cibles, état (actif, à venir, expiré). Ordre de création.
    - Filtres : par groupe, par téléviseur (montre exactement la file de cette télé) et par état.
-   - Formulaire commun : titre interne, début (date + heure, défaut : date de création à 00:00), fin facultative (vide = message permanent ; si une date est choisie, heure par défaut 23:59), durée (défaut 20 s), cibles (groupes ou « Tous les téléviseurs »).
+   - Formulaire commun : titre interne, début (date + heure, défaut : date de création à 00:00), fin facultative (vide = message permanent ; si une date est choisie, heure par défaut 23:59), durée (défaut 20 s), cibles (groupes ou « Tous les téléviseurs » ; « Tous » par défaut pour qui peut le choisir).
    - Type image : téléversement JPG, PNG, WebP ou GIF, jusqu'à la taille maximale paramétrée.
    - Type texte : éditeur de texte enrichi (gras, italique, titres, listes, alignement, taille) et choix de l'arrière-plan parmi les préréglages.
    - Aperçu 16:9 du rendu final, dans le formulaire.

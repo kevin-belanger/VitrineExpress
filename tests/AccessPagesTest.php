@@ -168,6 +168,17 @@ function test_manager_dashboard_covers_their_scope(): void
     assert_contains('href="/admin/messages/' . $own['id'] . '/edit"', $page);
 }
 
+function test_new_message_targets_all_devices_by_default_when_allowed(): void
+{
+    $f = access_fixture();
+    $admin = manager_kernel($f, 'admin')->handle('GET', '/admin/messages/new')->body;
+    assert_contains('name="all_devices" value="1" data-choice-target="target-choice" checked', $admin, 'Administrateur : « Tous » coché');
+
+    $julie = manager_kernel($f)->handle('GET', '/admin/messages/new')->body;
+    assert_false(str_contains($julie, 'name="all_devices"'), 'Gestionnaire : pas de « Tous »');
+    assert_false((bool) preg_match('/name="(groups|devices)\[\]"[^>]*checked/', $julie), 'Gestionnaire : aucune cible cochée d’office');
+}
+
 function test_admin_edits_any_message_with_every_target(): void
 {
     $f = access_fixture();
