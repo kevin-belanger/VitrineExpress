@@ -50,9 +50,6 @@ $others = $otherTargets['names'];
                 'summary' => true,
                 'fixedDevices' => $otherTargets['device_ids'],
             ], null) ?>
-            <?php if ($groups): ?>
-                <p class="hint">Un groupe coché inclut aussi les périphériques qu’on y ajoutera plus tard.</p>
-            <?php endif; ?>
         </div>
         <?php if ($others): ?>
             <p class="hint">Aussi affiché dans : <?= e(implode(', ', $others)) ?>.<?= $contentNote ? ' Vos modifications s’y appliqueront aussi.' : '' ?></p>
