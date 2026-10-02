@@ -114,12 +114,14 @@
     // ---------- Rotation ----------
 
     function tick() {
-        if (new Date().getTime() - startedAt > RELOAD_AFTER_MS) {
-            window.location.reload();
-            return;
-        }
         request('GET', '/next', null, function (status, data) {
             if (status === 200 && data) {
+                // Rechargement quotidien seulement quand le serveur vient de répondre : pendant une coupure,
+                // un rechargement laisserait la page d'erreur du navigateur, sans nouvel essai.
+                if (new Date().getTime() - startedAt > RELOAD_AFTER_MS) {
+                    window.location.reload();
+                    return;
+                }
                 deviceName = data.device.name;
                 store(NAME_KEY, deviceName);
                 if (!data.current) {

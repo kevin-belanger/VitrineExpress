@@ -148,6 +148,9 @@
     imageUrl = imageField.imageField.url();
     imageField.addEventListener('imagechange', function (event) {
         imageUrl = event.detail.url;
+        if (!imageUrl && titleIsAuto) {
+            titleInput.value = ''; // image retirée : le titre proposé d'après son nom l'est aussi
+        }
         var fromName = titleFromFileName(event.detail.name || '');
         if (fromName) {
             suggestTitle(fromName);

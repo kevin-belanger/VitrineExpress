@@ -24,6 +24,7 @@ $isActive = static function (string $path) use ($current): bool {
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
     <title><?= e($title !== '' ? $title . ' · VitrineExpress' : 'VitrineExpress') ?></title>
     <?php if (!empty($refresh)): ?>
         <meta http-equiv="refresh" content="<?= (int) $refresh ?>">

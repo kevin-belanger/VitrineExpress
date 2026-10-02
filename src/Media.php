@@ -58,7 +58,8 @@ final class Media
         }
 
         $mime = (string) (new finfo(FILEINFO_MIME_TYPE))->file($source);
-        if (!isset(self::IMAGE_TYPES[$mime]) || @getimagesize($source) === false) {
+        $info = @getimagesize($source);
+        if (!isset(self::IMAGE_TYPES[$mime]) || $info === false) {
             throw new ValidationException('Format non accepté. Utilisez une image JPG, PNG, WebP ou GIF.');
         }
 
@@ -70,9 +71,23 @@ final class Media
             throw new \RuntimeException('Impossible d’enregistrer le fichier dans ' . $dir);
         }
         @chmod($target, 0644);
-        self::makeThumbnail($target, $dir . '/' . self::thumbName($name));
+        // Sans miniature, l'image elle-même sert de vignette : mieux qu'un dépassement de mémoire fatal.
+        if (self::fitsInMemory((int) $info[0], (int) $info[1], $size)) {
+            self::makeThumbnail($target, $dir . '/' . self::thumbName($name));
+        }
 
         return ['path' => $name, 'mime' => $mime];
+    }
+
+    /** Peut-on décoder cette image avec GD sans dépasser memory_limit (environ 5 octets par pixel, plus le fichier) ? */
+    private static function fitsInMemory(int $width, int $height, int $fileSize): bool
+    {
+        $limit = Installer::iniBytes((string) ini_get('memory_limit'));
+        if ($limit <= 0) {
+            return true; // pas de limite
+        }
+        $needed = $width * $height * 5 + $fileSize + 8 * 1024 * 1024;
+        return memory_get_usage() + $needed < $limit;
     }
 
     public static function directory(App $app): string

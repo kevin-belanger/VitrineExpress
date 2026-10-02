@@ -20,13 +20,11 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
             <div class="type-switch" role="radiogroup" aria-label="Type de message">
                 <label>
                     <input type="radio" name="type" value="image" <?= !$isText ? 'checked' : '' ?>>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l4.6-4.6a2 2 0 0 1 2.8 0L16 16m-2-2 1.6-1.6a2 2 0 0 1 2.8 0L20 14M14 8h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>
-                    Image
+                    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 16l4.6-4.6a2 2 0 0 1 2.8 0L16 16m-2-2 1.6-1.6a2 2 0 0 1 2.8 0L20 14M14 8h.01M6 20h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2z"/></svg>Image</span>
                 </label>
                 <label>
                     <input type="radio" name="type" value="text" <?= $isText ? 'checked' : '' ?>>
-                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg>
-                    Texte
+                    <span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7V5h14v2M12 5v14M9 19h6"/></svg>Texte</span>
                 </label>
             </div>
         <?php else: ?>
