@@ -78,7 +78,8 @@ function test_dashboard_shows_live_message_thumbnails(): void
     assert_contains('destinés à 1 périphérique', $page);
     assert_false(str_contains($page, 'href="/admin/messages?status=live"'), 'Pas de lien vers les messages en diffusion');
     assert_contains('href="/admin/messages">Détails</a>', $page, '« Détails » remplace « Voir les messages »');
-    assert_false(str_contains($page, 'Voir les messages'));
+    assert_contains('href="/admin/devices">Détails</a>', $page, '« Détails » remplace « Voir les périphériques d’affichage »');
+    assert_false(str_contains($page, 'Voir les '));
 }
 
 function test_dashboard_names(): void

@@ -111,7 +111,7 @@ docs/              spécification, phases, décisions
 - Le détail télé par télé (dont le message affiché en ce moment) est dans la page Téléviseurs, actualisée elle aussi toutes les 30 s.
 - **Écarté** : ligne « télés sans groupe » (déjà couverte par « sans message à afficher ») ; compteurs à zéro ; tableau détaillé sur le tableau de bord.
 - Code : `src/Dashboard.php` (calculs, testés), nouveaux filtres de la liste des messages (`live`, `ending`, `unbroadcast`).
-- **Ajout** (demandé par Kevin) : sous « N messages en diffusion », les miniatures des 6 premiers (titre au survol, cliquables vers le message, ou sa page Diffusion pour le message d'un autre). Le lien « Voir les messages → » devient un bouton « Détails » (liste des messages).
+- **Ajout** (demandé par Kevin) : sous « N messages en diffusion », les miniatures des 6 premiers (titre au survol, cliquables vers le message, ou sa page Diffusion pour le message d'un autre). Au bas des deux cartes, les liens « Voir les messages → » et « Voir les périphériques d'affichage → » deviennent des boutons « Détails » (même destination).
 
 ## D21 — Vocabulaire : « périphérique d'affichage »
 

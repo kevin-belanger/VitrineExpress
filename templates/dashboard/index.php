@@ -68,7 +68,7 @@ $next = $msg['upcoming'][0] ?? null;
                 $plural(count($tv['idle']), 'en ligne sans message à afficher', 'en ligne sans message à afficher'),
                 Dashboard::names($tv['idle']) . (count($tv['idle']) > 1 ? ' affichent' : ' affiche') . ' seulement l’heure') ?>
 
-            <a class="dash-more" href="<?= e(url('/admin/devices')) ?>">Voir les périphériques d’affichage →</a>
+            <a class="button dash-details" href="<?= e(url('/admin/devices')) ?>">Détails</a>
         <?php endif; ?>
     </section>
 
