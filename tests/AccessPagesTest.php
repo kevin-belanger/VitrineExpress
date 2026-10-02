@@ -90,6 +90,7 @@ function test_manager_changes_only_the_broadcast_of_someone_elses_message(): voi
     assert_contains('Créé par Marc', $page->body);
     assert_contains('Aussi affiché dans : Aire commune.', $page->body);
     assert_false(str_contains($page->body, 'name="title"'), 'Contenu en lecture seule');
+    assert_false(str_contains($page->body, 'form="delete-form"'), 'Pas de suppression');
 
     assert_same(303, post_form($kernel, '/admin/messages/' . $id, message_form([
         'title' => 'Titre changé',
@@ -111,8 +112,9 @@ function test_manager_deletes_their_own_message(): void
     $own = message_by($f, 'julie', [$f['compta'], $f['commune']]);
     $kernel = manager_kernel($f);
 
-    $list = $kernel->handle('GET', '/admin/messages')->body;
-    assert_contains('Il est aussi affiché dans : Aire commune.', $list, 'Avertissement avant de supprimer un message partagé');
+    $page = $kernel->handle('GET', '/admin/messages/' . $own['id'] . '/edit')->body;
+    assert_contains('form="delete-form"', $page, '« Supprimer » dans la fiche');
+    assert_contains('Il est aussi affiché dans : Aire commune.', $page, 'Avertissement avant de supprimer un message partagé');
 
     assert_same(303, post_form($kernel, '/admin/messages/' . $own['id'] . '/delete', [])->status);
     assert_same(0, (int) $f['app']->db->query('SELECT COUNT(*) FROM messages')->fetchColumn());
@@ -123,7 +125,8 @@ function test_manager_message_list_defaults_to_their_groups(): void
     $f = access_fixture();
     message_by($f, 'julie', [], false, 'Brouillon de Julie');
     message_by($f, 'marc', [$f['compta']], false, 'Pour la compta');
-    message_by($f, 'marc', [$f['commune']], false, 'Pour l’aire commune');
+    $commune = message_by($f, 'marc', [$f['commune']], false, 'Pour l’aire commune');
+    $global = message_by($f, 'admin', [], true, 'Pour tous');
     $kernel = manager_kernel($f);
 
     $mine = $kernel->handle('GET', '/admin/messages')->body;
@@ -132,6 +135,8 @@ function test_manager_message_list_defaults_to_their_groups(): void
     assert_contains('par Marc', $mine);
     assert_contains('Pour la compta', $mine);
     assert_false(str_contains($mine, 'Pour l’aire commune'), 'Par défaut : ses groupes seulement');
+    assert_contains('Pour tous', $mine);
+    assert_false(str_contains($mine, 'data-href="/admin/messages/' . $global['id'] . '/edit"'), '« Tous » : ligne non cliquable');
 
     $_GET = ['group' => 'all'];
     try {
@@ -140,7 +145,7 @@ function test_manager_message_list_defaults_to_their_groups(): void
         $_GET = [];
     }
     assert_contains('Pour l’aire commune', $all, '« Tous les groupes » : aussi les messages des autres');
-    assert_contains('>Diffusion</a>', $all);
+    assert_contains('data-href="/admin/messages/' . $commune['id'] . '/edit"', $all, 'Ligne cliquable vers la page Diffusion');
 }
 
 function test_manager_dashboard_covers_their_scope(): void

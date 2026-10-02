@@ -112,6 +112,7 @@ final class UserController extends Controller
             'values' => $values,
             'errors' => $errors,
             'id' => $id,
+            'savedName' => $id !== null ? $this->findOr404('users', $id)['username'] : null, // pour la confirmation de suppression
             'isSelf' => $id !== null && $id === $this->currentUserId(),
             'groups' => Groups::pickerItems($this->app),
         ], $status);

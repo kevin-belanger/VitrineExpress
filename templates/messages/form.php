@@ -112,6 +112,9 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
         <div class="form-actions">
             <button type="submit" class="button primary">Enregistrer</button>
             <a class="button" href="<?= e(url('/admin/messages')) ?>">Annuler</a>
+            <?php if ($canDelete): ?>
+                <button type="submit" form="delete-form" class="button danger">Supprimer</button>
+            <?php endif; ?>
         </div>
     </form>
 
@@ -120,3 +123,12 @@ $action = $isNew ? '/admin/messages' : '/admin/messages/' . $message['id'];
         <div class="preview-frame" id="preview"></div>
     </aside>
 </div>
+
+<?php if ($canDelete): ?>
+    <?php // Message partagé hors du périmètre de son créateur : la suppression l'enlève aussi ailleurs, on le dit. ?>
+    <?= View::render('partials/delete-form', [
+        'action' => '/admin/messages/' . $message['id'] . '/delete',
+        'confirm' => 'Supprimer le message « ' . $message['title'] . ' » ?'
+            . ($otherTargets['names'] ? ' Il est aussi affiché dans : ' . implode(', ', $otherTargets['names']) . '.' : ''),
+    ], null) ?>
+<?php endif; ?>

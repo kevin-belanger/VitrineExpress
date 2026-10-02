@@ -76,6 +76,7 @@ final class GroupController extends Controller
             'selected' => $deviceIds,
             'errors' => $errors,
             'id' => $id,
+            'savedName' => $id !== null ? $this->findOr404('groups', $id)['name'] : null, // pour la confirmation de suppression
         ], $status);
     }
 }

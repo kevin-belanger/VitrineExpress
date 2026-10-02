@@ -75,21 +75,30 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
         <th>Durée</th>
         <th>Cibles</th>
         <th>État</th>
-        <th class="actions">Actions</th>
     </tr>
     </thead>
     <tbody>
     <?php if (!$messages): ?>
-        <tr><td colspan="7" class="empty">
+        <tr><td colspan="6" class="empty">
             <?= $hasFilters ? 'Aucun message pour ces filtres.' : ($access->isAdmin() ? 'Aucun message.' : 'Aucun message dans vos groupes.') ?>
         </td></tr>
     <?php endif; ?>
     <?php foreach ($messages as $message): ?>
-        <?php $status = Messages::status($message, $now); ?>
-        <tr class="<?= $status === Messages::STATUS_EXPIRED ? 'is-dim' : '' ?>">
+        <?php
+        $status = Messages::status($message, $now);
+        // La ligne ouvre la fiche (ou la page Diffusion pour le message d'un autre) ; rien si on ne peut pas y toucher.
+        $href = $access->canEdit($message) ? url('/admin/messages/' . $message['id'] . '/edit') : null;
+        ?>
+        <tr class="<?= $status === Messages::STATUS_EXPIRED ? 'is-dim' : '' ?>"<?= $href !== null ? ' data-href="' . e($href) . '"' : '' ?>>
             <td class="thumb-col"><?= View::render('messages/_thumb', ['message' => $message, 'app' => $app], null) ?></td>
             <td>
-                <strong><?= e($message['title']) ?></strong><br>
+                <strong>
+                    <?php if ($href !== null): ?>
+                        <a class="row-link" href="<?= e($href) ?>"><?= e($message['title']) ?></a>
+                    <?php else: ?>
+                        <?= e($message['title']) ?>
+                    <?php endif; ?>
+                </strong><br>
                 <span class="muted">
                     <?= e(Messages::TYPE_LABELS[$message['type']]) ?>
                     <?php if ($access->owns($message)): ?>
@@ -119,23 +128,6 @@ $hasFilters = $filters['group'] || $filters['device'] || $filters['status'] || $
                 <?php endif; ?>
             </td>
             <td><span class="badge <?= $statusClass[$status] ?>"><?= e(Messages::STATUS_LABELS[$status]) ?></span></td>
-            <td class="actions">
-                <?php if ($access->canEditContent($message)): ?>
-                    <a class="button small" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>">Modifier</a>
-                    <?php
-                    // Message partagé hors de son périmètre : la suppression l'enlève aussi ailleurs, on le dit.
-                    $others = $access->isAdmin() ? [] : $access->otherTargets($message)['names'];
-                    $confirm = 'Supprimer le message « ' . $message['title'] . ' » ?'
-                        . ($others ? ' Il est aussi affiché dans : ' . implode(', ', $others) . '.' : '');
-                    ?>
-                    <form method="post" action="<?= e(url('/admin/messages/' . $message['id'] . '/delete')) ?>" data-confirm="<?= e($confirm) ?>">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="button small danger">Supprimer</button>
-                    </form>
-                <?php elseif ($access->canEditTargets($message)): ?>
-                    <a class="button small" href="<?= e(url('/admin/messages/' . $message['id'] . '/edit')) ?>">Diffusion</a>
-                <?php endif; ?>
-            </td>
         </tr>
     <?php endforeach; ?>
     </tbody>

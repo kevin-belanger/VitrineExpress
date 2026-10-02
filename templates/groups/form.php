@@ -27,5 +27,15 @@
     <div class="form-actions">
         <button type="submit" class="button primary">Enregistrer</button>
         <a class="button" href="<?= e(url('/admin/groups')) ?>">Annuler</a>
+        <?php if ($id !== null): ?>
+            <button type="submit" form="delete-form" class="button danger">Supprimer</button>
+        <?php endif; ?>
     </div>
 </form>
+
+<?php if ($id !== null): ?>
+    <?= \VitrineExpress\View::render('partials/delete-form', [
+        'action' => '/admin/groups/' . $id . '/delete',
+        'confirm' => 'Supprimer le groupe « ' . $savedName . ' » ? Les périphériques d’affichage et les messages seront conservés.',
+    ], null) ?>
+<?php endif; ?>

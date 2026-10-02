@@ -1,7 +1,8 @@
 <?php
 // L'état et la diapositive affichée sont mis à jour toutes les 5 secondes (devices-live.js, /admin/devices/live).
-// Un gestionnaire voit seulement les périphériques de ses groupes, sans code ni actions.
-$columns = $isAdmin ? 6 : 4;
+// Un administrateur ouvre la fiche en cliquant sur la ligne ; un gestionnaire voit seulement les périphériques
+// de ses groupes, sans code et sans fiche.
+$columns = $isAdmin ? 5 : 4;
 ?>
 <div class="page-head">
     <h1>Périphériques d’affichage</h1>
@@ -19,7 +20,6 @@ $columns = $isAdmin ? 6 : 4;
         <th>Groupes</th>
         <th>État</th>
         <th>Affiche en ce moment</th>
-        <?php if ($isAdmin): ?><th class="actions">Actions</th><?php endif; ?>
     </tr>
     </thead>
     <tbody>
@@ -29,10 +29,19 @@ $columns = $isAdmin ? 6 : 4;
         </td></tr>
     <?php endif; ?>
     <?php foreach ($devices as $device): ?>
-        <?php $state = $live[(int) $device['id']]; ?>
-        <tr data-device-id="<?= (int) $device['id'] ?>">
+        <?php
+        $state = $live[(int) $device['id']];
+        $href = $isAdmin ? url('/admin/devices/' . $device['id'] . '/edit') : null;
+        ?>
+        <tr data-device-id="<?= (int) $device['id'] ?>"<?= $href !== null ? ' data-href="' . e($href) . '"' : '' ?>>
             <td>
-                <strong><?= e($device['name']) ?></strong>
+                <strong>
+                    <?php if ($href !== null): ?>
+                        <a class="row-link" href="<?= e($href) ?>"><?= e($device['name']) ?></a>
+                    <?php else: ?>
+                        <?= e($device['name']) ?>
+                    <?php endif; ?>
+                </strong>
                 <?php if ($device['description'] !== ''): ?><br><span class="muted"><?= e($device['description']) ?></span><?php endif; ?>
             </td>
             <?php if ($isAdmin): ?><td><span class="code"><?= e($device['code']) ?></span></td><?php endif; ?>
@@ -44,11 +53,6 @@ $columns = $isAdmin ? 6 : 4;
             </td>
             <td class="live-status"><?= $state['status'] ?></td>
             <td class="live-current" data-key="<?= e($state['key']) ?>"><div class="live-slot"><?= $state['current'] ?></div></td>
-            <?php if ($isAdmin): ?>
-                <td class="actions">
-                    <a class="button small" href="<?= e(url('/admin/devices/' . $device['id'] . '/edit')) ?>">Modifier</a>
-                </td>
-            <?php endif; ?>
         </tr>
     <?php endforeach; ?>
     </tbody>

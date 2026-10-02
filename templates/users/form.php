@@ -80,5 +80,15 @@ $passwordError = isset($errors['password']) || isset($errors['password_confirm']
     <div class="form-actions">
         <button type="submit" class="button primary">Enregistrer</button>
         <a class="button" href="<?= e(url('/admin/users')) ?>">Annuler</a>
+        <?php if ($id !== null && !$isSelf): ?>
+            <button type="submit" form="delete-form" class="button danger">Supprimer</button>
+        <?php endif; ?>
     </div>
 </form>
+
+<?php if ($id !== null && !$isSelf): ?>
+    <?= \VitrineExpress\View::render('partials/delete-form', [
+        'action' => '/admin/users/' . $id . '/delete',
+        'confirm' => 'Supprimer l’utilisateur « ' . $savedName . ' » ?',
+    ], null) ?>
+<?php endif; ?>

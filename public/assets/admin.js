@@ -81,7 +81,9 @@
             return;
         }
         event.preventDefault();
-        var trigger = event.submitter || form.querySelector('button[type="submit"]');
+        // Le bouton peut être hors du formulaire (form="…"), ex. « Supprimer » dans la rangée d'actions d'une fiche.
+        var trigger = event.submitter || form.querySelector('button[type="submit"]')
+            || (form.id ? document.querySelector('button[form="' + form.id + '"]') : null);
         var ok = dialog.querySelector('[value="ok"]');
         dialog.querySelector('.confirm-message').textContent = message;
         ok.textContent = trigger ? trigger.textContent.trim() : 'Confirmer';
@@ -89,6 +91,26 @@
         pendingForm = form;
         dialog.showModal();
         dialog.querySelector('[value="cancel"]').focus();
+    });
+
+    // Lignes de tableau cliquables (tr[data-href]) : un clic n'importe où sur la ligne ouvre la fiche.
+    // Les liens et boutons de la ligne gardent leur rôle ; Ctrl/Cmd/Maj+clic ouvre un nouvel onglet ;
+    // pas de navigation si on vient de sélectionner du texte.
+    document.addEventListener('click', function (event) {
+        var row = event.target.closest && event.target.closest('tr[data-href]');
+        if (!row || event.defaultPrevented || event.button !== 0
+            || event.target.closest('a, button, input, select, textarea, label, form')) {
+            return;
+        }
+        if (window.getSelection && String(window.getSelection()) !== '') {
+            return;
+        }
+        var href = row.getAttribute('data-href');
+        if (event.ctrlKey || event.metaKey || event.shiftKey) {
+            window.open(href, '_blank');
+        } else {
+            window.location.href = href;
+        }
     });
 
     // Miniatures des messages texte : rendu réduit du vrai message (slide.js).

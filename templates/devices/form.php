@@ -33,6 +33,9 @@ use VitrineExpress\View;
         <div class="form-actions">
             <button type="submit" class="button primary">Enregistrer</button>
             <a class="button" href="<?= e(url('/admin/devices')) ?>">Annuler</a>
+            <?php if ($device !== null): ?>
+                <button type="submit" form="delete-form" class="button danger">Supprimer</button>
+            <?php endif; ?>
         </div>
     </form>
 
@@ -70,12 +73,14 @@ use VitrineExpress\View;
                     <?= csrf_field() ?>
                     <button type="submit" class="button">Régénérer le code</button>
                 </form>
-                <form method="post" action="<?= e(url('/admin/devices/' . $id . '/delete')) ?>"
-                      data-confirm="Supprimer le périphérique d’affichage « <?= e($device['name']) ?> » ?">
-                    <?= csrf_field() ?>
-                    <button type="submit" class="button danger">Supprimer</button>
-                </form>
             </div>
         </aside>
     <?php endif; ?>
 </div>
+
+<?php if ($device !== null): ?>
+    <?= View::render('partials/delete-form', [
+        'action' => '/admin/devices/' . $id . '/delete',
+        'confirm' => 'Supprimer le périphérique d’affichage « ' . $device['name'] . ' » ?',
+    ], null) ?>
+<?php endif; ?>

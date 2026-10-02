@@ -156,6 +156,7 @@ final class MessageController extends Controller
             'values' => $values,
             'errors' => $errors,
             'message' => $message,
+            'canDelete' => $message !== null && $access->canDelete($message),
             'imageUrl' => $message !== null ? Media::url($this->app, $message['media_path']) : null,
             'maxBytes' => Media::limitBytes($this->app),
             'maxLabel' => Media::formatBytes(Media::limitBytes($this->app)),

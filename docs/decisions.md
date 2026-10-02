@@ -159,6 +159,13 @@ docs/              spécification, phases, décisions
 - **Périmètre des listes** : liste des messages et tableau de bord d'un gestionnaire limités par défaut à son périmètre (mêmes chiffres des deux côtés) ; « Tous les groupes » dans le filtre montre le reste, pour diffuser chez soi le message d'un autre.
 - **Sans changement pour un administrateur**, sauf l'auteur affiché sous le titre des messages.
 
+## D28 — Listes : lignes cliquables, suppression dans la fiche
+
+- **Décision** (demandée par Kevin) : les listes Messages, Périphériques d'affichage, Groupes et Utilisateurs n'ont plus de colonne Actions. Toute la ligne ouvre la fiche ; « Supprimer » est dans la fiche, à droite d'« Enregistrer » et « Annuler », avec la même confirmation qu'avant.
+- **Ligne cliquable** : `tr[data-href]` géré par `admin.js` (Ctrl/Cmd/Maj+clic : nouvel onglet ; pas de navigation après une sélection de texte ; les liens de la ligne, comme la miniature d'un périphérique, gardent leur rôle). Le nom reste un vrai lien, pour le clavier et le clic du milieu. Une ligne qu'on ne peut pas ouvrir (gestionnaire : message « Tous », périphériques) n'est pas cliquable.
+- **Suppression** : formulaire séparé (`partials/delete-form.php`), placé hors du formulaire principal puisque les formulaires ne s'imbriquent pas ; le bouton s'y rattache par `form="delete-form"`. Pour un périphérique, « Supprimer » quitte le panneau du code, qui garde les actions de connexion (Déconnecter, Régénérer le code).
+- **Écarté** : lien étiré sur toute la ligne en CSS (`position: relative` sur `tr` mal pris en charge par certains navigateurs).
+
 ## À valider par Kevin
 
 - **Type fixé à la création** : on ne peut pas transformer une image en texte (ou l'inverse) en modifiant un message ; il faut en créer un nouveau.
